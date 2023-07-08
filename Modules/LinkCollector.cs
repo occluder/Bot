@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using Bot.Interfaces;
+using Bot.Utils;
 using MiniTwitch.Irc.Models;
 
 namespace Bot.Modules;
@@ -16,7 +17,12 @@ internal class LinkCollector : IModule
     {
         "streamelements", "streamlabs", "scriptorex", "apulxd", "rewardmore", "iogging", "ttdb"
     };
-    private static int _commitAt = Random.Shared.Next(10, 1000);
+    private readonly BackgroundTimer _timer;
+
+    public LinkCollector()
+    {
+        _timer = new(TimeSpan.FromMinutes(5), Commit, PostgresTimerSemaphore);
+    }
 
     private async ValueTask OnMessage(Privmsg arg)
     {
@@ -28,13 +34,11 @@ internal class LinkCollector : IModule
             if (_regex.Match(arg.Content) is { Success: true, Length: > 10 } match && match.Value[0] == 'h')
             {
                 await _ss.WaitAsync();
-                _links.Add(new(arg.Author.Name, arg.Channel.Name, match.Value, DateTime.Now));
+                LinkData link = new(arg.Author.Name, arg.Channel.Name, match.Value, DateTime.Now);
+                _links.Add(link);
                 _ = _ss.Release();
-                _logger.Verbose("Link added: {Link} ({Total})", match.Value, _links.Count);
+                _logger.Verbose("Link added: {@LinkInfo} ({Total})", link, _links.Count);
             }
-
-            if (_links.Count > 0 && _links.Count % _commitAt == 0)
-                await Commit();
         }
         catch (Exception ex)
         {
@@ -42,15 +46,17 @@ internal class LinkCollector : IModule
         }
     }
 
-    private static async Task Commit()
+    private async Task Commit()
     {
+        if (!this.Enabled)
+            return;
+
         try
         {
             await _ss.WaitAsync();
             int inserted = await Postgres.ExecuteAsync("insert into collected_links values (@Username, @Channel, @LinkText, @TimePosted)", _links);
             _ = _ss.Release();
             _logger.Information("Inserted {LinkCount} links", inserted);
-            _commitAt = Random.Shared.Next(25, 1000);
         }
         catch (Exception ex)
         {
@@ -77,22 +83,24 @@ internal class LinkCollector : IModule
 
     public async ValueTask Enable()
     {
-        if (Enabled)
+        if (this.Enabled)
             return;
 
         MainClient.OnMessage += OnMessage;
         AnonClient.OnMessage += OnMessage;
+        _timer.Start();
         await Settings.EnableModule(nameof(LinkCollector));
         return;
     }
 
     public async ValueTask Disable()
     {
-        if (!Enabled)
+        if (!this.Enabled)
             return;
 
         MainClient.OnMessage -= OnMessage;
         AnonClient.OnMessage -= OnMessage;
+        await _timer.StopAsync();
         await Settings.DisableModule(nameof(LinkCollector));
         return;
     }

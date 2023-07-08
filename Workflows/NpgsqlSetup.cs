@@ -10,6 +10,7 @@ namespace Bot.Workflows;
 public class NpgsqlSetup : IWorkflow
 {
     public static IDbConnection Postgres { get; private set; } = default!;
+    public static SemaphoreSlim PostgresTimerSemaphore { get; } = new(1);
 
     public async ValueTask<WorkflowState> Run()
     {
