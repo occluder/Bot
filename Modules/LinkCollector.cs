@@ -7,7 +7,7 @@ namespace Bot.Modules;
 
 internal class LinkCollector : IModule
 {
-    public bool Enabled { get; }
+    public bool Enabled { get; private set; }
 
     private static readonly Regex _regex = new(@"https?:[\\/][\\/](www\.|[-a-zA-Z0-9]+\.)?[-a-zA-Z0-9@:%._\+~#=]{3,}(\.[a-zA-Z]{2,10})+(/([-a-zA-Z0-9@:%._\+~#=/?&]+)?)?\b", RegexOptions.Compiled, TimeSpan.FromMilliseconds(50));
     private static readonly ILogger _logger = ForContext<LinkCollector>();
@@ -75,6 +75,7 @@ internal class LinkCollector : IModule
         if (nameSpan.Contains(bot, StringComparison.CurrentCultureIgnoreCase))
         {
             _ = _bots.Add(bot);
+            _logger.Verbose("New bot detected: {BotUsername}", name);
             return true;
         }
 
@@ -89,8 +90,8 @@ internal class LinkCollector : IModule
         MainClient.OnMessage += OnMessage;
         AnonClient.OnMessage += OnMessage;
         _timer.Start();
+        this.Enabled = true;
         await Settings.EnableModule(nameof(LinkCollector));
-        return;
     }
 
     public async ValueTask Disable()
@@ -101,8 +102,8 @@ internal class LinkCollector : IModule
         MainClient.OnMessage -= OnMessage;
         AnonClient.OnMessage -= OnMessage;
         await _timer.StopAsync();
+        this.Enabled = false;
         await Settings.DisableModule(nameof(LinkCollector));
-        return;
     }
 
     private record struct LinkData(string Username, string Channel, string LinkText, DateTime TimePosted)
