@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using Bot.Interfaces;
 using MiniTwitch.Irc.Models;
 
@@ -31,6 +30,7 @@ internal class LinkCollector : IModule
                 await _ss.WaitAsync();
                 _links.Add(new(arg.Author.Name, arg.Channel.Name, match.Value, DateTime.Now));
                 _ = _ss.Release();
+                _logger.Verbose("Link added: {Link} ({Total})", match.Value, _links.Count);
             }
 
             if (_links.Count % _commitAt == 0)
@@ -84,11 +84,6 @@ internal class LinkCollector : IModule
         AnonClient.OnMessage += OnMessage;
         await Settings.EnableModule(nameof(LinkCollector));
         return;
-    }
-
-    public string Method(string address)
-    {
-        return string.Join(", ", address.Split(", ").Reverse());
     }
 
     public async ValueTask Disable()

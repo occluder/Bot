@@ -15,8 +15,8 @@ public class ConfigSetup : IWorkflow
         var builder = new ConfigurationBuilder();
         IConfigurationRoot config = builder.AddJsonFile("BotConfig.json").Build();
         var section = new AppConfig() { SettingsKey = config.GetSection("InMemorySettingsKey").Value ?? "bot:settings" };
-        string mode = OperatingSystem.IsLinux() ? "Hosted" : "Local";
-        config.Bind(mode, section);
+        string profile = config.GetSection("Profile").Value ?? throw new ArgumentException("Config profile was not set");
+        config.Bind(profile, section);
         Config = section;
 
         return ValueTask.FromResult(WorkflowState.Completed);

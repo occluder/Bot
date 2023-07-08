@@ -38,6 +38,10 @@ internal class Program
                 await Settings.ChangeLogLevel((int)level);
                 Console.WriteLine($"Switching logging level to: {level}");
             }
+            else if (input == "clear")
+            {
+                Console.Clear();
+            }
         }
     }
 }
