@@ -1,0 +1,23 @@
+{
+	"InMemorySettingsKey": "bot:settings",
+	"Local": {
+		"Prefix": "",
+		"Username": "",
+		"Token": "",
+		"RedisAddress": "",
+		"RedisPass": "",
+		"DbConnectionString": "",
+		"WebhookUrl": "",
+		"DefaultLogLevel": 1
+	},
+	"Hosted": {
+		"Prefix": "",
+		"Username": "",
+		"Token": "",
+		"RedisAddress": "",
+		"RedisPass": "",
+		"DbConnectionString": "",
+		"WebhookUrl": "",
+		"DefaultLogLevel": 2
+	}
+}
