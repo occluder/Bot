@@ -28,7 +28,7 @@ public static class ChatHandler
             }
         }
 
-        Information("ChatHandler dynamically loaded {CommandCount} commands", _commands.Count);
+        Information("{CommandCount} commands were dynamically loaded", _commands.Count);
     }
 
     private static ValueTask OnMessage(Privmsg arg)

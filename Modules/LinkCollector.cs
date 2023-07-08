@@ -33,7 +33,7 @@ internal class LinkCollector : IModule
                 _logger.Verbose("Link added: {Link} ({Total})", match.Value, _links.Count);
             }
 
-            if (_links.Count % _commitAt == 0)
+            if (_links.Count > 0 && _links.Count % _commitAt == 0)
                 await Commit();
         }
         catch (Exception ex)
