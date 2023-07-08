@@ -1,4 +1,5 @@
-﻿using MiniTwitch.Irc.Models;
+﻿using Bot.Models;
+using MiniTwitch.Irc.Models;
 
 namespace Bot.Interfaces;
 
