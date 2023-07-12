@@ -2,9 +2,11 @@
 using System.Text.Json.Serialization;
 using Bot.Enums;
 using Bot.Interfaces;
+using Bot.Utils;
 using CachingFramework.Redis;
 using CachingFramework.Redis.Contracts.Providers;
 using CachingFramework.Redis.Serializers;
+using Npgsql;
 using StackExchange.Redis;
 
 namespace Bot.Workflows;
@@ -29,10 +31,12 @@ public class RedisSetup : IWorkflow
             return WorkflowState.Failed;
         }
 
-        Information("Connected to Redis");
         Cache = context.Cache;
         Collections = context.Collections;
         PubSub = context.PubSub;
+        ForContext("Version", typeof(RedisContext).GetAssemblyVersion()).ForContext("ShowProperties", true).
+            Information("Connected to Redis");
+
         return WorkflowState.Completed;
     }
 }

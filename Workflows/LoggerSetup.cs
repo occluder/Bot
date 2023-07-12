@@ -3,7 +3,6 @@ global using static Serilog.Log;
 using Bot.Enums;
 using Bot.Interfaces;
 using Bot.Utils.Logging;
-using MiniTwitch.Irc;
 using Serilog.Core;
 using Serilog.Enrichers.ClassName;
 using Serilog.Events;
@@ -19,7 +18,6 @@ public class LoggerSetup : IWorkflow
     {
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.ControlledBy(LogSwitch)
-            .Enrich.WithProperty("MiniTwitch.Irc", typeof(IrcClient).Assembly.GetName().Version)
             .Enrich.WithClassName()
             .Enrich.WithHeapSize()
             .WriteTo.Console(outputTemplate: "[{Timestamp:yyyy.mm.dd HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}{NewLine}")

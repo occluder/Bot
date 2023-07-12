@@ -27,7 +27,8 @@ internal class MainClientSetup : IWorkflow
             return WorkflowState.Failed;
         }
 
-        Information("MainClient setup done");
+        ForContext("Version", typeof(IrcClient).GetAssemblyVersion()).ForContext("ShowProperties", true)
+            .Information("MainClient setup done");
         return WorkflowState.Completed;
     }
 }

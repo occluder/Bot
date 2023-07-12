@@ -4,6 +4,7 @@ using System.Data;
 using Bot.Enums;
 using Bot.Interfaces;
 using Npgsql;
+using Bot.Utils;
 
 namespace Bot.Workflows;
 
@@ -27,7 +28,9 @@ public class NpgsqlSetup : IWorkflow
             return WorkflowState.Failed;
         }
 
-        Information("Connected to Postgres Db");
+        ForContext("Version", typeof(NpgsqlConnection).GetAssemblyVersion()).ForContext("ShowProperties", true)
+            .Information("Connected to Postgres database");
+
         return WorkflowState.Completed;
     }
 }
