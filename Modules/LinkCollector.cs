@@ -15,7 +15,7 @@ internal class LinkCollector : IModule
     private static SemaphoreSlim _ss = new(1);
     private static readonly HashSet<string> _bots = new()
     {
-        "streamelements", "streamlabs", "scriptorex", "apulxd", "rewardmore", "iogging", "ttdb"
+        "streamelements", "streamlabs", "scriptorex", "apulxd", "rewardmore", "iogging", "ttdb", "supibot", "nightbot"
     };
     private readonly BackgroundTimer _timer;
 

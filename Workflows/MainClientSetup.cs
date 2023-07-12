@@ -4,7 +4,6 @@ using Bot.Interfaces;
 using Bot.Utils;
 using Microsoft.Extensions.Logging;
 using MiniTwitch.Irc;
-using Serilog;
 
 namespace Bot.Workflows;
 
