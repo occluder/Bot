@@ -1,6 +1,7 @@
 ﻿global using static Bot.Workflows.MainClientSetup;
 using Bot.Enums;
 using Bot.Interfaces;
+using Bot.Utils;
 using Microsoft.Extensions.Logging;
 using MiniTwitch.Irc;
 using Serilog;
