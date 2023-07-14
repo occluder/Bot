@@ -8,6 +8,7 @@ public class AppConfig
     public string Token { get; init; }
     public string ParentToken { get; init; }
     public long ParentId { get; init; }
+    public string RelayChannel { get; init; }
 
     public string RedisAddress { get; init; }
     public string RedisPass { get; init; }

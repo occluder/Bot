@@ -11,7 +11,8 @@
 		"WebhookUrl": "",
 		"DefaultLogLevel": 1,
 		"ParentToken": "",
-		"ParentId": 0
+		"ParentId": 0,
+		"RelayChannel": ""
 	},
 	"Hosted": {
 		"Prefix": "",
@@ -23,6 +24,7 @@
 		"WebhookUrl": "",
 		"DefaultLogLevel": 2,
 		"ParentToken": "",
-		"ParentId": 0
+		"ParentId": 0,
+		"RelayChannel": ""
 	}
 }
