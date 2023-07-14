@@ -9,7 +9,9 @@
 		"RedisPass": "",
 		"DbConnectionString": "",
 		"WebhookUrl": "",
-		"DefaultLogLevel": 1
+		"DefaultLogLevel": 1,
+		"ParentToken": "",
+		"ParentId": 0
 	},
 	"Hosted": {
 		"Prefix": "",
@@ -19,6 +21,8 @@
 		"RedisPass": "",
 		"DbConnectionString": "",
 		"WebhookUrl": "",
-		"DefaultLogLevel": 2
+		"DefaultLogLevel": 2,
+		"ParentToken": "",
+		"ParentId": 0
 	}
 }

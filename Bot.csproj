@@ -24,6 +24,13 @@
 
     <ItemGroup>
         <Content Include="BotConfig.json" CopyToOutputDirectory="PreserveNewest" />
+        <Content Include="MiniTwitch.PubSub.dll" CopyToOutputDirectory="Always" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="MiniTwitch.PubSub">
+        <HintPath>MiniTwitch.PubSub.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

@@ -16,6 +16,7 @@ internal class Program
            .Add<LoadInMemorySettings>()
            .Add<MainClientSetup>()
            .Add<AnonClientSetup>()
+           .Add<PubSubSetup>()
            .Add<LoadModules>()
            .Add<ChannelsSetup>()
            .Add<LoadWhiteListBlackList>()
