@@ -6,9 +6,10 @@ namespace Bot.Modules;
 internal class HypeChatCollector : IModule
 {
     public bool Enabled { get; private set; }
+
     private async ValueTask OnMessage(Privmsg message)
     {
-        if (!message.HypeChat.HasContent)
+        if (!message.HypeChat.HasContent || !ChannelsById[message.Channel.Id].IsLogged)
             return;
 
         ForContext<HypeChatCollector>().Verbose("@{User} sent {Amount} {Currency} through hype chat in #{Channel}!",
@@ -27,7 +28,7 @@ internal class HypeChatCollector : IModule
         _ = PostgresTimerSemaphore.Release();
     }
 
-    private double GetActualAmount(HypeChat hc) => Math.Pow(hc.PaidAmount, -hc.Exponent);
+    private double GetActualAmount(HypeChat hc) => hc.PaidAmount * Math.Pow(10, -hc.Exponent);
 
     public async ValueTask Enable()
     {

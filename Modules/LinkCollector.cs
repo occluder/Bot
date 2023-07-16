@@ -51,16 +51,20 @@ internal class LinkCollector : IModule
         if (!this.Enabled)
             return;
 
+        await _ss.WaitAsync();
         try
         {
-            await _ss.WaitAsync();
             int inserted = await Postgres.ExecuteAsync("insert into collected_links values (@Username, @Channel, @LinkText, @TimePosted)", _links);
-            _ = _ss.Release();
-            _logger.Information("Inserted {LinkCount} links", inserted);
+            _links.Clear();
+            _logger.Debug("Inserted {LinkCount} links", inserted);
         }
         catch (Exception ex)
         {
             _logger.Error(ex, "Failed to insert links into table");
+        }
+        finally
+        {
+            _ = _ss.Release();
         }
     }
 
