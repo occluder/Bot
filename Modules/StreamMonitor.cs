@@ -75,7 +75,7 @@ internal class StreamMonitor : IModule
         else if (settings.OldGame == settings.NewGame)
             return MainClient.SendMessage(Config.RelayChannel, $"ppSlide @{ChannelsById[channelId].DisplayName} changed title: {settings.OldTitle} -> {settings.NewTitle}");
 
-        return MainClient.SendMessage(Config.RelayChannel, $"ppSlide @{ChannelsById[channelId].DisplayName} updated their: {settings.OldTitle} -> {settings.NewTitle} -- {settings.OldGame} -> {settings.OldGame}");
+        return MainClient.SendMessage(Config.RelayChannel, $"ppSlide @{ChannelsById[channelId].DisplayName} updated their: {settings.OldTitle} -> {settings.NewTitle} -- {settings.OldGame} -> {settings.NewGame}");
     }
 
 
