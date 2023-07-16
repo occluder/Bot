@@ -56,6 +56,7 @@ internal class TimeoutRelay : IModule
         TwitchPubSub.OnBanned += OnBanned;
         TwitchPubSub.OnUnbanned += OnUnbanned;
         TwitchPubSub.OnUntimedOut += OnUntimedOut;
+        this.Enabled = true;
         await Settings.EnableModule(nameof(TimeoutRelay));
     }
 
@@ -72,6 +73,7 @@ internal class TimeoutRelay : IModule
         TwitchPubSub.OnBanned -= OnBanned;
         TwitchPubSub.OnUnbanned -= OnUnbanned;
         TwitchPubSub.OnUntimedOut -= OnUntimedOut;
+        this.Enabled = false;
         await Settings.DisableModule(nameof(TimeoutRelay));
     }
 }

@@ -18,8 +18,8 @@ internal class Program
            .Add<AnonClientSetup>()
            .Add<ChannelsSetup>()
            .Add<PubSubSetup>()
-           .Add<LoadModules>()
            .Add<LoadWhiteListBlackList>()
+           .Add<LoadModules>()
            .Add<InitHandlers>();
 
         await foreach (WorkflowState result in runner.RunAll())

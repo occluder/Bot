@@ -93,6 +93,7 @@ internal class StreamMonitor : IModule
         TwitchPubSub.OnViewerCountUpdate += OnViewerCountUpdate;
         TwitchPubSub.OnStreamDown += OnStreamDown;
         TwitchPubSub.OnBroadcastSettingsUpdate += OnBroadcastSettingsUpdate;
+        this.Enabled = true;
         await Settings.EnableModule(nameof(StreamMonitor));
     }
 
@@ -111,6 +112,7 @@ internal class StreamMonitor : IModule
         TwitchPubSub.OnViewerCountUpdate -= OnViewerCountUpdate;
         TwitchPubSub.OnStreamDown -= OnStreamDown;
         TwitchPubSub.OnBroadcastSettingsUpdate -= OnBroadcastSettingsUpdate;
+        this.Enabled = false;
         await Settings.DisableModule(nameof(StreamMonitor));
     }
 }
