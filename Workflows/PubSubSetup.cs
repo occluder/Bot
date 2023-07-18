@@ -4,7 +4,6 @@ using Bot.Interfaces;
 using Bot.Utils;
 using Microsoft.Extensions.Logging;
 using MiniTwitch.PubSub;
-using MiniTwitch.PubSub.Models;
 
 namespace Bot.Workflows;
 

@@ -102,7 +102,7 @@ internal class StreamMonitor : IModule
         if (!this.Enabled)
             return;
 
-        foreach(long channelId in GetMonitoredChannelIds())
+        foreach (long channelId in GetMonitoredChannelIds())
         {
             _ = await TwitchPubSub.UnlistenTo(Topics.VideoPlayback(channelId));
             _ = await TwitchPubSub.UnlistenTo(Topics.BroadcastSettingsUpdate(channelId));

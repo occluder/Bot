@@ -6,7 +6,6 @@ using Bot.Utils;
 using CachingFramework.Redis;
 using CachingFramework.Redis.Contracts.Providers;
 using CachingFramework.Redis.Serializers;
-using Npgsql;
 using StackExchange.Redis;
 
 namespace Bot.Workflows;

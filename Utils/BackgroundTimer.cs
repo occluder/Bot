@@ -52,7 +52,7 @@ internal class BackgroundTimer
 
     private async Task StartTimerTask()
     {
-        while (_invocationsLeft  != 0 && await _timer.WaitForNextTickAsync())
+        while (_invocationsLeft != 0 && await _timer.WaitForNextTickAsync())
         {
             try
             {

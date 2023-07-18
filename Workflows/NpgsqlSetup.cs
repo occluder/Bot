@@ -1,10 +1,10 @@
-﻿global using static Bot.Workflows.NpgsqlSetup;
-global using Dapper;
+﻿global using Dapper;
+global using static Bot.Workflows.NpgsqlSetup;
 using System.Data;
 using Bot.Enums;
 using Bot.Interfaces;
-using Npgsql;
 using Bot.Utils;
+using Npgsql;
 
 namespace Bot.Workflows;
 

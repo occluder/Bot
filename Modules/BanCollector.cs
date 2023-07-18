@@ -47,7 +47,7 @@ internal class BanCollector : IModule
                       ban.Channel.Id,
                       -1,
                       DateTime.Now));
-        
+
         _ = _ss.Release();
         return;
     }

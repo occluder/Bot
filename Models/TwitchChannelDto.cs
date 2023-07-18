@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Bot.Models;
+﻿namespace Bot.Models;
 public class TwitchChannelDto
 {
     public required string DisplayName { get; set; }
