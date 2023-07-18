@@ -1,4 +1,5 @@
 ﻿using Bot.Enums;
+using Bot.Utils.Logging;
 using Bot.Workflows;
 using Serilog.Events;
 
@@ -42,6 +43,20 @@ internal class Program
             else if (input == "clear")
             {
                 Console.Clear();
+            }
+            else if (input.StartsWith("l!include"))
+            {
+                string[] args = input.Split(' ');
+                if (args.Length < 2)
+                    continue;
+
+                ClassNameFilter.ClassName = args[1];
+                Console.WriteLine($"ClassNameFilter set to {args[1]}");
+            }
+            else if (input == "l!unfilter")
+            {
+                ClassNameFilter.ClassName = null;
+                Console.WriteLine("Removed all filters");
             }
         }
     }

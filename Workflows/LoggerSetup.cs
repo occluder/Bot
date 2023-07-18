@@ -18,6 +18,7 @@ public class LoggerSetup : IWorkflow
     {
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.ControlledBy(LogSwitch)
+            .Filter.With<ClassNameFilter>()
             .Enrich.WithClassName()
             .Enrich.WithHeapSize()
             .WriteTo.Console(outputTemplate: "[{Timestamp:yyyy.mm.dd HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}{NewLine}")
