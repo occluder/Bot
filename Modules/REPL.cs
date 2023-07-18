@@ -13,6 +13,7 @@ internal partial class REPL : IModule
 {
     private const int GLOBAL_COOLDOWN_SECONDS = 5;
     private const int USER_COOLDOWN_SECONDS = 15;
+    private const int MAX_MESSAGE_LENGTH = 450;
 
     public bool Enabled { get; private set; }
 
@@ -51,16 +52,17 @@ internal partial class REPL : IModule
         }
 
         _lastUsed = DateTime.Now;
+        string currentContent = message.Content[(verbose ? 5 : 4)..];
         if (message.Content[2] == '?')
         {
             if (_builders.TryGetValue(message.Author.Id, out var sb))
             {
-                sb.AppendLine(message.Content[(verbose ? 5 : 4)..]);
+                sb.AppendLine(currentContent);
                 return;
             }
 
             _builders[message.Author.Id] = new();
-            _builders[message.Author.Id].AppendLine(message.Content[(verbose ? 5 : 4)..]);
+            _builders[message.Author.Id].AppendLine(currentContent);
             return;
         }
 
@@ -73,7 +75,6 @@ internal partial class REPL : IModule
         _globalCooldown = timeNow;
         _cooldowns[message.Author.Id] = timeNow;
         ILogger logger = MessageContextLogger(message);
-        string currentContent = message.Content[(verbose ? 5 : 4)..];
         string payloadContent = _builders.TryGetValue(message.Author.Id, out var sb2) && sb2.Length > 0 ? GetAndClear(sb2.AppendLine(currentContent)) : currentContent;
         StringContent payload = new(payloadContent);
         HttpResponseMessage response;
@@ -139,7 +140,7 @@ internal partial class REPL : IModule
 
         if (result.ConsoleOut is { Length: > 0 } cout)
         {
-            if (cout.Length > 475)
+            if (cout.Length > MAX_MESSAGE_LENGTH)
             {
                 string? hasteLink = await UploadToHaste(cout);
                 if (hasteLink is not null)
@@ -152,7 +153,7 @@ internal partial class REPL : IModule
             return;
         }
 
-        if (result.ReturnValue?.ToString() is string { Length: > 475 } longReturnValue)
+        if (result.ReturnValue?.ToString() is string { Length: > MAX_MESSAGE_LENGTH } longReturnValue)
         {
             string? hasteLink = await UploadToHaste(longReturnValue);
             if (hasteLink is not null)
@@ -167,7 +168,7 @@ internal partial class REPL : IModule
     private async Task<string?> UploadToHaste(string data)
     {
         string link = Config.EvalApi["LongResultHasteLink"];
-        StringContent content = new(data);
+        StringContent content = new(data, Encoding.UTF8);
         HttpResponseMessage response = await _requests.PostAsync(link, content);
         ForContext<REPL>().Debug("[{Result}] POST {Link}", response.StatusCode, link);
         if (!response.IsSuccessStatusCode)
