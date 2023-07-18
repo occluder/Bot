@@ -191,7 +191,7 @@ internal partial class REPL : IModule
 
         if (result?["key"] is string key)
         {
-            return $"{link[..link.LastIndexOf('/')]}/{key}";
+            return $"https://haste.occluder.space/{key}";
         }
 
         return null;
