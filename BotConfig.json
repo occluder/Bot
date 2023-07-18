@@ -12,7 +12,12 @@
 		"DefaultLogLevel": 1,
 		"ParentToken": "",
 		"ParentId": 0,
-		"RelayChannel": ""
+		"RelayChannel": "",
+		"EvalApi": {
+			"Address": "",
+			"Auth": "",
+			"LongResultHasteLink": ""
+		}
 	},
 	"Hosted": {
 		"Prefix": "",
@@ -25,6 +30,11 @@
 		"DefaultLogLevel": 2,
 		"ParentToken": "",
 		"ParentId": 0,
-		"RelayChannel": ""
+		"RelayChannel": "",
+		"EvalApi": {
+			"Address": "",
+			"Auth": "",
+			"LongResultHasteLink": ""
+		}
 	}
 }
