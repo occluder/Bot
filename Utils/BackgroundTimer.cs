@@ -54,9 +54,9 @@ internal class BackgroundTimer
     {
         while (_invocationsLeft != 0 && await _timer.WaitForNextTickAsync())
         {
+            await (_semaphore?.WaitAsync() ?? Task.CompletedTask);
             try
             {
-                await (_semaphore?.WaitAsync() ?? Task.CompletedTask);
                 await _callback();
             }
             finally

@@ -78,8 +78,8 @@ internal class LinkCollector : IModule
         ReadOnlySpan<char> nameSpan = name;
         if (nameSpan.Contains(bot, StringComparison.CurrentCultureIgnoreCase))
         {
-            _ = _bots.Add(bot);
-            _logger.Verbose("New bot detected: {BotUsername}", name);
+            if (_bots.Add(bot))
+                _logger.Verbose("New bot detected: {BotUsername}", name);
             return true;
         }
 
