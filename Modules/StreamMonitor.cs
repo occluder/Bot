@@ -60,7 +60,6 @@ internal class StreamMonitor : IModule
                 _logger.Warning("Failed to listen to {TopicKey}: {Error}", r.TopicKey, r.Error);
 
             _logger.Debug("{Channel} is already live: {@StreamData}", ChannelsById[channelId].DisplayName, _);
-            await MainClient.SendMessage(Config.RelayChannel, $"ppCircle @{ChannelsById[channelId].DisplayName} is live!");
             _streams[channelId] = true;
         }
     }
