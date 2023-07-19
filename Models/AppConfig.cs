@@ -15,5 +15,7 @@ public class AppConfig
     public int DefaultLogLevel { get; init; }
     public string SettingsKey { get; init; }
     public IReadOnlyDictionary<string, string> EvalApi { get; init; }
+    public string MentionsWebhookUrl { get; init; }
+    public string MentionsRegex { get; init; }
 }
 #pragma warning restore CS8618

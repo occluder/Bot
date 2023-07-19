@@ -17,7 +17,9 @@
 			"Address": "",
 			"Auth": "",
 			"LongResultHasteLink": ""
-		}
+		},
+		"MentionsWebhookUrl": "",
+		"MentionsRegex": ""
 	},
 	"Hosted": {
 		"Prefix": "",
@@ -35,6 +37,8 @@
 			"Address": "",
 			"Auth": "",
 			"LongResultHasteLink": ""
-		}
+		},
+		"MentionsWebhookUrl": "",
+		"MentionsRegex": ""
 	}
 }
