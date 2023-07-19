@@ -8,6 +8,7 @@ namespace Bot.Modules;
 internal class StreamMonitor : IModule
 {
     private static readonly Dictionary<long, bool> _streams = new();
+    private static readonly Dictionary<long, DateTime> _offlineAt = new();
     private static readonly ILogger _logger = ForContext<StreamMonitor>();
 
     public bool Enabled { get; private set; }
@@ -23,11 +24,17 @@ internal class StreamMonitor : IModule
     public StreamMonitor()
     {
         foreach (long channelId in GetMonitoredChannelIds())
+        {
             _streams.Add(channelId, false);
+            _offlineAt.Add(channelId, DateTime.MinValue);
+        }
     }
 
     private async ValueTask OnStreamUp(ChannelId channelId, IStreamUp _)
     {
+        if ((DateTime.Now - _offlineAt[channelId]).TotalMinutes <= 5)
+            return;
+
         _streams[channelId] = true;
         ListenResponse r = await TwitchPubSub.ListenTo(Topics.BroadcastSettingsUpdate(channelId));
         if (r.IsSuccess)
@@ -41,6 +48,9 @@ internal class StreamMonitor : IModule
 
     private async ValueTask OnViewerCountUpdate(ChannelId channelId, IViewerCountUpdate _)
     {
+        if ((DateTime.Now - _offlineAt[channelId]).TotalMinutes <= 5)
+            return;
+
         if (!IsLive(channelId))
         {
             ListenResponse r = await TwitchPubSub.ListenTo(Topics.BroadcastSettingsUpdate(channelId));
@@ -58,6 +68,7 @@ internal class StreamMonitor : IModule
     private async ValueTask OnStreamDown(ChannelId channelId, IStreamDown _)
     {
         _streams[channelId] = false;
+        _offlineAt[channelId] = DateTime.Now;
         ListenResponse r = await TwitchPubSub.UnlistenTo(Topics.BroadcastSettingsUpdate(channelId));
         if (r.IsSuccess)
             _logger.Debug("Successfully unlistened to {TopicKey}", r.TopicKey);
