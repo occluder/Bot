@@ -24,6 +24,14 @@ internal class MentionsRelay : IModule
                 embed.title = $"@{message.Author.Name} in #{message.Channel.Name}";
                 embed.description = message.Content;
                 embed.timestamp = DateTime.Now;
+                if (message.Reply.HasContent)
+                {
+                    embed.AddField(field =>
+                    {
+                        field.name = $"Replying to @{message.Reply.ParentUsername}";
+                        field.value = message.Reply.ParentMessage;
+                    });
+                }
             });
 
             HttpResponseMessage response;
