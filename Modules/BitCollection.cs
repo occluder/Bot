@@ -9,7 +9,7 @@ internal class BitCollection : IModule
 
     private async ValueTask OnMessage(Privmsg message)
     {
-        if (message.Bits != 0 || !ChannelsById[message.Channel.Id].IsLogged)
+        if (message.Bits == 0 || !ChannelsById[message.Channel.Id].IsLogged)
             return;
 
         ForContext<HypeChatCollector>().Verbose("@{User} sent {Amount} bits to #{Channel}!", message.Author.Name, message.Bits, message.Channel.Name);
