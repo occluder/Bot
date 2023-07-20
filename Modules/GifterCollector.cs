@@ -1,4 +1,5 @@
 ﻿using Bot.Interfaces;
+using MiniTwitch.Irc.Enums;
 using MiniTwitch.Irc.Interfaces;
 
 namespace Bot.Modules;
@@ -25,7 +26,13 @@ internal class GifterCollector : IModule
                 SentTo = notice.Channel.Name,
                 SentToId = notice.Channel.Id,
                 GiftAmount = notice.GiftCount,
-                Tier = notice.SubPlan.ToString(),
+                Tier = notice.SubPlan switch
+                {
+                    SubPlan.Tier1 => 1,
+                    SubPlan.Tier2 => 2,
+                    SubPlan.Tier3 => 3,
+                    _ => 0
+                },
                 TimeSent = notice.SentTimestamp
             }, commandTimeout: 10);
         }
