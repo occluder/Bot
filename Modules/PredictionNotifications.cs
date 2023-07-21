@@ -179,7 +179,7 @@ internal class PredictionNotifications : IModule
             embed.AddField(feed =>
             {
                 feed.name = $"Winning outcome: *{winningOutcome.Title}*";
-                feed.value = string.Join('\n', winningOutcome.TopPredictors.Select(p => $"*@{p.UserDisplayName}* +{p.Result!.Value.PointsWon}"));
+                feed.value = string.Join('\n', winningOutcome.TopPredictors.Select(p => $"**@{p.UserDisplayName}**\t+{p.Result!.Value.PointsWon}"));
             });
         });
 
