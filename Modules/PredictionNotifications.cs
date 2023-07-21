@@ -193,7 +193,7 @@ internal class PredictionNotifications : IModule
         sb.AppendLine(outcome.Title);
         sb.Append("👥 ");
         if (outcome.TotalUsers > 1000)
-            sb.AppendLine($"{Math.Round(outcome.TotalUsers / (double)1000, 1)} users chose this outcome ({100 * outcome.TotalUsers / (double)totalUsers}%)");
+            sb.AppendLine($"{Math.Round(outcome.TotalUsers / (double)1000, 1)} users chose this outcome ({100 * outcome.TotalUsers / totalUsers}%)");
         else
             sb.AppendLine($"{outcome.TotalUsers} users chose this outcome ({Math.Floor(outcome.TotalUsers / (double)totalUsers)}%)");
 
