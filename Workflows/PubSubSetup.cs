@@ -13,7 +13,7 @@ internal class PubSubSetup : IWorkflow
 
     public async ValueTask<WorkflowState> Run()
     {
-        TwitchPubSub = new(Config.Token, new LoggerFactory().AddSerilog(ForContext("IsSubLogger", true).ForContext("Client", "PubSub")).CreateLogger<PubSubClient>());
+        TwitchPubSub = new(Config.Secrets["BotToken"], new LoggerFactory().AddSerilog(ForContext("IsSubLogger", true).ForContext("Client", "PubSub")).CreateLogger<PubSubClient>());
         if (!await TwitchPubSub.ConnectAsync())
         {
             ForContext<PubSubSetup>().Fatal("[{ClassName}] Failed to setup PubSub");

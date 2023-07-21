@@ -9,7 +9,7 @@ internal class MentionsRelay : IModule
 {
     public bool Enabled { get; private set; }
 
-    private readonly Regex _regex = new(Config.MentionsRegex, RegexOptions.Compiled, TimeSpan.FromMilliseconds(50));
+    private readonly Regex _regex = new(Config.Secrets["MentionsRegex"], RegexOptions.Compiled, TimeSpan.FromMilliseconds(50));
     private readonly HttpClient _requests = new() { Timeout = TimeSpan.FromSeconds(15) };
 
     private async ValueTask OnMessage(Privmsg message)
@@ -37,15 +37,15 @@ internal class MentionsRelay : IModule
             HttpResponseMessage response;
             try
             {
-                response = await _requests.PostAsync(Config.MentionsWebhookUrl, builder.ToStringContent());
+                response = await _requests.PostAsync(Config.Links["MentionsWebhook"], builder.ToStringContent());
                 if (response.IsSuccessStatusCode)
-                    ForContext<MentionsRelay>().Debug("[{StatusCode}] POST {Url}", response.StatusCode, Config.MentionsWebhookUrl);
+                    ForContext<MentionsRelay>().Debug("[{StatusCode}] POST {Url}", response.StatusCode, Config.Links["MentionsWebhook"]);
                 else
-                    ForContext<MentionsRelay>().Warning("[{StatusCode}] POST {Url}", response.StatusCode, Config.MentionsWebhookUrl);
+                    ForContext<MentionsRelay>().Warning("[{StatusCode}] POST {Url}", response.StatusCode, Config.Links["MentionsWebhook"]);
             }
             catch (Exception ex)
             {
-                ForContext<MentionsRelay>().Error(ex, "POST {Url}", Config.MentionsWebhookUrl);
+                ForContext<MentionsRelay>().Error(ex, "POST {Url}", Config.Links["MentionsWebhook"]);
             }
         }
     }

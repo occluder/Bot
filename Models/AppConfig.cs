@@ -2,20 +2,13 @@
 #pragma warning disable CS8618
 public class AppConfig
 {
+    public string SettingsKey { get; set; }
     public string Prefix { get; init; }
-    public string Username { get; init; }
-    public string Token { get; init; }
-    public string ParentToken { get; init; }
-    public long ParentId { get; init; }
-    public string RelayChannel { get; init; }
-    public string RedisAddress { get; init; }
-    public string RedisPass { get; init; }
-    public string DbConnectionString { get; init; }
-    public string WebhookUrl { get; init; }
     public int DefaultLogLevel { get; init; }
-    public string SettingsKey { get; init; }
-    public IReadOnlyDictionary<string, string> EvalApi { get; init; }
-    public string MentionsWebhookUrl { get; init; }
-    public string MentionsRegex { get; init; }
+    public string RelayChannel { get; init; }
+    public string[] PredictionChannels { get; init; }
+    public Dictionary<string, string> Links { get; init; }
+    public Dictionary <string, string> Secrets { get; init; }
+    public Dictionary<string, long> Ids { get; init; }
 }
 #pragma warning restore CS8618

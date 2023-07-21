@@ -26,7 +26,7 @@ internal partial class REPL : IModule
 
     public REPL()
     {
-        _requests.DefaultRequestHeaders.Add("Authorization", Config.EvalApi["Auth"]);
+        _requests.DefaultRequestHeaders.Add("Authorization", Config.Secrets["EvalAuth"]);
         _requests.Timeout = TimeSpan.FromSeconds(5);
     }
 
@@ -81,15 +81,15 @@ internal partial class REPL : IModule
         ReplResult? result;
         try
         {
-            response = await _requests.PostAsync(Config.EvalApi["Address"], payload);
+            response = await _requests.PostAsync(Config.Links["Eval"], payload);
             if (response.StatusCode is not HttpStatusCode.OK and not HttpStatusCode.BadRequest)
             {
-                logger.Warning("[{Result}] POST {Address}", response.StatusCode, Config.EvalApi["Address"]);
+                logger.Warning("[{Result}] POST {Address}", response.StatusCode, Config.Links["Eval"]);
                 await MainClient.SendMessage(message.Channel.Name, $"@{message.Author.Name},🚫 {response.StatusCode}");
                 return;
             }
 
-            logger.Debug("[{Result}] POST {Address}", response.StatusCode, Config.EvalApi["Address"]);
+            logger.Debug("[{Result}] POST {Address}", response.StatusCode, Config.Links["Eval"]);
             result = await response.Content.ReadFromJsonAsync<ReplResult>();
         }
         catch (JsonException jex)
@@ -167,7 +167,7 @@ internal partial class REPL : IModule
 
     private async Task<string?> UploadToHaste(string data)
     {
-        string link = Config.EvalApi["LongResultHasteLink"];
+        string link = Config.Links["Haste"];
         StringContent content = new(data, Encoding.UTF8);
         HttpResponseMessage response = await _requests.PostAsync(link, content);
         ForContext<REPL>().Debug("[{Result}] POST {Link}", response.StatusCode, link);

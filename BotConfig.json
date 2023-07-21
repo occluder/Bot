@@ -3,42 +3,31 @@
 	"Profile": "Local",
 	"Local": {
 		"Prefix": "",
-		"Username": "",
-		"Token": "",
-		"RedisAddress": "",
-		"RedisPass": "",
-		"DbConnectionString": "",
-		"WebhookUrl": "",
 		"DefaultLogLevel": 1,
-		"ParentToken": "",
-		"ParentId": 0,
 		"RelayChannel": "",
-		"EvalApi": {
-			"Address": "",
-			"Auth": "",
-			"LongResultHasteLink": ""
+		"PredictionChannels": [
+			""
+		],
+		"Links": {
+			"PredictionNotifications": "",
+			"MentionsWebhook": "",
+			"Webhook": "",
+			"Redis": "",
+			"Eval": "",
+			"Haste": ""
 		},
-		"MentionsWebhookUrl": "",
-		"MentionsRegex": ""
-	},
-	"Hosted": {
-		"Prefix": "",
-		"Username": "",
-		"Token": "",
-		"RedisAddress": "",
-		"RedisPass": "",
-		"DbConnectionString": "",
-		"WebhookUrl": "",
-		"DefaultLogLevel": 2,
-		"ParentToken": "",
-		"ParentId": 0,
-		"RelayChannel": "",
-		"EvalApi": {
-			"Address": "",
-			"Auth": "",
-			"LongResultHasteLink": ""
+		"Secrets": {
+			"ParentToken": "",
+			"DbConnectionString": "",
+			"RedisPass": "",
+			"BotUsername": "",
+			"BotToken": "",
+			"EvalAuth": "",
+			"MentionsRegex": ""
 		},
-		"MentionsWebhookUrl": "",
-		"MentionsRegex": ""
+		"Ids": {
+			"ParentId": 0,
+			"BotId":  0
+		}
 	}
 }

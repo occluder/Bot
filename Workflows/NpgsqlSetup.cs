@@ -18,7 +18,7 @@ public class NpgsqlSetup : IWorkflow
         DefaultTypeMap.MatchNamesWithUnderscores = true;
         try
         {
-            var conn = new NpgsqlConnection(Config.DbConnectionString);
+            var conn = new NpgsqlConnection(Config.Secrets["DbConnectionString"]);
             await conn.OpenAsync();
             Postgres = conn;
         }

@@ -15,8 +15,8 @@ internal class MainClientSetup : IWorkflow
     {
         MainClient = new(options =>
         {
-            options.Username = Config.Username;
-            options.OAuth = Config.Token;
+            options.Username = Config.Secrets["BotUsername"];
+            options.OAuth = Config.Secrets["BotToken"];
             options.Logger = new LoggerFactory().AddSerilog(ForContext("IsSubLogger", true).ForContext("Client", "Main")).CreateLogger<IrcClient>();
         });
 
