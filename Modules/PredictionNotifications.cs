@@ -162,7 +162,7 @@ internal class PredictionNotifications : IModule
 
             embed.SetFooter(footer =>
             {
-                footer.text = $"Prediction cancelled by {prediction.EndedBy?.UserDisplayName}";
+                footer.text = $"Prediction ended by {prediction.EndedBy?.UserDisplayName}";
             });
 
             foreach (var outcome in prediction.Outcomes)
