@@ -10,7 +10,7 @@ internal class Program
     static async Task Main()
     {
         var runner = new WorkflowRunner()
-           .Add<ConfigSetup>()
+           .Add<LoadConfig>()
            .Add<LoggerSetup>()
            .Add<RedisSetup>()
            .Add<NpgsqlSetup>()

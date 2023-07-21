@@ -23,7 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Content Include="BotConfig.json" CopyToOutputDirectory="PreserveNewest" />
+        <Content Include="Config.json" CopyToOutputDirectory="PreserveNewest" />
         <Content Include="MiniTwitch.PubSub.dll" CopyToOutputDirectory="Always" />
     </ItemGroup>
 
