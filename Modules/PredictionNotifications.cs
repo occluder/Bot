@@ -64,7 +64,7 @@ internal class PredictionNotifications : IModule
                 embed.AddField(feed =>
                 {
                     feed.name = GetOutcomeEmote(outcome) + outcome.Title;
-                    feed.value = GetOutcomeData(outcome, prediction.Outcomes.Sum(o => o.TotalUsers));
+                    feed.value = GetOutcomeData(outcome, prediction.Outcomes);
                     feed.inline = prediction.Outcomes.Count > 2;
                 });
             }
@@ -96,7 +96,7 @@ internal class PredictionNotifications : IModule
                 embed.AddField(feed =>
                 {
                     feed.name = GetOutcomeEmote(outcome) + outcome.Title;
-                    feed.value = GetOutcomeData(outcome, prediction.Outcomes.Sum(o => o.TotalUsers));
+                    feed.value = GetOutcomeData(outcome, prediction.Outcomes);
                     feed.inline = prediction.Outcomes.Count > 2;
                 });
             }
@@ -128,7 +128,7 @@ internal class PredictionNotifications : IModule
                 embed.AddField(feed =>
                 {
                     feed.name = GetOutcomeEmote(outcome) + outcome.Title;
-                    feed.value = GetOutcomeData(outcome, prediction.Outcomes.Sum(o => o.TotalUsers));
+                    feed.value = GetOutcomeData(outcome, prediction.Outcomes);
                     feed.inline = prediction.Outcomes.Count > 2;
                 });
             }
@@ -160,7 +160,7 @@ internal class PredictionNotifications : IModule
                 embed.AddField(feed =>
                 {
                     feed.name = GetOutcomeEmote(outcome) + outcome.Title;
-                    feed.value = GetOutcomeData(outcome, prediction.Outcomes.Sum(o => o.TotalUsers));
+                    feed.value = GetOutcomeData(outcome, prediction.Outcomes);
                     feed.inline = prediction.Outcomes.Count > 2;
                 });
             }
@@ -177,23 +177,27 @@ internal class PredictionNotifications : IModule
     }
 
     private static string GetOutcomeEmote(ChannelPredictions.Outcome outcome) => outcome.Badge.Version[0] == 'p' ? PINK_EMOTE : BLUE_EMOTE;
-    private static string GetOutcomeData(ChannelPredictions.Outcome outcome, int totalUsers)
+    private static string GetOutcomeData(ChannelPredictions.Outcome outcome, IReadOnlyList<ChannelPredictions.Outcome> outcomes)
     {
+        int allUsers = outcomes.Sum(x => x.TotalUsers);
+        int allPoints = outcomes.Sum(x => x.TotalPoints);
         StringBuilder sb = new();
         sb.Append("👥 ");
         if (outcome.TotalUsers > 1000)
-            sb.AppendLine($"{Math.Round(outcome.TotalUsers / (double)1000, 1)}k users chose this outcome ({100 * outcome.TotalUsers / totalUsers}%)");
+            sb.Append($"{Math.Round(outcome.TotalUsers / (double)1000, 1)}k users chose this outcome");
         else
-            sb.AppendLine($"{outcome.TotalUsers} users chose this outcome ({100 * outcome.TotalUsers / totalUsers}%)");
+            sb.Append($"{outcome.TotalUsers} users chose this outcome");
 
+        sb.AppendLine($" ({100 * outcome.TotalUsers / allUsers}%)");
         sb.Append("💰 ");
         if (outcome.TotalPoints > 1_000_000)
-            sb.AppendLine($"{Math.Round(outcome.TotalPoints / (double)1_000_000, 2)}M points");
+            sb.Append($"{Math.Round(outcome.TotalPoints / (double)1_000_000, 2)}M points");
         else if (outcome.TotalPoints > 1000)
-            sb.AppendLine($"{Math.Round(outcome.TotalPoints / (double)1000, 1)}K points");
+            sb.Append($"{Math.Round(outcome.TotalPoints / (double)1000, 1)}K points");
         else
-            sb.AppendLine($"{outcome.TotalPoints} points");
+            sb.Append($"{outcome.TotalPoints} points");
 
+        sb.AppendLine($" ({100 * outcome.TotalPoints / allPoints}%)");
         return sb.ToString();
     }
 
