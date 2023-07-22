@@ -9,20 +9,25 @@ namespace Bot.Modules;
 
 internal class PredictionNotifications : IModule
 {
-    private const string BLUE_EMOTE = "<:blue:1131951905929703455> ";
-    private const string PINK_EMOTE = "<:pink:1131951908089757808> ";
-
     public bool Enabled { get; private set; }
 
     private readonly HttpClient _requests = new() { Timeout = TimeSpan.FromSeconds(15) };
     private readonly string _link = Config.Links["PredictionNotifications"];
+    private readonly Dictionary<string, string> _emotes = new()
+    {
+        { "blue-1", "<:blue1:1132358378191061254>" }, { "blue-2", "<:blue2:1132358379826860063" }, { "blue-3", "<:blue3:1132358383027093634>" },
+        { "blue-4", "<:blue4:1132358386277695609>" }, { "blue-5", "<:blue5:1132358388207075349>" }, { "blue-6", "<:blue6:1132358416485077002>" },
+        { "blue-7", "<:blue7:1132358419802771526>" }, { "blue-8", "<:blue8:1132358421505638523>" }, { "blue-9", "<:blue9:1132358424571682898>" },
+        { "blue-10", "<:blue10:1132358426203263037>" }, { "gray-1", "<:gray1:1132358473837977761>" }, { "gray-2", "<:gray2:1132358475557654588>" },
+        { "pink-1", "<:pink1:1132358478653038617>" }, { "pink-2", "<:pink2:1132358481719070752>" }
+    };
 
     private async ValueTask OnPredictionStarted(ChannelId channelId, IPredictionStarted prediction)
     {
         var builder = new DiscordMessageBuilder().AddEmbed(embed =>
         {
             embed.title = "Prediction Started!";
-            embed.description = $"{prediction.Title}\n" + string.Join('\n', prediction.Outcomes.Select(x => GetOutcomeEmote(x) + x.Title));
+            embed.description = $"{prediction.Title}\n" + string.Join('\n', prediction.Outcomes.Select(x => _emotes[x.Badge.Version] + ' ' + x.Title));
             embed.timestamp = prediction.CreatedAt;
             embed.color = 5766924;
             embed.SetAuthor(author =>
@@ -63,7 +68,7 @@ internal class PredictionNotifications : IModule
             {
                 embed.AddField(feed =>
                 {
-                    feed.name = GetOutcomeEmote(outcome) + outcome.Title;
+                    feed.name = _emotes[outcome.Badge.Version] + ' ' + outcome.Title;
                     feed.value = GetOutcomeData(outcome, prediction.Outcomes);
                     feed.inline = prediction.Outcomes.Count > 2;
                 });
@@ -95,7 +100,7 @@ internal class PredictionNotifications : IModule
             {
                 embed.AddField(feed =>
                 {
-                    feed.name = GetOutcomeEmote(outcome) + outcome.Title;
+                    feed.name = _emotes[outcome.Badge.Version] + ' ' + outcome.Title;
                     feed.value = GetOutcomeData(outcome, prediction.Outcomes);
                     feed.inline = prediction.Outcomes.Count > 2;
                 });
@@ -127,7 +132,7 @@ internal class PredictionNotifications : IModule
             {
                 embed.AddField(feed =>
                 {
-                    feed.name = GetOutcomeEmote(outcome) + outcome.Title;
+                    feed.name = _emotes[outcome.Badge.Version] + ' ' + outcome.Title;
                     feed.value = GetOutcomeData(outcome, prediction.Outcomes);
                     feed.inline = prediction.Outcomes.Count > 2;
                 });
@@ -159,7 +164,7 @@ internal class PredictionNotifications : IModule
             {
                 embed.AddField(feed =>
                 {
-                    feed.name = GetOutcomeEmote(outcome) + outcome.Title;
+                    feed.name = _emotes[outcome.Badge.Version] + ' ' + outcome.Title;
                     feed.value = GetOutcomeData(outcome, prediction.Outcomes);
                     feed.inline = prediction.Outcomes.Count > 2;
                 });
@@ -176,7 +181,6 @@ internal class PredictionNotifications : IModule
         await SendMessage(builder);
     }
 
-    private static string GetOutcomeEmote(ChannelPredictions.Outcome outcome) => outcome.Badge.Version[0] == 'p' ? PINK_EMOTE : BLUE_EMOTE;
     private static string GetOutcomeData(ChannelPredictions.Outcome outcome, IReadOnlyList<ChannelPredictions.Outcome> outcomes)
     {
         int allUsers = outcomes.Sum(x => x.TotalUsers);
