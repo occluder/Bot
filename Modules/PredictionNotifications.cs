@@ -9,8 +9,8 @@ namespace Bot.Modules;
 
 internal class PredictionNotifications : IModule
 {
-    private const string BLUE_EMOTE = "<:blue:1131951905929703455>";
-    private const string PINK_EMOTE = "<:pink:1131951908089757808>";
+    private const string BLUE_EMOTE = "<:blue:1131951905929703455> ";
+    private const string PINK_EMOTE = "<:pink:1131951908089757808> ";
 
     public bool Enabled { get; private set; }
 
@@ -22,7 +22,7 @@ internal class PredictionNotifications : IModule
         var builder = new DiscordMessageBuilder().AddEmbed(embed =>
         {
             embed.title = "Prediction Started!";
-            embed.description = prediction.Title;
+            embed.description = $"{prediction.Title}\n" + string.Join('\n', prediction.Outcomes.Select(x => GetOutcomeEmote(x) + x.Title));
             embed.timestamp = prediction.CreatedAt;
             embed.color = 5766924;
             embed.SetAuthor(author =>
@@ -36,16 +36,6 @@ internal class PredictionNotifications : IModule
             {
                 footer.text = $"Prediction started by {prediction.CreatedBy.UserDisplayName} • Closes in {prediction.PredictionWindowSeconds} seconds";
             });
-
-            foreach (var outcome in prediction.Outcomes)
-            {
-                embed.AddField(feed =>
-                {
-                    feed.name = GetOutcomeEmote(outcome);
-                    feed.value = outcome.Title;
-                    feed.inline = prediction.Outcomes.Count > 2;
-                });
-            }
         });
 
         await SendMessage(builder);
@@ -73,7 +63,7 @@ internal class PredictionNotifications : IModule
             {
                 embed.AddField(feed =>
                 {
-                    feed.name = GetOutcomeEmote(outcome);
+                    feed.name = GetOutcomeEmote(outcome) + outcome.Title;
                     feed.value = GetOutcomeData(outcome, prediction.Outcomes.Sum(o => o.TotalUsers));
                     feed.inline = prediction.Outcomes.Count > 2;
                 });
@@ -105,7 +95,7 @@ internal class PredictionNotifications : IModule
             {
                 embed.AddField(feed =>
                 {
-                    feed.name = GetOutcomeEmote(outcome);
+                    feed.name = GetOutcomeEmote(outcome) + outcome.Title;
                     feed.value = GetOutcomeData(outcome, prediction.Outcomes.Sum(o => o.TotalUsers));
                     feed.inline = prediction.Outcomes.Count > 2;
                 });
@@ -137,7 +127,7 @@ internal class PredictionNotifications : IModule
             {
                 embed.AddField(feed =>
                 {
-                    feed.name = GetOutcomeEmote(outcome);
+                    feed.name = GetOutcomeEmote(outcome) + outcome.Title;
                     feed.value = GetOutcomeData(outcome, prediction.Outcomes.Sum(o => o.TotalUsers));
                     feed.inline = prediction.Outcomes.Count > 2;
                 });
@@ -169,7 +159,7 @@ internal class PredictionNotifications : IModule
             {
                 embed.AddField(feed =>
                 {
-                    feed.name = GetOutcomeEmote(outcome);
+                    feed.name = GetOutcomeEmote(outcome) + outcome.Title;
                     feed.value = GetOutcomeData(outcome, prediction.Outcomes.Sum(o => o.TotalUsers));
                     feed.inline = prediction.Outcomes.Count > 2;
                 });
@@ -190,7 +180,6 @@ internal class PredictionNotifications : IModule
     private static string GetOutcomeData(ChannelPredictions.Outcome outcome, int totalUsers)
     {
         StringBuilder sb = new();
-        sb.AppendLine(outcome.Title);
         sb.Append("👥 ");
         if (outcome.TotalUsers > 1000)
             sb.AppendLine($"{Math.Round(outcome.TotalUsers / (double)1000, 1)}k users chose this outcome ({100 * outcome.TotalUsers / totalUsers}%)");

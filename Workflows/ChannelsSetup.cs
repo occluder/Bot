@@ -85,8 +85,11 @@ internal class ChannelsSetup : IWorkflow
         {
             _ = await Postgres.ExecuteAsync("delete from channels where id = @ChannelId", new { ChannelId = channelId });
             TwitchChannelDto channelDto = ChannelsById[channelId];
-            await MainClient.PartChannel(channelDto.Username);
-            await AnonClient.PartChannel(channelDto.Username);
+            if (channelDto.Priority >= 50)
+                await MainClient.PartChannel(channelDto.Username);
+            else
+                await AnonClient.PartChannel(channelDto.Username);
+
             Channels.Remove(channelDto.Username);
             ChannelsById.Remove(channelDto.Id);
         }
