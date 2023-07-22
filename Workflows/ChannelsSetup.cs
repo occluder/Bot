@@ -46,4 +46,51 @@ internal class ChannelsSetup : IWorkflow
 
         return WorkflowState.Completed;
     }
+
+    public static async Task JoinChannel(IvrUser user, int priority, bool isLogged)
+    {
+        await PostgresTimerSemaphore.WaitAsync();
+        try
+        {
+            TwitchChannelDto channelDto = new()
+            {
+                DisplayName = user.DisplayName,
+                Username = user.Login,
+                Id = long.Parse(user.Id),
+                AvatarUrl = user.Logo,
+                Priority = priority,
+                IsLogged = isLogged,
+                DateJoined = DateTime.Now,
+            };
+
+            _ = await Postgres.ExecuteAsync("insert into channels values (@DisplayName, @Username, @Id, @AvatarUrl, @Priority, @IsLogged, @DateJoined)", channelDto);
+            if (priority >= 50)
+                await MainClient.JoinChannel(user.Login);
+            else
+                await AnonClient.JoinChannel(user.Login);
+
+            Channels[channelDto.Username] = channelDto;
+            ChannelsById[channelDto.Id] = channelDto;
+        }
+        finally
+        {
+            _ = PostgresTimerSemaphore.Release();
+        }
+    }
+
+    public static async Task PartChannel(long channelId)
+    {
+        await PostgresTimerSemaphore.WaitAsync();
+        try
+        {
+            _ = await Postgres.ExecuteAsync("delete from channels where id = @ChannelId", new { ChannelId = channelId });
+            TwitchChannelDto channelDto = ChannelsById[channelId];
+            Channels.Remove(channelDto.Username);
+            ChannelsById.Remove(channelDto.Id);
+        }
+        finally
+        {
+            _ = PostgresTimerSemaphore.Release();
+        }
+    }
 }
