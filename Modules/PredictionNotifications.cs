@@ -201,7 +201,7 @@ internal class PredictionNotifications : IModule
         else
             sb.Append($"{outcome.TotalPoints} points");
 
-        sb.AppendLine($" ({100 * outcome.TotalPoints / allPoints}%)");
+        sb.AppendLine($" ({100L * outcome.TotalPoints / allPoints}%)");
         return sb.ToString();
     }
 
