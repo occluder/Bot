@@ -48,7 +48,7 @@ internal class TimeoutRelay : IModule
         if (this.Enabled)
             return;
 
-        ListenResponse response = await TwitchPubSub.ListenTo(Topics.ChatroomsUser(Config.Ids["ParentId"]), Config.Secrets["ParentToken"]);
+        ListenResponse response = await TwitchPubSub.ListenTo(Topics.ChatroomsUser(Config.Ids["ParentId"], Config.Secrets["ParentToken"]));
         if (!response.IsSuccess)
             _logger.ForContext("ShowProperties", true).Warning("Failed to listen to {TopicKey}: {Reason}", response.TopicKey, response.Error);
 
@@ -65,7 +65,7 @@ internal class TimeoutRelay : IModule
         if (!this.Enabled)
             return;
 
-        ListenResponse response = await TwitchPubSub.UnlistenTo(Topics.ChatroomsUser(Config.Ids["ParentId"]), Config.Secrets["ParentToken"]);
+        ListenResponse response = await TwitchPubSub.UnlistenTo(Topics.ChatroomsUser(Config.Ids["ParentId"], Config.Secrets["ParentToken"]));
         if (!response.IsSuccess)
             _logger.ForContext("ShowProperties", true).Warning("Failed to unlisten to {TopicKey}: {Reason}", response.TopicKey, response.Error);
 
