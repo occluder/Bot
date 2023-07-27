@@ -34,7 +34,8 @@ internal class TimeoutRelay : IModule
 
         var message = new DiscordMessageBuilder().AddEmbed(e =>
         {
-            e.title = $"You were timed out for {durationString} in #{ChannelNameOrId(data.ChannelId)}: {data.Reason ?? "NO REASON"}";
+            e.title = $"You were timed out for {durationString} in #{ChannelNameOrId(data.ChannelId)}";
+            e.description = data.Reason ?? "NO REASON";
             e.color = 12767488;
             e.timestamp = DateTime.Now;
         });
@@ -46,7 +47,8 @@ internal class TimeoutRelay : IModule
         _logger.Information("You were banned in #{Channel}: {Reason}", ChannelNameOrId(data.ChannelId), data.Reason);
         var message = new DiscordMessageBuilder().AddEmbed(e =>
         {
-            e.title = $"You were banned in #{ChannelNameOrId(data.ChannelId)}: {data.Reason ?? "NO REASON"}";
+            e.title = $"You were banned in #{ChannelNameOrId(data.ChannelId)}";
+            e.description = data.Reason ?? "NO REASON";
             e.color = 16001024;
             e.timestamp = DateTime.Now;
         });
