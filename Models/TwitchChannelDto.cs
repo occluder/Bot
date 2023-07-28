@@ -8,4 +8,5 @@ public class TwitchChannelDto
     public required int Priority { get; set; }
     public required bool IsLogged { get; set; }
     public required DateTime DateJoined { get; set; }
+    public required bool PredictionsEnabled { get; set; }
 }

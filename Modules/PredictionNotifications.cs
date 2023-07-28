@@ -227,8 +227,8 @@ internal class PredictionNotifications : IModule
         if (this.Enabled)
             return;
 
-        foreach (string channel in Config.PredictionChannels)
-            _ = await TwitchPubSub.ListenTo(Topics.ChannelPredictions(Channels[channel].Id));
+        foreach (var channel in Channels.Values.Where(c => c.PredictionsEnabled))
+            _ = await TwitchPubSub.ListenTo(Topics.ChannelPredictions(channel.Id));
 
         TwitchPubSub.OnPredictionStarted += OnPredictionStarted;
         TwitchPubSub.OnPredictionLocked += OnPredictionLocked;
@@ -244,8 +244,8 @@ internal class PredictionNotifications : IModule
         if (!this.Enabled)
             return;
 
-        foreach (string channel in Config.PredictionChannels)
-            _ = await TwitchPubSub.UnlistenTo(Topics.ChannelPredictions(Channels[channel].Id));
+        foreach (var channel in Channels.Values.Where(c => c.PredictionsEnabled))
+            _ = await TwitchPubSub.UnlistenTo(Topics.ChannelPredictions(channel.Id));
 
         TwitchPubSub.OnPredictionStarted -= OnPredictionStarted;
         TwitchPubSub.OnPredictionLocked -= OnPredictionLocked;
