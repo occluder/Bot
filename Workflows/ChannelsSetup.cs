@@ -61,6 +61,7 @@ internal class ChannelsSetup : IWorkflow
                 Priority = priority,
                 IsLogged = isLogged,
                 DateJoined = DateTime.Now,
+                PredictionsEnabled = false
             };
 
             _ = await Postgres.ExecuteAsync("insert into channels values (@DisplayName, @Username, @Id, @AvatarUrl, @Priority, @IsLogged, @DateJoined)", channelDto);
