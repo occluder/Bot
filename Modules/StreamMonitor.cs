@@ -43,7 +43,7 @@ internal class StreamMonitor : IModule
             _logger.Warning("Failed to listen to {TopicKey}: {Error}", r.TopicKey, r.Error);
 
         _logger.Information("{Channel} went live {@StreamData}", ChannelsById[channelId].DisplayName, _);
-        await MainClient.SendMessage(Config.RelayChannel, $"ppBounce @{ChannelsById[channelId].DisplayName} went live!");
+        await MainClient.SendMessage(Config.RelayChannel, $"🟩 ppBounce @{ChannelsById[channelId].DisplayName} went live!", true);
     }
 
     private async ValueTask OnViewerCountUpdate(ChannelId channelId, IViewerCountUpdate _)
@@ -75,17 +75,17 @@ internal class StreamMonitor : IModule
             _logger.Warning("Failed to unlisten to {TopicKey}: {Error}", r.TopicKey, r.Error);
 
         _logger.Information("{Channel} went offline! {@StreamData}", ChannelsById[channelId].DisplayName, _);
-        await MainClient.SendMessage(Config.RelayChannel, $"Sleepo @{ChannelsById[channelId].DisplayName} is now offline!");
+        await MainClient.SendMessage(Config.RelayChannel, $"🟥 Sleepo @{ChannelsById[channelId].DisplayName} is now offline!");
     }
 
     private ValueTask OnBroadcastSettingsUpdate(ChannelId channelId, BroadcastSettingsUpdate settings)
     {
         if (settings.OldTitle != settings.NewTitle && settings.OldGame != settings.NewGame)
-            return MainClient.SendMessage(Config.RelayChannel, $"ppSlide @{ChannelsById[channelId].DisplayName} updated their stream: {settings.OldTitle} -> {settings.NewTitle} -- {settings.OldGame} -> {settings.NewGame}");
+            return MainClient.SendMessage(Config.RelayChannel, $"🟦 ppSlide @{ChannelsById[channelId].DisplayName} updated their stream: {settings.OldTitle} -> {settings.NewTitle} -- {settings.OldGame} -> {settings.NewGame}");
         else if (settings.OldTitle != settings.NewTitle)
-            return MainClient.SendMessage(Config.RelayChannel, $"ppSlide @{ChannelsById[channelId].DisplayName} changed title: {settings.OldTitle} -> {settings.NewTitle}");
+            return MainClient.SendMessage(Config.RelayChannel, $"🟦 ppSlide @{ChannelsById[channelId].DisplayName} changed title: {settings.OldTitle} -> {settings.NewTitle}");
         else if (settings.OldGameId != settings.NewGameId)
-            return MainClient.SendMessage(Config.RelayChannel, $"ppSlide @{ChannelsById[channelId].DisplayName} changed game: {settings.OldGame} -> {settings.NewGame}");
+            return MainClient.SendMessage(Config.RelayChannel, $"🟦 ppSlide @{ChannelsById[channelId].DisplayName} changed game: {settings.OldGame} -> {settings.NewGame}");
 
         return ValueTask.CompletedTask;
     }
