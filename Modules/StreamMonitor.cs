@@ -81,11 +81,11 @@ internal class StreamMonitor : IModule
     private ValueTask OnBroadcastSettingsUpdate(ChannelId channelId, BroadcastSettingsUpdate settings)
     {
         if (settings.OldTitle != settings.NewTitle && settings.OldGame != settings.NewGame)
-            return MainClient.SendMessage(Config.RelayChannel, $"ppSlide @{ChannelsById[channelId].DisplayName} updated their: {settings.OldTitle} -> {settings.NewTitle} -- {settings.OldGame} -> {settings.NewGame}");
+            return MainClient.SendMessage(Config.RelayChannel, $"ppSlide @{ChannelsById[channelId].DisplayName} updated their stream: {settings.OldTitle} -> {settings.NewTitle} -- {settings.OldGame} -> {settings.NewGame}");
         else if (settings.OldTitle != settings.NewTitle)
-            return MainClient.SendMessage(Config.RelayChannel, $"ppSlide @{ChannelsById[channelId].DisplayName} changed game: {settings.OldGame} -> {settings.NewGame}");
-        else if (settings.OldGameId != settings.NewGameId)
             return MainClient.SendMessage(Config.RelayChannel, $"ppSlide @{ChannelsById[channelId].DisplayName} changed title: {settings.OldTitle} -> {settings.NewTitle}");
+        else if (settings.OldGameId != settings.NewGameId)
+            return MainClient.SendMessage(Config.RelayChannel, $"ppSlide @{ChannelsById[channelId].DisplayName} changed game: {settings.OldGame} -> {settings.NewGame}");
 
         return ValueTask.CompletedTask;
     }
