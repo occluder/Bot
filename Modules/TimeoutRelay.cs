@@ -23,12 +23,12 @@ internal class TimeoutRelay : IModule
         _logger.Information("You were timed out for {TimeoutDuration} in #{Channel}: {Reason}", 
             TimeSpan.FromMilliseconds(data.ExpiresInMs), ChannelNameOrId(data.ChannelId), data.Reason);
 
-        string durationString = TimeSpan.FromMilliseconds(data.ExpiresInMs) switch
+        string durationString = TimeSpan.FromMilliseconds(data.ExpiresInMs + 1000) switch
         {
             { TotalDays: >= 1 } ts => $"{ts.Days}d",
             { TotalHours: >= 1 } ts => $"{ts.Hours}h",
             { TotalMinutes: >= 2 } ts => $"{ts.Minutes}m",
-            { TotalSeconds: >= 1 } ts => $"{ts}s",
+            { TotalSeconds: >= 1 } ts => $"{ts.Seconds}s",
             _ => $"{data.ExpiresInMs}ms",
         };
 
