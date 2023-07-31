@@ -15,7 +15,7 @@ internal class PredictionNotifications : IModule
     private readonly string _link = Config.Links["PredictionNotifications"];
     private readonly Dictionary<string, string> _emotes = new()
     {
-        { "blue-1", "<:blue1:1132358378191061254>" }, { "blue-2", "<:blue2:1132358379826860063" }, { "blue-3", "<:blue3:1132358383027093634>" },
+        { "blue-1", "<:blue1:1132358378191061254>" }, { "blue-2", "<:blue2:1132358379826860063>" }, { "blue-3", "<:blue3:1132358383027093634>" },
         { "blue-4", "<:blue4:1132358386277695609>" }, { "blue-5", "<:blue5:1132358388207075349>" }, { "blue-6", "<:blue6:1132358416485077002>" },
         { "blue-7", "<:blue7:1132358419802771526>" }, { "blue-8", "<:blue8:1132358421505638523>" }, { "blue-9", "<:blue9:1132358424571682898>" },
         { "blue-10", "<:blue10:1132358426203263037>" }, { "gray-1", "<:gray1:1132358473837977761>" }, { "gray-2", "<:gray2:1132358475557654588>" },
