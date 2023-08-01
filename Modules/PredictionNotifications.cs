@@ -39,7 +39,9 @@ internal class PredictionNotifications : IModule
 
             embed.SetFooter(footer =>
             {
-                footer.text = $"Prediction started by {prediction.CreatedBy.UserDisplayName} • Closes in {prediction.PredictionWindowSeconds} seconds";
+                int length = prediction.PredictionWindowSeconds;
+                footer.text = $"Prediction started by {prediction.CreatedBy.UserDisplayName} " +
+                $"• Closes in {(length > 120 ? (length / 60) + "m" : length + "s")}";
             });
         });
 
