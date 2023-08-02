@@ -2,6 +2,7 @@
 using Bot.Enums;
 using Bot.Interfaces;
 using Bot.Models;
+using Serilog.Events;
 
 namespace Bot.Workflows;
 
@@ -31,14 +32,19 @@ internal class ChannelsSetup : IWorkflow
 
         Information("{ChannelCount} Channels loaded", channels.Length);
         Information("Joining MainClient channels");
+        LogEventLevel ll = LoggerSetup.LogSwitch.MinimumLevel;
+        LoggerSetup.LogSwitch.MinimumLevel = LogEventLevel.Warning;
         bool success = await MainClient.JoinChannels(channels.Where(x => x.Priority >= 50).Select(x => x.Username));
+        LoggerSetup.LogSwitch.MinimumLevel = ll;
         if (!success)
             Warning("MainClient failed to join some channels");
         else
             Information("MainClient finished joining Channels");
 
         Information("Joining AnonClient channels");
+        LoggerSetup.LogSwitch.MinimumLevel = LogEventLevel.Warning;
         bool success2 = await AnonClient.JoinChannels(channels.Where(x => x.Priority is < 50 and > -10).Select(x => x.Username));
+        LoggerSetup.LogSwitch.MinimumLevel = ll;
         if (!success2)
             Warning("AnonClient failed to join some channels");
         else
