@@ -30,7 +30,9 @@ internal class ChannelsSetup : IWorkflow
             ChannelsById.Add(channel.Id, channel);
         }
 
-        Information("{ChannelCount} Channels loaded", channels.Length);
+        Information("{ChannelCount} channels loaded. {JoinableCount} joinable. {PrioritizedCount} prioritized",
+            channels.Length, channels.Count(x => x.Priority > -10), channels.Count(x => x.Priority >= 50));
+
         Information("Joining MainClient channels");
         LogEventLevel ll = LoggerSetup.LogSwitch.MinimumLevel;
         LoggerSetup.LogSwitch.MinimumLevel = LogEventLevel.Warning;
