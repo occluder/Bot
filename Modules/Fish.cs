@@ -18,7 +18,7 @@ internal class Fish : IModule
         if (!this.Enabled)
             return Task.CompletedTask;
 
-        if (Random.Shared.Next(10) != 0)
+        if (Random.Shared.Next(20) != 0)
             return Task.CompletedTask;
 
         return MainClient.SendMessage("pajlada", "$fish").AsTask();
