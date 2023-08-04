@@ -1,5 +1,5 @@
 ﻿namespace Bot.Enums;
-internal enum CommandPermission
+public enum CommandPermission
 {
     None,
     Everyone,
