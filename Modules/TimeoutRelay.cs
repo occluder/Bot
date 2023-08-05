@@ -27,7 +27,7 @@ internal class TimeoutRelay : IModule
         {
             { TotalDays: >= 1 } ts => $"{ts.Days}d",
             { TotalHours: >= 1 } ts => $"{ts.Hours}h",
-            { TotalMinutes: >= 2 } ts => $"{ts.Minutes}m",
+            { TotalMinutes: >= 1 } ts => $"{ts.Minutes}m",
             { TotalSeconds: >= 1 } ts => $"{ts.Seconds}s",
             _ => $"{data.ExpiresInMs}ms",
         };
