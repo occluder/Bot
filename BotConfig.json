@@ -23,7 +23,8 @@
 			"BotUsername": "",
 			"BotToken": "",
 			"EvalAuth": "",
-			"MentionsRegex": ""
+			"MentionsRegex": "",
+			"ParentHandle": ""
 		},
 		"Ids": {
 			"ParentId": 0,
