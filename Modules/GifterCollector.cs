@@ -1,13 +1,11 @@
-﻿using Bot.Interfaces;
+﻿using Bot.Models;
 using MiniTwitch.Irc.Enums;
 using MiniTwitch.Irc.Interfaces;
 
 namespace Bot.Modules;
 
-internal class GifterCollector : IModule
+internal class GifterCollector : BotModule
 {
-    public bool Enabled { get; private set; }
-
     private async ValueTask OnGiftedSubNoticeIntro(IGiftSubNoticeIntro notice)
     {
         if (!ChannelsById[notice.Channel.Id].IsLogged)
@@ -42,25 +40,16 @@ internal class GifterCollector : IModule
         }
     }
 
-    public async ValueTask Enable()
+    protected override ValueTask OnModuleEnabled()
     {
-        if (this.Enabled)
-            return;
-
         MainClient.OnGiftedSubNoticeIntro += OnGiftedSubNoticeIntro;
         AnonClient.OnGiftedSubNoticeIntro += OnGiftedSubNoticeIntro;
-        this.Enabled = true;
-        await Settings.EnableModule(nameof(GifterCollector));
+        return default;
     }
-
-    public async ValueTask Disable()
+    protected override ValueTask OnModuleDisabled()
     {
-        if (!this.Enabled)
-            return;
-
         MainClient.OnGiftedSubNoticeIntro -= OnGiftedSubNoticeIntro;
         AnonClient.OnGiftedSubNoticeIntro -= OnGiftedSubNoticeIntro;
-        this.Enabled = false;
-        await Settings.DisableModule(nameof(GifterCollector));
+        return default;
     }
 }

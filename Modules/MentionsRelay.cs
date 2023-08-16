@@ -1,14 +1,12 @@
 ﻿using System.Text.RegularExpressions;
-using Bot.Interfaces;
+using Bot.Models;
 using Bot.Utils;
 using MiniTwitch.Irc.Models;
 
 namespace Bot.Modules;
 
-internal class MentionsRelay : IModule
+internal class MentionsRelay : BotModule
 {
-    public bool Enabled { get; private set; }
-
     private readonly Regex _regex = new(Config.Secrets["MentionsRegex"], RegexOptions.Compiled, TimeSpan.FromMilliseconds(50));
     private readonly HttpClient _requests = new() { Timeout = TimeSpan.FromSeconds(15) };
 
@@ -50,25 +48,16 @@ internal class MentionsRelay : IModule
         }
     }
 
-    public async ValueTask Enable()
+    protected override ValueTask OnModuleEnabled()
     {
-        if (this.Enabled)
-            return;
-
         MainClient.OnMessage += OnMessage;
         AnonClient.OnMessage += OnMessage;
-        this.Enabled = true;
-        await Settings.EnableModule(nameof(MentionsRelay));
+        return default;
     }
-
-    public async ValueTask Disable()
+    protected override ValueTask OnModuleDisabled()
     {
-        if (!this.Enabled)
-            return;
-
         MainClient.OnMessage -= OnMessage;
         AnonClient.OnMessage -= OnMessage;
-        this.Enabled = false;
-        await Settings.DisableModule(nameof(MentionsRelay));
+        return default;
     }
 }

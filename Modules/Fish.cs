@@ -1,11 +1,10 @@
-﻿using Bot.Interfaces;
+﻿using Bot.Models;
 using Bot.Utils;
 
 namespace Bot.Modules;
 
-internal class Fish : IModule
+internal class Fish : BotModule
 {
-    public bool Enabled { get; private set; }
     private readonly BackgroundTimer _timer;
 
     public Fish()
@@ -24,23 +23,10 @@ internal class Fish : IModule
         return MainClient.SendMessage("pajlada", "$fish").AsTask();
     }
 
-    public async ValueTask Enable()
+    protected override ValueTask OnModuleEnabled()
     {
-        if (this.Enabled)
-            return;
-
         _timer.Start();
-        this.Enabled = true;
-        await Settings.EnableModule(nameof(Fish));
+        return default;
     }
-
-    public async ValueTask Disable()
-    {
-        if (!this.Enabled)
-            return;
-
-        await _timer.StopAsync();
-        this.Enabled = false;
-        await Settings.DisableModule(nameof(Fish));
-    }
+    protected override async ValueTask OnModuleDisabled() => await _timer.StopAsync();
 }

@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using Bot.Interfaces;
+using Bot.Models;
 using Bot.Utils;
 using MiniTwitch.PubSub.Interfaces;
 using MiniTwitch.PubSub.Models;
@@ -7,10 +7,8 @@ using MiniTwitch.PubSub.Models.Payloads;
 
 namespace Bot.Modules;
 
-internal class PredictionNotifications : IModule
+internal class PredictionNotifications : BotModule
 {
-    public bool Enabled { get; private set; }
-
     private readonly HttpClient _requests = new() { Timeout = TimeSpan.FromSeconds(15) };
     private readonly string _link = Config.Links["PredictionNotifications"];
     private readonly Dictionary<string, string> _emotes = new()
@@ -224,11 +222,8 @@ internal class PredictionNotifications : IModule
         }
     }
 
-    public async ValueTask Enable()
+    protected override async ValueTask OnModuleEnabled()
     {
-        if (this.Enabled)
-            return;
-
         foreach (var channel in Channels.Values.Where(c => c.PredictionsEnabled))
             _ = await TwitchPubSub.ListenTo(Topics.ChannelPredictions(channel.Id));
 
@@ -237,15 +232,9 @@ internal class PredictionNotifications : IModule
         TwitchPubSub.OnPredictionWindowClosed += OnPredictionWindowClosed;
         TwitchPubSub.OnPredictionCancelled += OnPredictionCancelled;
         TwitchPubSub.OnPredictionEnded += OnPredictionEnded;
-        this.Enabled = true;
-        await Settings.EnableModule(nameof(PredictionNotifications));
     }
-
-    public async ValueTask Disable()
+    protected override async ValueTask OnModuleDisabled()
     {
-        if (!this.Enabled)
-            return;
-
         foreach (var channel in Channels.Values.Where(c => c.PredictionsEnabled))
             _ = await TwitchPubSub.UnlistenTo(Topics.ChannelPredictions(channel.Id));
 
@@ -254,7 +243,5 @@ internal class PredictionNotifications : IModule
         TwitchPubSub.OnPredictionWindowClosed -= OnPredictionWindowClosed;
         TwitchPubSub.OnPredictionCancelled -= OnPredictionCancelled;
         TwitchPubSub.OnPredictionEnded -= OnPredictionEnded;
-        this.Enabled = false;
-        await Settings.DisableModule(nameof(PredictionNotifications));
     }
 }

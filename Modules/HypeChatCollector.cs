@@ -1,12 +1,10 @@
-﻿using Bot.Interfaces;
+﻿using Bot.Models;
 using MiniTwitch.Irc.Models;
 
 namespace Bot.Modules;
 
-internal class HypeChatCollector : IModule
+internal class HypeChatCollector : BotModule
 {
-    public bool Enabled { get; private set; }
-
     private async ValueTask OnMessage(Privmsg message)
     {
         if (!message.HypeChat.HasContent || !ChannelsById[message.Channel.Id].IsLogged)
@@ -34,27 +32,18 @@ internal class HypeChatCollector : IModule
         }
     }
 
-    private double GetActualAmount(HypeChat hc) => hc.PaidAmount * Math.Pow(10, -hc.Exponent);
+    private static double GetActualAmount(HypeChat hc) => hc.PaidAmount * Math.Pow(10, -hc.Exponent);
 
-    public async ValueTask Enable()
+    protected override ValueTask OnModuleEnabled()
     {
-        if (this.Enabled)
-            return;
-
         MainClient.OnMessage += OnMessage;
         AnonClient.OnMessage += OnMessage;
-        this.Enabled = true;
-        await Settings.EnableModule(nameof(HypeChatCollector));
+        return default;
     }
-
-    public async ValueTask Disable()
+    protected override ValueTask OnModuleDisabled()
     {
-        if (!this.Enabled)
-            return;
-
         MainClient.OnMessage -= OnMessage;
         AnonClient.OnMessage -= OnMessage;
-        this.Enabled = false;
-        await Settings.DisableModule(nameof(HypeChatCollector));
+        return default;
     }
 }

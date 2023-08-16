@@ -1,17 +1,15 @@
-﻿using Bot.Interfaces;
+﻿using Bot.Models;
 using MiniTwitch.PubSub.Interfaces;
 using MiniTwitch.PubSub.Models;
 using MiniTwitch.PubSub.Models.Payloads;
 
 namespace Bot.Modules;
 
-internal class StreamMonitor : IModule
+internal class StreamMonitor : BotModule
 {
     private static readonly Dictionary<long, bool> _streams = new();
     private static readonly Dictionary<long, DateTime> _offlineAt = new();
     private static readonly ILogger _logger = ForContext<StreamMonitor>();
-
-    public bool Enabled { get; private set; }
 
     public static bool IsLive(long channelId)
     {
@@ -93,11 +91,8 @@ internal class StreamMonitor : IModule
 
     private static IEnumerable<long> GetMonitoredChannelIds() => Channels.Values.Where(x => x.Priority >= 0).Select(x => x.Id);
 
-    public async ValueTask Enable()
+    protected override async ValueTask OnModuleEnabled()
     {
-        if (this.Enabled)
-            return;
-
         foreach (long channelId in GetMonitoredChannelIds())
             _ = await TwitchPubSub.ListenTo(Topics.VideoPlayback(channelId));
 
@@ -105,15 +100,9 @@ internal class StreamMonitor : IModule
         TwitchPubSub.OnViewerCountUpdate += OnViewerCountUpdate;
         TwitchPubSub.OnStreamDown += OnStreamDown;
         TwitchPubSub.OnBroadcastSettingsUpdate += OnBroadcastSettingsUpdate;
-        this.Enabled = true;
-        await Settings.EnableModule(nameof(StreamMonitor));
     }
-
-    public async ValueTask Disable()
+    protected override async ValueTask OnModuleDisabled()
     {
-        if (!this.Enabled)
-            return;
-
         foreach (long channelId in GetMonitoredChannelIds())
         {
             _ = await TwitchPubSub.UnlistenTo(Topics.VideoPlayback(channelId));
@@ -124,7 +113,5 @@ internal class StreamMonitor : IModule
         TwitchPubSub.OnViewerCountUpdate -= OnViewerCountUpdate;
         TwitchPubSub.OnStreamDown -= OnStreamDown;
         TwitchPubSub.OnBroadcastSettingsUpdate -= OnBroadcastSettingsUpdate;
-        this.Enabled = false;
-        await Settings.DisableModule(nameof(StreamMonitor));
     }
 }

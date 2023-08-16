@@ -3,19 +3,16 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using Bot.Interfaces;
 using Bot.Models;
 using MiniTwitch.Irc.Models;
 
 namespace Bot.Modules;
 
-internal partial class REPL : IModule
+internal partial class REPL : BotModule
 {
     private const int GLOBAL_COOLDOWN_SECONDS = 5;
     private const int USER_COOLDOWN_SECONDS = 15;
     private const int MAX_MESSAGE_LENGTH = 450;
-
-    public bool Enabled { get; private set; }
 
     private readonly JsonSerializerOptions _jsop = new() { WriteIndented = true };
     private readonly Dictionary<long, StringBuilder> _builders = new();
@@ -27,10 +24,10 @@ internal partial class REPL : IModule
     public REPL()
     {
         _requests.DefaultRequestHeaders.Add("Authorization", Config.Secrets["EvalAuth"]);
-        _requests.Timeout = TimeSpan.FromSeconds(5);
+        _requests.Timeout = TimeSpan.FromSeconds(3);
     }
 
-    private async ValueTask Onmessage(Privmsg message)
+    private async ValueTask OnMessage(Privmsg message)
     {
         bool verbose = false;
         long timeNow = DateTimeOffset.Now.ToUnixTimeSeconds();
@@ -218,23 +215,14 @@ internal partial class REPL : IModule
         return s;
     }
 
-    public async ValueTask Enable()
+    protected override ValueTask OnModuleEnabled()
     {
-        if (this.Enabled)
-            return;
-
-        MainClient.OnMessage += Onmessage;
-        this.Enabled = true;
-        await Settings.EnableModule(nameof(REPL));
+        MainClient.OnMessage += OnMessage;
+        return default;
     }
-
-    public async ValueTask Disable()
+    protected override ValueTask OnModuleDisabled()
     {
-        if (!this.Enabled)
-            return;
-
-        MainClient.OnMessage -= Onmessage;
-        this.Enabled = false;
-        await Settings.DisableModule(nameof(REPL));
+        MainClient.OnMessage -= OnMessage;
+        return default;
     }
 }

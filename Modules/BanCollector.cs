@@ -1,13 +1,11 @@
-﻿using Bot.Interfaces;
+﻿using Bot.Models;
 using Bot.Utils;
 using MiniTwitch.Irc.Interfaces;
 
 namespace Bot.Modules;
 
-internal class BanCollector : IModule
+internal class BanCollector : BotModule
 {
-    public bool Enabled { get; private set; }
-
     private readonly ILogger _logger = ForContext<BanCollector>();
     private readonly List<BanData> _bans = new(1000);
     private readonly SemaphoreSlim _ss = new(1);
@@ -75,32 +73,22 @@ internal class BanCollector : IModule
         }
     }
 
-    public async ValueTask Enable()
+    protected override ValueTask OnModuleEnabled()
     {
-        if (this.Enabled)
-            return;
-
         MainClient.OnUserTimeout += OnUserTimeout;
         MainClient.OnUserBan += OnUserBan;
         AnonClient.OnUserTimeout += OnUserTimeout;
         AnonClient.OnUserBan += OnUserBan;
-        this.Enabled = true;
         _timer.Start();
-        await Settings.EnableModule(nameof(BanCollector));
+        return default;
     }
-
-    public async ValueTask Disable()
+    protected override async ValueTask OnModuleDisabled()
     {
-        if (!this.Enabled)
-            return;
-
         MainClient.OnUserTimeout -= OnUserTimeout;
         MainClient.OnUserBan -= OnUserBan;
         AnonClient.OnUserTimeout -= OnUserTimeout;
         AnonClient.OnUserBan -= OnUserBan;
-        this.Enabled = false;
         await _timer.StopAsync();
-        await Settings.DisableModule(nameof(BanCollector));
     }
 
     private readonly record struct BanData(string Username, long UserId, string Channel, long ChannelId, int Duration, DateTime BanTime);

@@ -1,14 +1,12 @@
 ﻿using System.Text.RegularExpressions;
-using Bot.Interfaces;
+using Bot.Models;
 using Bot.Utils;
 using MiniTwitch.Irc.Models;
 
 namespace Bot.Modules;
 
-internal class LinkCollector : IModule
+internal class LinkCollector : BotModule
 {
-    public bool Enabled { get; private set; }
-
     private static readonly Regex _regex = new(@"https?:[\\/][\\/](www\.|[-a-zA-Z0-9]+\.)?[-a-zA-Z0-9@:%._\+~#=]{3,}(\.[a-zA-Z]{2,10})+(/([-a-zA-Z0-9@:%._\+~#=/?&]+)?)?\b", RegexOptions.Compiled, TimeSpan.FromMilliseconds(50));
     private static readonly ILogger _logger = ForContext<LinkCollector>();
     private static readonly List<LinkData> _links = new(1500);
@@ -86,28 +84,18 @@ internal class LinkCollector : IModule
         return false;
     }
 
-    public async ValueTask Enable()
+    protected override ValueTask OnModuleEnabled()
     {
-        if (this.Enabled)
-            return;
-
         MainClient.OnMessage += OnMessage;
         AnonClient.OnMessage += OnMessage;
         _timer.Start();
-        this.Enabled = true;
-        await Settings.EnableModule(nameof(LinkCollector));
+        return default;
     }
-
-    public async ValueTask Disable()
+    protected override async ValueTask OnModuleDisabled()
     {
-        if (!this.Enabled)
-            return;
-
         MainClient.OnMessage -= OnMessage;
         AnonClient.OnMessage -= OnMessage;
         await _timer.StopAsync();
-        this.Enabled = false;
-        await Settings.DisableModule(nameof(LinkCollector));
     }
 
     private record struct LinkData(string Username, string Channel, string LinkText, DateTime TimePosted)

@@ -1,14 +1,12 @@
-﻿using Bot.Interfaces;
+﻿using Bot.Models;
 using Bot.Utils;
 using MiniTwitch.Irc;
 using MiniTwitch.Irc.Models;
 
 namespace Bot.Modules;
-internal class WhisperNotifications : IModule
+internal class WhisperNotifications : BotModule
 {
     private static readonly HttpClient _requests = new();
-
-    public bool Enabled { get; private set; }
     private readonly ILogger _logger = ForContext<WhisperNotifications>();
     private readonly IrcClient _whisperClient;
 
@@ -20,8 +18,6 @@ internal class WhisperNotifications : IModule
             options.OAuth = Config.Secrets["ParentToken"];
             options.ReconnectionDelay = TimeSpan.FromMinutes(5);
         });
-
-        _whisperClient.OnWhisper += OnWhisperReceived;
     }
 
     private async ValueTask OnWhisperReceived(Whisper whisper)
@@ -53,24 +49,16 @@ internal class WhisperNotifications : IModule
         }
     }
 
-    public async ValueTask Enable()
+    protected override async ValueTask OnModuleEnabled()
     {
-        if (this.Enabled)
-            return;
-
+        _whisperClient.OnWhisper += OnWhisperReceived;
         await _whisperClient.ConnectAsync();
         await _whisperClient.JoinChannel(Config.RelayChannel);
-        this.Enabled = true;
-        await Settings.EnableModule(nameof(WhisperNotifications));
     }
 
-    public async ValueTask Disable()
+    protected override async ValueTask OnModuleDisabled()
     {
-        if (!this.Enabled)
-            return;
-
+        _whisperClient.OnWhisper -= OnWhisperReceived;
         await _whisperClient.DisconnectAsync();
-        this.Enabled = false;
-        await Settings.DisableModule(nameof(WhisperNotifications));
     }
 }

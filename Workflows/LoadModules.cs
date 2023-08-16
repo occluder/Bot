@@ -2,7 +2,7 @@
 using Bot.Enums;
 using Bot.Handlers;
 using Bot.Interfaces;
-
+using Bot.Models;
 
 namespace Bot.Workflows;
 
@@ -12,11 +12,11 @@ internal class LoadModules : IWorkflow
 
     public async ValueTask<WorkflowState> Run()
     {
-        List<IModule> modules = new();
-        Type interfaceType = typeof(IModule);
-        foreach (Type type in interfaceType.Assembly.GetTypes().Where(t => interfaceType.IsAssignableFrom(t) && !t.IsInterface))
+        List<BotModule> modules = new();
+        Type abstractType = typeof(BotModule);
+        foreach (Type type in abstractType.Assembly.GetTypes().Where(abstractType.IsAssignableFrom))
         {
-            if (Activator.CreateInstance(type) is IModule module)
+            if (type.IsClass && !type.IsAbstract && Activator.CreateInstance(type) is BotModule module)
             {
                 modules.Add(module);
                 Debug("Loaded module: {ModuleName}", module.GetType().Name);
@@ -32,9 +32,9 @@ internal class LoadModules : IWorkflow
         return await VerifyModulesPresence(modules);
     }
 
-    private async ValueTask<WorkflowState> VerifyModulesPresence(List<IModule> modules)
+    private async ValueTask<WorkflowState> VerifyModulesPresence(List<BotModule> modules)
     {
-        foreach (IModule module in modules)
+        foreach (BotModule module in modules)
         {
             string moduleName = module.GetType().Name;
             if (Settings.EnabledModules.ContainsKey(moduleName))

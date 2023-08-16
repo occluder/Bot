@@ -1,12 +1,10 @@
-﻿using Bot.Interfaces;
+﻿using Bot.Models;
 using MiniTwitch.Irc.Models;
 
 namespace Bot.Modules;
 
-internal class BitCollection : IModule
+internal class BitCollection : BotModule
 {
-    public bool Enabled { get; private set; }
-
     private async ValueTask OnMessage(Privmsg message)
     {
         if (message.Bits == 0 || !ChannelsById[message.Channel.Id].IsLogged)
@@ -32,25 +30,16 @@ internal class BitCollection : IModule
         }
     }
 
-    public async ValueTask Enable()
+    protected override ValueTask OnModuleEnabled()
     {
-        if (this.Enabled)
-            return;
-
         MainClient.OnMessage += OnMessage;
         AnonClient.OnMessage += OnMessage;
-        this.Enabled = true;
-        await Settings.EnableModule(nameof(BitCollection));
+        return default;
     }
-
-    public async ValueTask Disable()
+    protected override ValueTask OnModuleDisabled()
     {
-        if (!this.Enabled)
-            return;
-
         MainClient.OnMessage -= OnMessage;
         AnonClient.OnMessage -= OnMessage;
-        this.Enabled = false;
-        await Settings.DisableModule(nameof(BitCollection));
+        return default;
     }
 }

@@ -1,16 +1,14 @@
-﻿using Bot.Interfaces;
+﻿using Bot.Models;
 using Bot.Utils;
 using MiniTwitch.PubSub.Interfaces;
 using MiniTwitch.PubSub.Models;
 
 namespace Bot.Modules;
 
-internal class TimeoutRelay : IModule
+internal class TimeoutRelay : BotModule
 {
     private static readonly ILogger _logger = ForContext<TimeoutRelay>();
     private static readonly HttpClient _requests = new();
-
-    public bool Enabled { get; private set; }
 
     private async ValueTask OnTimedOut(UserId userId, ITimeOutData data)
     {
@@ -20,7 +18,7 @@ internal class TimeoutRelay : IModule
             return;
         }
 
-        _logger.Information("You were timed out for {TimeoutDuration} in #{Channel}: {Reason}", 
+        _logger.Information("You were timed out for {TimeoutDuration} in #{Channel}: {Reason}",
             TimeSpan.FromMilliseconds(data.ExpiresInMs), ChannelNameOrId(data.ChannelId), data.Reason);
 
         string durationString = TimeSpan.FromMilliseconds(data.ExpiresInMs + 50) switch
@@ -104,11 +102,8 @@ internal class TimeoutRelay : IModule
         return channelId;
     }
 
-    public async ValueTask Enable()
+    protected override async ValueTask OnModuleEnabled()
     {
-        if (this.Enabled)
-            return;
-
         ListenResponse response = await TwitchPubSub.ListenTo(Topics.ChatroomsUser(Config.Ids["ParentId"], Config.Secrets["ParentToken"]));
         if (!response.IsSuccess)
             _logger.ForContext("ShowProperties", true).Warning("Failed to listen to {TopicKey}: {Reason}", response.TopicKey, response.Error);
@@ -117,15 +112,9 @@ internal class TimeoutRelay : IModule
         TwitchPubSub.OnBanned += OnBanned;
         TwitchPubSub.OnUnbanned += OnUnbanned;
         TwitchPubSub.OnUntimedOut += OnUntimedOut;
-        this.Enabled = true;
-        await Settings.EnableModule(nameof(TimeoutRelay));
     }
-
-    public async ValueTask Disable()
+    protected override async ValueTask OnModuleDisabled()
     {
-        if (!this.Enabled)
-            return;
-
         ListenResponse response = await TwitchPubSub.UnlistenTo(Topics.ChatroomsUser(Config.Ids["ParentId"], Config.Secrets["ParentToken"]));
         if (!response.IsSuccess)
             _logger.ForContext("ShowProperties", true).Warning("Failed to unlisten to {TopicKey}: {Reason}", response.TopicKey, response.Error);
@@ -134,7 +123,5 @@ internal class TimeoutRelay : IModule
         TwitchPubSub.OnBanned -= OnBanned;
         TwitchPubSub.OnUnbanned -= OnUnbanned;
         TwitchPubSub.OnUntimedOut -= OnUntimedOut;
-        this.Enabled = false;
-        await Settings.DisableModule(nameof(TimeoutRelay));
     }
 }
