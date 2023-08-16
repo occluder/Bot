@@ -6,7 +6,7 @@ using Serilog.Events;
 
 namespace Bot.Workflows;
 
-internal class ChannelsSetup : IWorkflow
+internal class ChannelsSetup : IWorkflow, IReloadable
 {
     public static Dictionary<string, TwitchChannelDto> Channels { get; } = new();
     public static Dictionary<long, TwitchChannelDto> ChannelsById { get; } = new();
@@ -106,5 +106,30 @@ internal class ChannelsSetup : IWorkflow
         {
             _ = PostgresTimerSemaphore.Release();
         }
+    }
+
+    public string ReloadKey { get; } = "channels";
+    public async ValueTask<bool> Reload()
+    {
+        TwitchChannelDto[] channels;
+        try
+        {
+            channels = (await Postgres.QueryAsync<TwitchChannelDto>("select * from channels", commandTimeout: 5)).ToArray();
+        }
+        catch (Exception ex)
+        {
+            ForContext<ChannelsSetup>().Fatal(ex, "{ClassName} Failed to reload channels");
+            return false;
+        }
+
+        Channels.Clear();
+        ChannelsById.Clear();
+        foreach (TwitchChannelDto channel in channels)
+        {
+            Channels.Add(channel.Username, channel);
+            ChannelsById.Add(channel.Id, channel);
+        }
+
+        return true;
     }
 }

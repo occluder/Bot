@@ -1,11 +1,12 @@
-﻿using Bot.Models;
+﻿using Bot.Interfaces;
+using Bot.Models;
 using MiniTwitch.PubSub.Interfaces;
 using MiniTwitch.PubSub.Models;
 using MiniTwitch.PubSub.Models.Payloads;
 
 namespace Bot.Modules;
 
-internal class StreamMonitor : BotModule
+internal class StreamMonitor : BotModule, IReloadable
 {
     private static readonly Dictionary<long, bool> _streams = new();
     private static readonly Dictionary<long, DateTime> _offlineAt = new();
@@ -113,5 +114,21 @@ internal class StreamMonitor : BotModule
         TwitchPubSub.OnViewerCountUpdate -= OnViewerCountUpdate;
         TwitchPubSub.OnStreamDown -= OnStreamDown;
         TwitchPubSub.OnBroadcastSettingsUpdate -= OnBroadcastSettingsUpdate;
+    }
+
+    public string ReloadKey { get; } = "streammonitor";
+
+    public async ValueTask<bool> Reload()
+    {
+        foreach (long channelId in GetMonitoredChannelIds())
+        {
+            _ = await TwitchPubSub.UnlistenTo(Topics.VideoPlayback(channelId));
+            _ = await TwitchPubSub.UnlistenTo(Topics.BroadcastSettingsUpdate(channelId));
+        }
+
+        foreach (long channelId in GetMonitoredChannelIds())
+            _ = await TwitchPubSub.ListenTo(Topics.VideoPlayback(channelId));
+
+        return true;
     }
 }
