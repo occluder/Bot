@@ -1,13 +1,13 @@
-﻿using Bot.Interfaces;
+﻿using Bot.Models;
 
 namespace Bot.Handlers;
 
 public class ModuleHandler
 {
     private static readonly ILogger _logger = ForContext<ModuleHandler>();
-    private readonly Dictionary<string, IModule> _modules;
+    private readonly Dictionary<string, BotModule> _modules;
 
-    public ModuleHandler(IEnumerable<IModule> modules)
+    public ModuleHandler(IEnumerable<BotModule> modules)
     {
         _modules = modules.ToDictionary(module => module.GetType().Name, module => module);
     }

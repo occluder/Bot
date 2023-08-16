@@ -2,7 +2,7 @@
 
 namespace Bot.Models;
 
-public abstract class BotModule : IModule
+public abstract class BotModule
 {
     public bool Enabled { get; private set; }
     private string Name => GetType().Name;
