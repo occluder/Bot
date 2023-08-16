@@ -1,9 +1,7 @@
-﻿using System.Text.RegularExpressions;
-using Bot.Interfaces;
+﻿using Bot.Interfaces;
 using Bot.Utils;
 using MiniTwitch.Irc;
 using MiniTwitch.Irc.Models;
-using MiniTwitch.PubSub.Models;
 
 namespace Bot.Modules;
 internal class WhisperNotifications : IModule
