@@ -9,7 +9,7 @@ public static class ChatHandler
 {
     private static Dictionary<string, IConsoleCommand> _consoleCommands = new();
     private static Dictionary<string, IChatCommand> _chatCommands = new();
-    private static IConsoleCommand _consoleCommandNotFound;
+    private static IConsoleCommand _consoleCommandNotFound = default!;
 
     public static void Setup()
     {
@@ -37,7 +37,7 @@ public static class ChatHandler
         {
             if (!type.IsInterface && Activator.CreateInstance(type) is IConsoleCommand command)
             {
-                if (Guid.TryParse(command.Name, out _))
+                if (command.Name == "notfound")
                     _consoleCommandNotFound = command;
                 else
                     _consoleCommands.Add(command.Name, command);
