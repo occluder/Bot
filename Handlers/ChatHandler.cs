@@ -37,7 +37,7 @@ public static class ChatHandler
         {
             if (!type.IsInterface && Activator.CreateInstance(type) is IConsoleCommand command)
             {
-                if (command.Name == "notfound")
+                if (Guid.TryParse(command.Name, out _))
                     _consoleCommandNotFound = command;
                 else
                     _consoleCommands.Add(command.Name, command);
