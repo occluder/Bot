@@ -6,8 +6,10 @@ namespace Bot.Modules;
 
 internal class BanCollector : BotModule
 {
+    private const int MAX_BANS = 250;
+
     private readonly ILogger _logger = ForContext<BanCollector>();
-    private readonly List<BanData> _bans = new(1000);
+    private readonly List<BanData> _bans = new(MAX_BANS);
     private readonly SemaphoreSlim _ss = new(1);
     private readonly BackgroundTimer _timer;
 
@@ -20,6 +22,9 @@ internal class BanCollector : BotModule
     {
         if (timeout.Duration.TotalSeconds < 2 || !ChannelsById[timeout.Channel.Id].IsLogged)
             return;
+
+        if (_bans.Count >=  MAX_BANS)
+            await Commit();
 
         await _ss.WaitAsync();
         _bans.Add(new(timeout.Target.Name,
@@ -37,6 +42,9 @@ internal class BanCollector : BotModule
     {
         if (!ChannelsById[ban.Channel.Id].IsLogged)
             return;
+
+        if (_bans.Count >= MAX_BANS)
+            await Commit();
 
         await _ss.WaitAsync();
         _bans.Add(new(ban.Target.Name,

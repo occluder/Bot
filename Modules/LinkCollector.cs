@@ -7,9 +7,11 @@ namespace Bot.Modules;
 
 internal class LinkCollector : BotModule
 {
+    private const int MAX_LINKS = 250;
+
     private static readonly Regex _regex = new(@"https?:[\\/][\\/](www\.|[-a-zA-Z0-9]+\.)?[-a-zA-Z0-9@:%._\+~#=]{3,}(\.[a-zA-Z]{2,10})+(/([-a-zA-Z0-9@:%._\+~#=/?&]+)?)?\b", RegexOptions.Compiled, TimeSpan.FromMilliseconds(50));
     private static readonly ILogger _logger = ForContext<LinkCollector>();
-    private static readonly List<LinkData> _links = new(1500);
+    private static readonly List<LinkData> _links = new(MAX_LINKS);
     private static SemaphoreSlim _ss = new(1);
     private static readonly HashSet<string> _bots = new()
     {
@@ -31,6 +33,9 @@ internal class LinkCollector : BotModule
 
             if (_regex.Match(arg.Content) is { Success: true, Length: > 10 } match && match.Value[0] == 'h')
             {
+                if (_links.Count >= MAX_LINKS)
+                    await Commit();
+
                 await _ss.WaitAsync();
                 LinkData link = new(arg.Author.Name, arg.Channel.Name, match.Value, DateTime.Now);
                 _links.Add(link);
