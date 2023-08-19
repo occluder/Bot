@@ -1,6 +1,7 @@
 ﻿using Bot.Enums;
-using Bot.Handlers;
+using Bot.Utils.Logging;
 using Bot.Workflows;
+using Serilog.Events;
 
 namespace Bot;
 
@@ -34,12 +35,29 @@ internal class Program
             if (string.IsNullOrEmpty(input))
                 continue;
 
-            var commandResult = await ChatHandler.HandleConsoleCommand(input);
-            commandResult.Switch(Console.WriteLine,
-            error =>
+            if (Enum.TryParse(input, true, out LogEventLevel level))
             {
-                Console.WriteLine($"🚨 {error.Value}");
-            });
+                await Settings.ChangeLogLevel((int)level);
+                Console.WriteLine($"Switching logging level to: {level}");
+            }
+            else if (input == "clear")
+            {
+                Console.Clear();
+            }
+            else if (input.StartsWith("l!include"))
+            {
+                string[] args = input.Split(' ');
+                if (args.Length < 2)
+                    continue;
+
+                ClassNameFilter.ClassName = args[1];
+                Console.WriteLine($"ClassNameFilter set to {args[1]}");
+            }
+            else if (input == "l!unfilter")
+            {
+                ClassNameFilter.ClassName = null;
+                Console.WriteLine("Removed all filters");
+            }
         }
     }
 }
