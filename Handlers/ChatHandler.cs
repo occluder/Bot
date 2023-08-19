@@ -33,7 +33,7 @@ public static class ChatHandler
 
         Information("{CommandCount} chat commands were dynamically loaded", _chatCommands.Count);
         Type consoleInterfaceType = typeof(IChatCommand);
-        foreach (Type type in chatInterfaceType.Assembly.GetTypes().Where(consoleInterfaceType.IsAssignableFrom))
+        foreach (Type type in consoleInterfaceType.Assembly.GetTypes().Where(consoleInterfaceType.IsAssignableFrom))
         {
             if (!type.IsInterface && Activator.CreateInstance(type) is IConsoleCommand command)
             {
