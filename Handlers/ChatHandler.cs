@@ -45,6 +45,8 @@ public static class ChatHandler
                 Debug("Loaded console command: {CommandName}", command.Name);
             }
         }
+
+        Information("{CommandCount} console commands were dynamically loaded", _consoleCommands.Count);
     }
 
     private static ValueTask OnMessage(Privmsg arg)
