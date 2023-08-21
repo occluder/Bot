@@ -7,13 +7,16 @@ namespace Bot.Modules;
 
 internal class LinkCollector : BotModule
 {
-    private const string BOTS_REDIS_KEY = "bot:chat:detected_bots";
     private const int MAX_LINKS = 250;
 
     private static readonly Regex _regex = new(@"https?:[\\/][\\/](www\.|[-a-zA-Z0-9]+\.)?[-a-zA-Z0-9@:%._\+~#=]{3,}(\.[a-zA-Z]{2,10})+(/([-a-zA-Z0-9@:%._\+~#=/?&]+)?)?\b", RegexOptions.Compiled, TimeSpan.FromMilliseconds(50));
     private static readonly ILogger _logger = ForContext<LinkCollector>();
     private static readonly List<LinkData> _links = new(MAX_LINKS);
     private static SemaphoreSlim _ss = new(1);
+    private static readonly HashSet<string> _bots = new()
+    {
+        "streamelements", "streamlabs", "scriptorex", "apulxd", "rewardmore", "iogging", "ttdb", "supibot", "nightbot"
+    };
     private readonly BackgroundTimer _timer;
 
     public LinkCollector()
@@ -25,7 +28,7 @@ internal class LinkCollector : BotModule
     {
         try
         {
-            if (!ChannelsById[arg.Channel.Id].IsLogged || arg.Content.Length < 10 || await IsBot(arg))
+            if (!ChannelsById[arg.Channel.Id].IsLogged || arg.Content.Length < 10 || _bots.Contains(arg.Author.Name) || IsBot(arg.Author.Name, arg.Nonce))
                 return;
 
             if (_regex.Match(arg.Content) is { Success: true, Length: > 10 } match && match.Value[0] == 'h')
@@ -68,19 +71,18 @@ internal class LinkCollector : BotModule
         }
     }
 
-    private static async ValueTask<bool> IsBot(Privmsg message)
+    private static bool IsBot(string name, string nonce)
     {
-        if (message.Nonce.Length > 0)
+        const string bot = "bot";
+
+        if (nonce.Length > 0)
             return false;
 
-        if (await Collections.GetRedisSet<long>(BOTS_REDIS_KEY).ContainsAsync(message.Author.Id))
+        ReadOnlySpan<char> nameSpan = name;
+        if (nameSpan.Contains(bot, StringComparison.CurrentCultureIgnoreCase))
         {
-            return true;
-        }
-        else if (message.Author.Name.EndsWith("bot", StringComparison.CurrentCultureIgnoreCase))
-        {
-            await Collections.GetRedisSet<long>(BOTS_REDIS_KEY).AddAsync(message.Author.Id);
-            _logger.Verbose("New bot detected: {BotUsername}", message.Author.Name);
+            if (_bots.Add(bot))
+                _logger.Verbose("New bot detected: {BotUsername}", name);
             return true;
         }
 
