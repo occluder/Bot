@@ -24,7 +24,8 @@
 			"BotToken": "",
 			"EvalAuth": "",
 			"MentionsRegex": "",
-			"ParentHandle": ""
+			"ParentHandle": "",
+			"ImageHostsRegex": ""
 		},
 		"Ids": {
 			"ParentId": 0,

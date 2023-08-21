@@ -7,6 +7,7 @@ namespace Bot.Modules;
 
 internal class MentionsRelay : BotModule
 {
+    private readonly Regex _imageHosts = new(Config.Secrets["ImageHostsRegex"], RegexOptions.Compiled, TimeSpan.FromMilliseconds(50));
     private readonly Regex _regex = new(Config.Secrets["MentionsRegex"], RegexOptions.Compiled, TimeSpan.FromMilliseconds(50));
     private readonly HttpClient _requests = new() { Timeout = TimeSpan.FromSeconds(15) };
 
@@ -30,6 +31,9 @@ internal class MentionsRelay : BotModule
                         field.value = message.Reply.ParentMessage;
                     });
                 }
+
+                if (_imageHosts.Match(message.Content) is { Success: true } imageMatch)
+                    embed.SetImage(i => i.url = imageMatch.Value);
             });
 
             HttpResponseMessage response;
