@@ -52,7 +52,7 @@ internal class BackgroundTimer
 
     private async Task StartTimerTask()
     {
-        while (_invocationsLeft != 0 && await _timer.WaitForNextTickAsync())
+        do
         {
             await (_semaphore?.WaitAsync() ?? Task.CompletedTask);
             try
@@ -64,6 +64,6 @@ internal class BackgroundTimer
                 _ = _semaphore?.Release();
                 _invocationsLeft--;
             }
-        }
+        } while (_invocationsLeft != 0 && await _timer.WaitForNextTickAsync())
     }
 }
