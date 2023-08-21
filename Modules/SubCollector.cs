@@ -31,6 +31,7 @@ public class SubCollector : BotModule
         );
 
         await Subs.AddAsync(sub);
+        ForContext<SubCollector>().Verbose("New sub: {@SubData}", sub);
     }
 
     private async Task Commit()
@@ -42,6 +43,7 @@ public class SubCollector : BotModule
         try
         {
             int inserted = await Postgres.ExecuteAsync("insert into collected_subs values (@FromUser, @FromUserId, @ToChannel, @ToChannelId, @CumulativeMonths, @Tier, @TimeSent)", subs);
+            ForContext<SubCollector>().Debug("{InsertedCount} subs inserted", inserted);
             await Subs.ClearAsync();
         }
         catch (Exception ex)
