@@ -64,6 +64,6 @@ internal class BackgroundTimer
                 _ = _semaphore?.Release();
                 _invocationsLeft--;
             }
-        } while (_invocationsLeft != 0 && await _timer.WaitForNextTickAsync())
+        } while (_invocationsLeft != 0 && await _timer.WaitForNextTickAsync());
     }
 }
