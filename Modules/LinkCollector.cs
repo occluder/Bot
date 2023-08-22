@@ -21,7 +21,7 @@ internal class LinkCollector : BotModule
 
     public LinkCollector()
     {
-        _timer = new(TimeSpan.FromMinutes(5), Commit, PostgresTimerSemaphore);
+        _timer = new(TimeSpan.FromMinutes(5), Commit, PostgresQueryLock);
     }
 
     private async ValueTask OnMessage(Privmsg arg)

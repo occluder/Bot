@@ -13,7 +13,7 @@ internal class HypeChatCollector : BotModule
         ForContext<HypeChatCollector>().Verbose("@{User} sent {Amount} {Currency} through hype chat in #{Channel}!",
             message.Author.Name, GetActualAmount(message.HypeChat), message.HypeChat.PaymentCurrency, message.Channel.Name);
 
-        await PostgresTimerSemaphore.WaitAsync();
+        await PostgresQueryLock.WaitAsync();
         try
         {
             await Postgres.ExecuteAsync("insert into collected_hype_chat values (@sent_by, @sent_by_id, @sent_to, @sent_to_id, @amount, @currency)", new
@@ -28,7 +28,7 @@ internal class HypeChatCollector : BotModule
         }
         finally
         {
-            _ = PostgresTimerSemaphore.Release();
+            _ = PostgresQueryLock.Release();
         }
     }
 

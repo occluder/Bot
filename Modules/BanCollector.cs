@@ -15,7 +15,7 @@ internal class BanCollector : BotModule
 
     public BanCollector()
     {
-        _timer = new(TimeSpan.FromMinutes(1), Commit, PostgresTimerSemaphore);
+        _timer = new(TimeSpan.FromMinutes(1), Commit, PostgresQueryLock);
     }
 
     private async ValueTask OnUserTimeout(IUserTimeout timeout)

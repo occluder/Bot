@@ -11,7 +11,7 @@ internal class BitCollection : BotModule
             return;
 
         ForContext<HypeChatCollector>().Verbose("@{User} sent {Amount} bits to #{Channel}!", message.Author.Name, message.Bits, message.Channel.Name);
-        await PostgresTimerSemaphore.WaitAsync();
+        await PostgresQueryLock.WaitAsync();
         try
         {
             await Postgres.ExecuteAsync("insert into collected_bits values (@SentBy, @SentById, @SentTo, @SentToId, @BitAmount, @TimeSent)", new
@@ -26,7 +26,7 @@ internal class BitCollection : BotModule
         }
         finally
         {
-            _ = PostgresTimerSemaphore.Release();
+            _ = PostgresQueryLock.Release();
         }
     }
 

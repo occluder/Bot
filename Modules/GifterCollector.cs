@@ -14,7 +14,7 @@ internal class GifterCollector : BotModule
         ForContext<HypeChatCollector>().Verbose("@{User} gifted {Amount} {Tier} subs to #{Channel}!",
             notice.Author.Name, notice.GiftCount, notice.SubPlan, notice.Channel.Name);
 
-        await PostgresTimerSemaphore.WaitAsync();
+        await PostgresQueryLock.WaitAsync();
         try
         {
             await Postgres.ExecuteAsync("insert into collected_gifts values (@SentBy, @SentById, @SentTo, @SentToId, @GiftAmount, @Tier, @TimeSent)", new
@@ -36,7 +36,7 @@ internal class GifterCollector : BotModule
         }
         finally
         {
-            _ = PostgresTimerSemaphore.Release();
+            _ = PostgresQueryLock.Release();
         }
     }
 

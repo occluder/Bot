@@ -57,7 +57,7 @@ internal class ChannelsSetup : IWorkflow
 
     public static async Task JoinChannel(IvrUser user, int priority, bool isLogged)
     {
-        await PostgresTimerSemaphore.WaitAsync();
+        await PostgresQueryLock.WaitAsync();
         try
         {
             TwitchChannelDto channelDto = new()
@@ -83,13 +83,13 @@ internal class ChannelsSetup : IWorkflow
         }
         finally
         {
-            _ = PostgresTimerSemaphore.Release();
+            _ = PostgresQueryLock.Release();
         }
     }
 
     public static async Task PartChannel(long channelId)
     {
-        await PostgresTimerSemaphore.WaitAsync();
+        await PostgresQueryLock.WaitAsync();
         try
         {
             _ = await Postgres.ExecuteAsync("delete from channels where id = @ChannelId", new { ChannelId = channelId });
@@ -104,7 +104,7 @@ internal class ChannelsSetup : IWorkflow
         }
         finally
         {
-            _ = PostgresTimerSemaphore.Release();
+            _ = PostgresQueryLock.Release();
         }
     }
 }

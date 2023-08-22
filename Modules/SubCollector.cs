@@ -12,7 +12,7 @@ public class SubCollector : BotModule
 
     public SubCollector()
     {
-        _timer = new(TimeSpan.FromHours(1), Commit, PostgresTimerSemaphore);
+        _timer = new(TimeSpan.FromHours(1), Commit, PostgresQueryLock);
     }
 
     private async ValueTask OnSub(ISubNotice notice)
