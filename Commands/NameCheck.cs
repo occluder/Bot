@@ -1,33 +1,30 @@
 ﻿using Bot.Enums;
-using Bot.Interfaces;
 using Bot.Models;
 using MiniTwitch.Irc.Models;
 
 namespace Bot.Commands;
 
-public class NameCheck : IChatCommand
+public class NameCheck : ChatCommand
 {
-    public CommandInfo Info => new("namecheck", "Check names of a user's ID", TimeSpan.FromSeconds(5), CommandPermission.Moderators);
+    public override CommandInfo Info => new("namecheck", "Check names of a user's ID", TimeSpan.FromSeconds(5), CommandPermission.Moderators);
 
-    public async ValueTask Run(Privmsg message)
+    public NameCheck()
     {
-        string[] args = message.Content.Split(' ');
+        AddArgument(new("UserId", 1, typeof(long)));
+    }
 
-        if (args.Length < 2)
+    public override async ValueTask Run(Privmsg message)
+    {
+        ValueTask check = CheckArguments(message);
+        if (!check.IsCompleted)
         {
-            await message.ReplyWith("Argument 2 missing: user ID");
-            return;
-        }
-
-        if (!long.TryParse(args[1], out var id))
-        {
-            await message.ReplyWith("Argument 2 must be int");
+            await check;
             return;
         }
 
         var queryResult = await Postgres.QueryAsync<UserDto>("SELECT username, user_id FROM collected_users WHERE user_id = @UserId", new
         {
-            UserId = id
+            UserId = GetArgument<long>("UserId")
         });
 
         string[] aliases = queryResult.Select(x => x.Username).ToArray();
@@ -37,6 +34,6 @@ public class NameCheck : IChatCommand
             return;
         }
 
-        await message.ReplyWith($"🔎 {id}: {string.Join(", ", aliases)}");
+        await message.ReplyWith($"🔎 {GetArgument<long>("UserId")}: {string.Join(", ", aliases)}");
     }
 }

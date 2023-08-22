@@ -1,22 +1,27 @@
 ﻿using Bot.Enums;
-using Bot.Interfaces;
 using Bot.Models;
 using MiniTwitch.Irc.Models;
 
 namespace Bot.Commands;
-internal class Part : IChatCommand
+internal class Part : ChatCommand
 {
-    public CommandInfo Info => new("part", "Leave a channel", TimeSpan.Zero, CommandPermission.Whitelisted);
+    public override CommandInfo Info => new("part", "Leave a channel", TimeSpan.Zero, CommandPermission.Whitelisted);
 
-    public async ValueTask Run(Privmsg message)
+    public Part()
     {
-        string[] args = message.Content.Split(' ');
-        if (args.Length < 2)
+        AddArgument(new("ChannelId", 1, typeof(long)));
+    }
+
+    public override async ValueTask Run(Privmsg message)
+    {
+        ValueTask check = CheckArguments(message);
+        if (!check.IsCompleted)
+        {
+            await check;
             return;
+        }
 
-        if (!long.TryParse(args[1], out long id))
-            await message.ReplyWith("First argument is user id (int64)");
-
+        var id = GetArgument<long>("ChannelId");
         if (ChannelsById.ContainsKey(id))
         {
             await PartChannel(id);

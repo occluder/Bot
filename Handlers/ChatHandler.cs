@@ -19,9 +19,9 @@ public static class ChatHandler
     private static void LoadCommands()
     {
         Type interfaceType = typeof(IChatCommand);
-        foreach (Type type in interfaceType.Assembly.GetTypes().Where(t => interfaceType.IsAssignableFrom(t) && !t.IsInterface))
+        foreach (Type type in interfaceType.Assembly.GetTypes().Where(interfaceType.IsAssignableFrom))
         {
-            if (Activator.CreateInstance(type) is IChatCommand command)
+            if (!type.IsInterface && !type.IsAbstract && Activator.CreateInstance(type) is IChatCommand command)
             {
                 _commands.Add(command.Info.Name, command);
                 Debug("Loaded command: {CommandName}", command.Info.Name);
