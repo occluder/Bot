@@ -10,7 +10,7 @@ using StackExchange.Redis;
 
 namespace Bot.Workflows;
 
-public class RedisSetup : IWorkflow
+public class RedisSetup: IWorkflow
 {
     public static ICacheProviderAsync Cache { get; private set; } = default!;
     public static ICollectionProvider Collections { get; private set; } = default!;

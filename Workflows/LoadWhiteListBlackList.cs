@@ -5,7 +5,7 @@ using Bot.Models;
 
 namespace Bot.Workflows;
 
-internal class LoadWhiteListBlackList : IWorkflow
+internal class LoadWhiteListBlackList: IWorkflow
 {
     public static HashSet<long> WhiteListedUserIds { get; private set; } = default!;
     public static HashSet<long> BlackListedUserIds { get; private set; } = default!;

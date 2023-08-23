@@ -3,7 +3,7 @@ using MiniTwitch.Irc.Models;
 
 namespace Bot.Models;
 
-public abstract class ChatCommand : IChatCommand
+public abstract class ChatCommand: IChatCommand
 {
     private static readonly Type[] _parsables = new[] { typeof(long), typeof(int), typeof(bool) };
     private readonly List<CommandArgument> _userArgs = new(2);

@@ -5,7 +5,7 @@ using MiniTwitch.Irc.Models;
 
 namespace Bot.Modules;
 
-internal class MentionsRelay : BotModule
+internal class MentionsRelay: BotModule
 {
     private readonly Regex _imageHosts = new(Config.Secrets["ImageHostsRegex"], RegexOptions.Compiled, TimeSpan.FromMilliseconds(50));
     private readonly Regex _regex = new(Config.Secrets["MentionsRegex"], RegexOptions.Compiled, TimeSpan.FromMilliseconds(50));

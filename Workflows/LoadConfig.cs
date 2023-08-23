@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Bot.Workflows;
 
-public class LoadConfig : IWorkflow
+public class LoadConfig: IWorkflow
 {
     public static AppConfig Config { get; private set; } = default!;
 

@@ -5,7 +5,7 @@ using MiniTwitch.PubSub.Models.Payloads;
 
 namespace Bot.Modules;
 
-internal class StreamMonitor : BotModule
+internal class StreamMonitor: BotModule
 {
     private static readonly Dictionary<long, bool> _streams = new();
     private static readonly Dictionary<long, DateTime> _offlineAt = new();

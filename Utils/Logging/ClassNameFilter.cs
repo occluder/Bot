@@ -3,7 +3,7 @@ using Serilog.Events;
 
 namespace Bot.Utils.Logging;
 
-internal class ClassNameFilter : ILogEventFilter
+internal class ClassNameFilter: ILogEventFilter
 {
     public static string? ClassName { get; set; }
 

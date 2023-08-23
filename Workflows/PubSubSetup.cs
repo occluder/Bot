@@ -7,7 +7,7 @@ using MiniTwitch.PubSub;
 
 namespace Bot.Workflows;
 
-internal class PubSubSetup : IWorkflow
+internal class PubSubSetup: IWorkflow
 {
     public static PubSubClient TwitchPubSub { get; private set; } = default!;
 

@@ -4,7 +4,7 @@ using Bot.Interfaces;
 
 namespace Bot.Workflows;
 
-internal class InitHandlers : IWorkflow
+internal class InitHandlers: IWorkflow
 {
     public ValueTask<WorkflowState> Run()
     {

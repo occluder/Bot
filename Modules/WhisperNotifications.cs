@@ -4,7 +4,7 @@ using MiniTwitch.Irc;
 using MiniTwitch.Irc.Models;
 
 namespace Bot.Modules;
-internal class WhisperNotifications : BotModule
+internal class WhisperNotifications: BotModule
 {
     private static readonly HttpClient _requests = new();
     private readonly ILogger _logger = ForContext<WhisperNotifications>();

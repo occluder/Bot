@@ -3,7 +3,7 @@ using Bot.Utils;
 
 namespace Bot.Modules;
 
-internal class Fish : BotModule
+internal class Fish: BotModule
 {
     private readonly BackgroundTimer _timer;
 

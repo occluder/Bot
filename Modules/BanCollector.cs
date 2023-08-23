@@ -4,7 +4,7 @@ using MiniTwitch.Irc.Interfaces;
 
 namespace Bot.Modules;
 
-internal class BanCollector : BotModule
+internal class BanCollector: BotModule
 {
     private const int MAX_BANS = 250;
 

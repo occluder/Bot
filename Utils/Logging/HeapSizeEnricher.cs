@@ -2,7 +2,7 @@
 using Serilog.Events;
 
 namespace Bot.Utils.Logging;
-public class HeapSizeEnricher : ILogEventEnricher
+public class HeapSizeEnricher: ILogEventEnricher
 {
     private readonly LogEventLevel _maxEnrichmentLevel;
 

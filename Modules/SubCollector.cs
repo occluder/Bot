@@ -5,7 +5,7 @@ using MiniTwitch.Irc.Interfaces;
 
 namespace Bot.Modules;
 
-public class SubCollector : BotModule
+public class SubCollector: BotModule
 {
     private static IRedisSet<Sub> Subs => Collections.GetRedisSet<Sub>("bot:chat:sub_notices");
     private readonly BackgroundTimer _timer;

@@ -6,7 +6,7 @@ using Bot.Models;
 
 namespace Bot.Workflows;
 
-internal class LoadModules : IWorkflow
+internal class LoadModules: IWorkflow
 {
     public static ModuleHandler Module { get; private set; } = default!;
 

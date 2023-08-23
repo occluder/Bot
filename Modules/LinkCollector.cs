@@ -5,7 +5,7 @@ using MiniTwitch.Irc.Models;
 
 namespace Bot.Modules;
 
-internal class LinkCollector : BotModule
+internal class LinkCollector: BotModule
 {
     private const int MAX_LINKS = 250;
 

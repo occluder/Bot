@@ -6,7 +6,7 @@ using MiniTwitch.Irc;
 
 namespace Bot.Workflows;
 
-internal class AnonClientSetup : IWorkflow
+internal class AnonClientSetup: IWorkflow
 {
     public static IrcClient AnonClient { get; private set; } = default!;
 

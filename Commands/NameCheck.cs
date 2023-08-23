@@ -4,7 +4,7 @@ using MiniTwitch.Irc.Models;
 
 namespace Bot.Commands;
 
-public class NameCheck : ChatCommand
+public class NameCheck: ChatCommand
 {
     public override CommandInfo Info => new("namecheck", "Check names of a user's ID", TimeSpan.FromSeconds(5), CommandPermission.Moderators);
 

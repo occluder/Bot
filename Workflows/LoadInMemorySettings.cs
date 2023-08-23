@@ -6,7 +6,7 @@ using Serilog.Events;
 
 namespace Bot.Workflows;
 
-internal class LoadInMemorySettings : IWorkflow
+internal class LoadInMemorySettings: IWorkflow
 {
     public static InMemorySettings Settings { get; private set; } = default!;
 

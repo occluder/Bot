@@ -7,7 +7,7 @@ using MiniTwitch.Irc;
 
 namespace Bot.Workflows;
 
-internal class MainClientSetup : IWorkflow
+internal class MainClientSetup: IWorkflow
 {
     public static IrcClient MainClient { get; private set; } = default!;
 

@@ -5,7 +5,7 @@ using MiniTwitch.PubSub.Models;
 
 namespace Bot.Modules;
 
-internal class TimeoutRelay : BotModule
+internal class TimeoutRelay: BotModule
 {
     private static readonly ILogger _logger = ForContext<TimeoutRelay>();
     private static readonly HttpClient _requests = new();

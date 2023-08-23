@@ -3,7 +3,7 @@ using MiniTwitch.Irc.Models;
 
 namespace Bot.Modules;
 
-internal class HypeChatCollector : BotModule
+internal class HypeChatCollector: BotModule
 {
     private async ValueTask OnMessage(Privmsg message)
     {

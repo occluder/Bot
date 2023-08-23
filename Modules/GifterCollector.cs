@@ -4,7 +4,7 @@ using MiniTwitch.Irc.Interfaces;
 
 namespace Bot.Modules;
 
-internal class GifterCollector : BotModule
+internal class GifterCollector: BotModule
 {
     private async ValueTask OnGiftedSubNoticeIntro(IGiftSubNoticeIntro notice)
     {

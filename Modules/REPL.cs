@@ -8,7 +8,7 @@ using MiniTwitch.Irc.Models;
 
 namespace Bot.Modules;
 
-internal partial class REPL : BotModule
+internal partial class REPL: BotModule
 {
     private const int GLOBAL_COOLDOWN_SECONDS = 5;
     private const int USER_COOLDOWN_SECONDS = 15;

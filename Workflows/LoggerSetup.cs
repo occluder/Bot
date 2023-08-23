@@ -10,7 +10,7 @@ using Serilog.Formatting.Compact;
 
 namespace Bot.Workflows;
 
-public class LoggerSetup : IWorkflow
+public class LoggerSetup: IWorkflow
 {
     public static LoggingLevelSwitch LogSwitch { get; private set; } = new((LogEventLevel)Config.DefaultLogLevel);
 

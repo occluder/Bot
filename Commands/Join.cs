@@ -4,7 +4,7 @@ using MiniTwitch.Irc.Models;
 
 namespace Bot.Commands;
 
-internal class Join : ChatCommand
+internal class Join: ChatCommand
 {
     public override CommandInfo Info => new("join", "Join a channel", TimeSpan.Zero, CommandPermission.Whitelisted);
 

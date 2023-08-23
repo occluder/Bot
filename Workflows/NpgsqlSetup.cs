@@ -8,7 +8,7 @@ using Npgsql;
 
 namespace Bot.Workflows;
 
-public class NpgsqlSetup : IWorkflow
+public class NpgsqlSetup: IWorkflow
 {
     public static IDbConnection Postgres { get; private set; } = default!;
     public static SemaphoreSlim PostgresQueryLock { get; } = new(1);

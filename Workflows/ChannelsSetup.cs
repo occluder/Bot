@@ -6,7 +6,7 @@ using Serilog.Events;
 
 namespace Bot.Workflows;
 
-internal class ChannelsSetup : IWorkflow
+internal class ChannelsSetup: IWorkflow
 {
     public static Dictionary<string, TwitchChannelDto> Channels { get; } = new();
     public static Dictionary<long, TwitchChannelDto> ChannelsById { get; } = new();

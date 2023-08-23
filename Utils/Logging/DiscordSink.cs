@@ -9,7 +9,7 @@ using Serilog.Events;
 
 namespace Bot.Utils.Logging;
 
-public class DiscordSink : ILogEventSink
+public class DiscordSink: ILogEventSink
 {
     private readonly JsonSerializerOptions _sOptions = new()
     {
@@ -40,6 +40,7 @@ public class DiscordSink : ILogEventSink
                     else
                         _logger.Warning("[{ClassName}] Sending log: {Status}", response.StatusCode);
                 }
+
                 await Task.Delay(TimeSpan.FromSeconds(1.5));
             }
         }, TaskCreationOptions.LongRunning);

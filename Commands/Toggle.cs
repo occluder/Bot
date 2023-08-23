@@ -4,7 +4,7 @@ using MiniTwitch.Irc.Models;
 
 namespace Bot.Commands;
 
-public class Toggle : ChatCommand
+public class Toggle: ChatCommand
 {
     public override CommandInfo Info => new(
         "toggle",

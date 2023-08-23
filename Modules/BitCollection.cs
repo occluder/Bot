@@ -3,7 +3,7 @@ using MiniTwitch.Irc.Models;
 
 namespace Bot.Modules;
 
-internal class BitCollection : BotModule
+internal class BitCollection: BotModule
 {
     private async ValueTask OnMessage(Privmsg message)
     {

@@ -7,7 +7,7 @@ using MiniTwitch.PubSub.Models.Payloads;
 
 namespace Bot.Modules;
 
-internal class PredictionNotifications : BotModule
+internal class PredictionNotifications: BotModule
 {
     private readonly HttpClient _requests = new() { Timeout = TimeSpan.FromSeconds(15) };
     private readonly string _link = Config.Links["PredictionNotifications"];
@@ -193,14 +193,11 @@ internal class PredictionNotifications : BotModule
 
         _ = sb.AppendLine($" ({100 * outcome.TotalUsers / allUsers}%)");
         _ = sb.Append("💰 ");
-        if (outcome.TotalPoints > 1_000_000)
-            _ = sb.Append($"{Math.Round(outcome.TotalPoints / (double)1_000_000, 2)}M points");
-        else
-        {
-            _ = outcome.TotalPoints > 1000
+        _ = outcome.TotalPoints > 1_000_000
+            ? sb.Append($"{Math.Round(outcome.TotalPoints / (double)1_000_000, 2)}M points")
+            : outcome.TotalPoints > 1000
             ? sb.Append($"{Math.Round(outcome.TotalPoints / (double)1000, 1)}K points")
             : sb.Append($"{outcome.TotalPoints} points");
-        }
 
         _ = sb.AppendLine($" ({100L * outcome.TotalPoints / allPoints}%)");
         return sb.ToString();

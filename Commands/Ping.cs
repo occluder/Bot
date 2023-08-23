@@ -5,7 +5,7 @@ using MiniTwitch.Irc.Models;
 
 namespace Bot.Commands;
 
-internal class Ping : IChatCommand
+internal class Ping: IChatCommand
 {
     public CommandInfo Info => new("ping", "Ping", TimeSpan.FromSeconds(5), CommandPermission.Everyone);
 
