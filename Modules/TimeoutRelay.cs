@@ -30,7 +30,7 @@ internal class TimeoutRelay : BotModule
             _ => $"{data.ExpiresInMs}ms",
         };
 
-        var message = new DiscordMessageBuilder().AddEmbed(e =>
+        DiscordMessageBuilder message = new DiscordMessageBuilder().AddEmbed(e =>
         {
             e.title = $"You were timed out for {durationString} in #{ChannelNameOrId(data.ChannelId)}";
             e.description = data.Reason ?? "NO REASON";
@@ -43,7 +43,7 @@ internal class TimeoutRelay : BotModule
     private async ValueTask OnBanned(UserId userId, IBanData data)
     {
         _logger.Information("You were banned in #{Channel}: {Reason}", ChannelNameOrId(data.ChannelId), data.Reason);
-        var message = new DiscordMessageBuilder().AddEmbed(e =>
+        DiscordMessageBuilder message = new DiscordMessageBuilder().AddEmbed(e =>
         {
             e.title = $"You were banned in #{ChannelNameOrId(data.ChannelId)}";
             e.description = data.Reason ?? "NO REASON";
@@ -56,7 +56,7 @@ internal class TimeoutRelay : BotModule
     private async ValueTask OnUntimedOut(UserId userId, IUntimeOutData data)
     {
         _logger.Information("You were untimed out in #{Channel}", ChannelNameOrId(data.ChannelId));
-        var message = new DiscordMessageBuilder().AddEmbed(e =>
+        DiscordMessageBuilder message = new DiscordMessageBuilder().AddEmbed(e =>
         {
             e.title = $"You were untimed out in #{ChannelNameOrId(data.ChannelId)}";
             e.color = 6353920;
@@ -68,7 +68,7 @@ internal class TimeoutRelay : BotModule
     private async ValueTask OnUnbanned(UserId userId, IUntimeOutData data)
     {
         _logger.Information("You were unbanned in #{Channel}", ChannelNameOrId(data.ChannelId));
-        var message = new DiscordMessageBuilder().AddEmbed(e =>
+        DiscordMessageBuilder message = new DiscordMessageBuilder().AddEmbed(e =>
         {
             e.title = $"You were unbanned in #{ChannelNameOrId(data.ChannelId)}";
             e.color = 6353920;
@@ -96,7 +96,7 @@ internal class TimeoutRelay : BotModule
 
     private static object ChannelNameOrId(long channelId)
     {
-        if (ChannelsById.TryGetValue(channelId, out var channel))
+        if (ChannelsById.TryGetValue(channelId, out TwitchChannelDto? channel))
             return channel.Username;
 
         return channelId;

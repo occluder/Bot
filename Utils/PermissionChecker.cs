@@ -15,12 +15,12 @@ internal static class PermissionChecker
             level = CommandPermission.Moderators;
         else if (message.Author.IsVip)
             level = CommandPermission.VIPs;
-        else if (message.Author.IsSubscriber)
-            level = CommandPermission.Subscribers;
-        else if (BlackListedUserIds.Contains(message.Author.Id))
-            level = CommandPermission.None;
         else
-            level = CommandPermission.Everyone;
+        {
+            level = message.Author.IsSubscriber
+            ? CommandPermission.Subscribers
+            : BlackListedUserIds.Contains(message.Author.Id) ? CommandPermission.None : CommandPermission.Everyone;
+        }
 
         bool hasPerms = level >= command.Info.Permission;
         ForContext("Permission", level).Verbose("{User} {HasPerms} run command: {Command}", message.Author.Name, hasPerms ? "can" : "can't",

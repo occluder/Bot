@@ -52,27 +52,27 @@ internal partial class REPL : BotModule
         string currentContent = message.Content[(verbose ? 5 : 4)..];
         if (message.Content[2] == '?')
         {
-            if (_builders.TryGetValue(message.Author.Id, out var sb))
+            if (_builders.TryGetValue(message.Author.Id, out StringBuilder? sb))
             {
-                sb.AppendLine(currentContent);
+                _ = sb.AppendLine(currentContent);
                 return;
             }
 
             _builders[message.Author.Id] = new();
-            _builders[message.Author.Id].AppendLine(currentContent);
+            _ = _builders[message.Author.Id].AppendLine(currentContent);
             return;
         }
 
         if (timeNow - _globalCooldown <= TimeSpan.FromSeconds(GLOBAL_COOLDOWN_SECONDS).TotalSeconds)
             return;
 
-        if (_cooldowns.TryGetValue(message.Author.Id, out var lastTime) && timeNow - lastTime <= TimeSpan.FromSeconds(USER_COOLDOWN_SECONDS).TotalSeconds)
+        if (_cooldowns.TryGetValue(message.Author.Id, out long lastTime) && timeNow - lastTime <= TimeSpan.FromSeconds(USER_COOLDOWN_SECONDS).TotalSeconds)
             return;
 
         _globalCooldown = timeNow;
         _cooldowns[message.Author.Id] = timeNow;
         ILogger logger = MessageContextLogger(message);
-        string payloadContent = _builders.TryGetValue(message.Author.Id, out var sb2) && sb2.Length > 0 ? GetAndClear(sb2.AppendLine(currentContent)) : currentContent;
+        string payloadContent = _builders.TryGetValue(message.Author.Id, out StringBuilder? sb2) && sb2.Length > 0 ? GetAndClear(sb2.AppendLine(currentContent)) : currentContent;
         StringContent payload = new(payloadContent);
         HttpResponseMessage response;
         ReplResult? result;
@@ -211,7 +211,7 @@ internal partial class REPL : BotModule
     private static string GetAndClear(StringBuilder sb)
     {
         string s = sb.ToString();
-        sb.Clear();
+        _ = sb.Clear();
         return s;
     }
 

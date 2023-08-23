@@ -12,7 +12,7 @@ internal class LinkCollector : BotModule
     private static readonly Regex _regex = new(@"https?:[\\/][\\/](www\.|[-a-zA-Z0-9]+\.)?[-a-zA-Z0-9@:%._\+~#=]{3,}(\.[a-zA-Z]{2,10})+(/([-a-zA-Z0-9@:%._\+~#=/?&]+)?)?\b", RegexOptions.Compiled, TimeSpan.FromMilliseconds(50));
     private static readonly ILogger _logger = ForContext<LinkCollector>();
     private static readonly List<LinkData> _links = new(MAX_LINKS);
-    private static SemaphoreSlim _ss = new(1);
+    private static readonly SemaphoreSlim _ss = new(1);
     private static readonly HashSet<string> _bots = new()
     {
         "streamelements", "streamlabs", "scriptorex", "apulxd", "rewardmore", "iogging", "ttdb", "supibot", "nightbot"

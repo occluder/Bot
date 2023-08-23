@@ -27,19 +27,15 @@ public class Toggle : ChatCommand
             return;
         }
 
-        var module = GetArgument<string>("Module");
-        var toggle = GetArgument<string>("EnabledOrDisable");
+        string module = GetArgument<string>("Module");
+        string toggle = GetArgument<string>("EnabledOrDisable");
         if (toggle is not "enable" and not "disable")
         {
             await message.ReplyWith("Argument 2 must be either \"enable\" or \"disable\"");
         }
 
         bool enable = "toggle" == "enable";
-        bool success;
-        if (enable)
-            success = await Module.EnableModule(module);
-        else
-            success = await Module.DisableModule(module);
+        bool success = enable ? await Module.EnableModule(module) : await Module.DisableModule(module);
 
         if (success)
             await message.ReplyWith("👍");

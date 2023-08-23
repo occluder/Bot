@@ -25,7 +25,7 @@ internal class WhisperNotifications : BotModule
         if (BlackListedUserIds.Contains(whisper.Author.Id))
             return;
 
-        var builder = new DiscordMessageBuilder(Config.Secrets["ParentHandle"]).AddEmbed(embed =>
+        DiscordMessageBuilder builder = new DiscordMessageBuilder(Config.Secrets["ParentHandle"]).AddEmbed(embed =>
         {
             embed.title = $"@`{whisper.Author.Name}` sent you a whisper";
             embed.color = 2393480;
@@ -52,8 +52,8 @@ internal class WhisperNotifications : BotModule
     protected override async ValueTask OnModuleEnabled()
     {
         _whisperClient.OnWhisper += OnWhisperReceived;
-        await _whisperClient.ConnectAsync();
-        await _whisperClient.JoinChannel(Config.RelayChannel);
+        _ = await _whisperClient.ConnectAsync();
+        _ = await _whisperClient.JoinChannel(Config.RelayChannel);
     }
 
     protected override async ValueTask OnModuleDisabled()

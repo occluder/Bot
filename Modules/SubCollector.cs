@@ -30,7 +30,7 @@ public class SubCollector : BotModule
             notice.SentTimestamp.DateTime
         );
 
-        await Subs.AddAsync(sub);
+        _ = await Subs.AddAsync(sub);
         ForContext<SubCollector>().Verbose("New sub: {@SubData}", sub);
     }
 

@@ -4,7 +4,7 @@ using Bot.Interfaces;
 namespace Bot.Workflows;
 internal class WorkflowRunner
 {
-    private SortedList<int, IWorkflow> _workflows = new(32);
+    private readonly SortedList<int, IWorkflow> _workflows = new(32);
 
     public WorkflowRunner Add<TWorkflow>()
         where TWorkflow : IWorkflow, new()

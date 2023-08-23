@@ -4,7 +4,7 @@ using MiniTwitch.Irc.Models;
 internal static class CooldownsManager
 {
     private static readonly Dictionary<string, Dictionary<long, long>> _cooldowns = new();
-    private static Dictionary<long, long> _channelCooldowns = new();
+    private static readonly Dictionary<long, long> _channelCooldowns = new();
 
     public static bool IsOnCooldown(this Privmsg privmsg, IChatCommand command)
     {

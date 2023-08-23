@@ -22,7 +22,7 @@ public class NameCheck : ChatCommand
             return;
         }
 
-        var queryResult = await Postgres.QueryAsync<UserDto>("SELECT username, user_id FROM collected_users WHERE user_id = @UserId", new
+        IEnumerable<UserDto> queryResult = await Postgres.QueryAsync<UserDto>("SELECT username, user_id FROM collected_users WHERE user_id = @UserId", new
         {
             UserId = GetArgument<long>("UserId")
         });

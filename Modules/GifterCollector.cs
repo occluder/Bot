@@ -17,7 +17,7 @@ internal class GifterCollector : BotModule
         await PostgresQueryLock.WaitAsync();
         try
         {
-            await Postgres.ExecuteAsync("insert into collected_gifts values (@SentBy, @SentById, @SentTo, @SentToId, @GiftAmount, @Tier, @TimeSent)", new
+            _ = await Postgres.ExecuteAsync("insert into collected_gifts values (@SentBy, @SentById, @SentTo, @SentToId, @GiftAmount, @Tier, @TimeSent)", new
             {
                 SentBy = notice.Author.Name,
                 SentById = notice.Author.Id,

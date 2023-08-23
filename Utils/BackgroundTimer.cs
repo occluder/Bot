@@ -23,13 +23,7 @@ internal class BackgroundTimer
         _logger.Debug("New background timer created ({InvocationCount} * {Period})", maxInvocationCount, period);
     }
 
-    public void Start()
-    {
-        if (_minsUntilComplete > 10)
-            _timerTask = Task.Factory.StartNew(StartTimerTask, TaskCreationOptions.LongRunning);
-        else
-            _timerTask = StartTimerTask();
-    }
+    public void Start() => _timerTask = _minsUntilComplete > 10 ? Task.Factory.StartNew(StartTimerTask, TaskCreationOptions.LongRunning) : StartTimerTask();
 
     public async Task StopAsync()
     {

@@ -1,6 +1,4 @@
-﻿using Bot.Interfaces;
-
-namespace Bot.Models;
+﻿namespace Bot.Models;
 
 public abstract class BotModule
 {
@@ -14,7 +12,7 @@ public abstract class BotModule
 
         await OnModuleEnabled();
         this.Enabled = true;
-        await Settings.EnableModule(Name);
+        await Settings.EnableModule(this.Name);
     }
     public async ValueTask Disable()
     {
@@ -23,7 +21,7 @@ public abstract class BotModule
 
         await OnModuleDisabled();
         this.Enabled = false;
-        await Settings.EnableModule(Name);
+        await Settings.EnableModule(this.Name);
     }
 
     protected virtual ValueTask OnModuleEnabled() => default;

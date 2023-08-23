@@ -23,7 +23,7 @@ internal class BanCollector : BotModule
         if (timeout.Duration.TotalSeconds < 2 || !ChannelsById[timeout.Channel.Id].IsLogged)
             return;
 
-        if (_bans.Count >=  MAX_BANS)
+        if (_bans.Count >= MAX_BANS)
             await Commit();
 
         await _ss.WaitAsync();

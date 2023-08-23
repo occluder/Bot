@@ -73,10 +73,7 @@ internal class ChannelsSetup : IWorkflow
             };
 
             _ = await Postgres.ExecuteAsync("insert into channels values (@DisplayName, @Username, @Id, @AvatarUrl, @Priority, @IsLogged, @DateJoined)", channelDto);
-            if (priority >= 50)
-                await MainClient.JoinChannel(user.Login);
-            else
-                await AnonClient.JoinChannel(user.Login);
+            _ = priority >= 50 ? await MainClient.JoinChannel(user.Login) : await AnonClient.JoinChannel(user.Login);
 
             Channels[channelDto.Username] = channelDto;
             ChannelsById[channelDto.Id] = channelDto;
@@ -99,8 +96,8 @@ internal class ChannelsSetup : IWorkflow
             else
                 await AnonClient.PartChannel(channelDto.Username);
 
-            Channels.Remove(channelDto.Username);
-            ChannelsById.Remove(channelDto.Id);
+            _ = Channels.Remove(channelDto.Username);
+            _ = ChannelsById.Remove(channelDto.Id);
         }
         finally
         {

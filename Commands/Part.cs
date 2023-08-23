@@ -21,7 +21,7 @@ internal class Part : ChatCommand
             return;
         }
 
-        var id = GetArgument<long>("ChannelId");
+        long id = GetArgument<long>("ChannelId");
         if (ChannelsById.ContainsKey(id))
         {
             await PartChannel(id);

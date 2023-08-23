@@ -19,7 +19,7 @@ internal class DiscordEmbed
     {
         Footer f = new();
         footerBuilder(f);
-        footer = f;
+        this.footer = f;
         return this;
     }
 
@@ -27,7 +27,7 @@ internal class DiscordEmbed
     {
         Image i = new();
         imageBuilder(i);
-        image = i;
+        this.image = i;
         return this;
     }
 
@@ -35,7 +35,7 @@ internal class DiscordEmbed
     {
         Author a = new();
         authorBuilder(a);
-        author = a;
+        this.author = a;
         return this;
     }
 
@@ -43,7 +43,7 @@ internal class DiscordEmbed
     {
         Field f = new();
         fieldBuilder(f);
-        fields.Add(f);
+        this.fields.Add(f);
         return this;
     }
 
@@ -72,7 +72,7 @@ internal class DiscordEmbed
         public string name { get; set; }
         public string url { get; set; }
         public string icon_url { get; set; }
-        public string proxy_icon_url { get; set;}
+        public string proxy_icon_url { get; set; }
     }
     public class Field
     {

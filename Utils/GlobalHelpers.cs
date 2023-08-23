@@ -9,7 +9,7 @@ namespace Bot.Utils;
 
 internal static class GlobalHelpers
 {
-    private static HttpClient _httpClient = new();
+    private static readonly HttpClient _httpClient = new();
 
     public static async Task<OneOf<T, HttpStatusCode, Exception>> GetFromRequest<T>(string url, JsonSerializerOptions? options = null, [CallerFilePath] string caller = default!, [CallerLineNumber] int line = default)
     {

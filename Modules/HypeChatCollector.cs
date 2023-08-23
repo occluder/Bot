@@ -16,7 +16,7 @@ internal class HypeChatCollector : BotModule
         await PostgresQueryLock.WaitAsync();
         try
         {
-            await Postgres.ExecuteAsync("insert into collected_hype_chat values (@sent_by, @sent_by_id, @sent_to, @sent_to_id, @amount, @currency)", new
+            _ = await Postgres.ExecuteAsync("insert into collected_hype_chat values (@sent_by, @sent_by_id, @sent_to, @sent_to_id, @amount, @currency)", new
             {
                 sent_by = message.Author.Name,
                 sent_by_id = message.Author.Id,

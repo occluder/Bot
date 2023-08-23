@@ -6,7 +6,7 @@ namespace Bot.Handlers;
 
 public static class ChatHandler
 {
-    private static Dictionary<string, IChatCommand> _commands = new();
+    private static readonly Dictionary<string, IChatCommand> _commands = new();
 
     public static void Setup()
     {

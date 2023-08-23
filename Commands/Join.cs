@@ -24,16 +24,18 @@ internal class Join : ChatCommand
             return;
         }
 
-        var login = GetArgument<string>("Login");
-        TryGetArgument<int?>("Priority", out var priority);
-        TryGetArgument<bool?>("IsLogged", out var logged);
-        var response = await GetFromRequest<IvrUser[]>($"https://api.ivr.fi/v2/twitch/user?login={login}");
+        string login = GetArgument<string>("Login");
+        _ = TryGetArgument<int?>("Priority", out int? priority);
+        _ = TryGetArgument<bool?>("IsLogged", out bool? logged);
+        OneOf<IvrUser[], System.Net.HttpStatusCode, Exception> response = await GetFromRequest<IvrUser[]>($"https://api.ivr.fi/v2/twitch/user?login={login}");
         if (response.TryPickT0(out IvrUser[] users, out _))
         {
             await JoinChannel(users[0], priority ?? 0, logged ?? true);
             await message.ReplyWith("👍");
         }
         else
+        {
             await message.ReplyWith("Failed");
+        }
     }
 }

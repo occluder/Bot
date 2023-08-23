@@ -7,9 +7,9 @@ namespace Bot;
 
 internal class Program
 {
-    static async Task Main()
+    private static async Task Main()
     {
-        var runner = new WorkflowRunner()
+        WorkflowRunner runner = new WorkflowRunner()
            .Add<LoadConfig>()
            .Add<LoggerSetup>()
            .Add<RedisSetup>()

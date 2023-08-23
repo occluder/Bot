@@ -22,20 +22,20 @@ internal class PredictionNotifications : BotModule
 
     private async ValueTask OnPredictionStarted(ChannelId channelId, IPredictionStarted prediction)
     {
-        var builder = new DiscordMessageBuilder().AddEmbed(embed =>
+        DiscordMessageBuilder builder = new DiscordMessageBuilder().AddEmbed(embed =>
         {
             embed.title = "Prediction Started!";
             embed.description = $"{prediction.Title}\n" + string.Join('\n', prediction.Outcomes.Select(x => _emotes[x.Badge.Version] + ' ' + x.Title));
             embed.timestamp = prediction.CreatedAt;
             embed.color = 5766924;
-            embed.SetAuthor(author =>
+            _ = embed.SetAuthor(author =>
             {
                 author.name = ChannelsById[channelId].DisplayName;
                 author.icon_url = ChannelsById[channelId].AvatarUrl;
                 author.url = $"https://www.twitch.tv/popout/{ChannelsById[channelId].Username}/chat?popout=";
             });
 
-            embed.SetFooter(footer =>
+            _ = embed.SetFooter(footer =>
             {
                 int length = prediction.PredictionWindowSeconds;
                 footer.text = $"Prediction started by {prediction.CreatedBy.UserDisplayName} " +
@@ -47,26 +47,26 @@ internal class PredictionNotifications : BotModule
     }
     private async ValueTask OnPredictionLocked(ChannelId channelId, IPredictionLocked prediction)
     {
-        var builder = new DiscordMessageBuilder().AddEmbed(embed =>
+        DiscordMessageBuilder builder = new DiscordMessageBuilder().AddEmbed(embed =>
         {
             embed.title = "Prediction Locked!";
             embed.description = prediction.Title;
             embed.timestamp = prediction.LockedAt!.Value;
             embed.color = 6298368;
-            embed.SetAuthor(author =>
+            _ = embed.SetAuthor(author =>
             {
                 author.name = ChannelsById[channelId].DisplayName;
                 author.icon_url = ChannelsById[channelId].AvatarUrl;
             });
 
-            embed.SetFooter(footer =>
+            _ = embed.SetFooter(footer =>
             {
                 footer.text = $"Prediction locked by {prediction.LockedBy?.UserDisplayName}";
             });
 
-            foreach (var outcome in prediction.Outcomes)
+            foreach (ChannelPredictions.Outcome outcome in prediction.Outcomes)
             {
-                embed.AddField(feed =>
+                _ = embed.AddField(feed =>
                 {
                     feed.name = _emotes[outcome.Badge.Version] + ' ' + outcome.Title;
                     feed.value = GetOutcomeData(outcome, prediction.Outcomes);
@@ -79,26 +79,26 @@ internal class PredictionNotifications : BotModule
     }
     private async ValueTask OnPredictionWindowClosed(ChannelId channelId, IPredictionWindowClosed prediction)
     {
-        var builder = new DiscordMessageBuilder().AddEmbed(embed =>
+        DiscordMessageBuilder builder = new DiscordMessageBuilder().AddEmbed(embed =>
         {
             embed.title = "Prediction Closed!";
             embed.description = prediction.Title;
             embed.timestamp = prediction.CreatedAt!.AddSeconds(prediction.PredictionWindowSeconds);
             embed.color = 6298368;
-            embed.SetAuthor(author =>
+            _ = embed.SetAuthor(author =>
             {
                 author.name = ChannelsById[channelId].DisplayName;
                 author.icon_url = ChannelsById[channelId].AvatarUrl;
             });
 
-            embed.SetFooter(footer =>
+            _ = embed.SetFooter(footer =>
             {
                 footer.text = $"Prediction started by {prediction.CreatedBy.UserDisplayName}";
             });
 
-            foreach (var outcome in prediction.Outcomes)
+            foreach (ChannelPredictions.Outcome outcome in prediction.Outcomes)
             {
-                embed.AddField(feed =>
+                _ = embed.AddField(feed =>
                 {
                     feed.name = _emotes[outcome.Badge.Version] + ' ' + outcome.Title;
                     feed.value = GetOutcomeData(outcome, prediction.Outcomes);
@@ -111,26 +111,26 @@ internal class PredictionNotifications : BotModule
     }
     private async ValueTask OnPredictionCancelled(ChannelId channelId, IPredictionCancelled prediction)
     {
-        var builder = new DiscordMessageBuilder().AddEmbed(embed =>
+        DiscordMessageBuilder builder = new DiscordMessageBuilder().AddEmbed(embed =>
         {
             embed.title = "Prediction Cancelled!";
             embed.description = prediction.Title;
             embed.timestamp = prediction.EndedAt!.Value;
             embed.color = 13614414;
-            embed.SetAuthor(author =>
+            _ = embed.SetAuthor(author =>
             {
                 author.name = ChannelsById[channelId].DisplayName;
                 author.icon_url = ChannelsById[channelId].AvatarUrl;
             });
 
-            embed.SetFooter(footer =>
+            _ = embed.SetFooter(footer =>
             {
                 footer.text = $"Prediction cancelled by {prediction.EndedBy?.UserDisplayName}";
             });
 
-            foreach (var outcome in prediction.Outcomes)
+            foreach (ChannelPredictions.Outcome outcome in prediction.Outcomes)
             {
-                embed.AddField(feed =>
+                _ = embed.AddField(feed =>
                 {
                     feed.name = _emotes[outcome.Badge.Version] + ' ' + outcome.Title;
                     feed.value = GetOutcomeData(outcome, prediction.Outcomes);
@@ -143,26 +143,26 @@ internal class PredictionNotifications : BotModule
     }
     private async ValueTask OnPredictionEnded(ChannelId channelId, IPredictionEnded prediction)
     {
-        var builder = new DiscordMessageBuilder().AddEmbed(embed =>
+        DiscordMessageBuilder builder = new DiscordMessageBuilder().AddEmbed(embed =>
         {
             embed.title = "Prediction Ended!";
             embed.description = prediction.Title;
             embed.timestamp = prediction.EndedAt!.Value;
             embed.color = 7053553;
-            embed.SetAuthor(author =>
+            _ = embed.SetAuthor(author =>
             {
                 author.name = ChannelsById[channelId].DisplayName;
                 author.icon_url = ChannelsById[channelId].AvatarUrl;
             });
 
-            embed.SetFooter(footer =>
+            _ = embed.SetFooter(footer =>
             {
                 footer.text = $"Prediction ended by {prediction.EndedBy?.UserDisplayName}";
             });
 
-            foreach (var outcome in prediction.Outcomes)
+            foreach (ChannelPredictions.Outcome outcome in prediction.Outcomes)
             {
-                embed.AddField(feed =>
+                _ = embed.AddField(feed =>
                 {
                     feed.name = _emotes[outcome.Badge.Version] + ' ' + outcome.Title;
                     feed.value = GetOutcomeData(outcome, prediction.Outcomes);
@@ -170,8 +170,8 @@ internal class PredictionNotifications : BotModule
                 });
             }
 
-            var winningOutcome = prediction.Outcomes.FirstOrDefault(x => x.Id == prediction.WinningOutcomeId);
-            embed.AddField(feed =>
+            ChannelPredictions.Outcome winningOutcome = prediction.Outcomes.FirstOrDefault(x => x.Id == prediction.WinningOutcomeId);
+            _ = embed.AddField(feed =>
             {
                 feed.name = $"🏆 Winning outcome: *{winningOutcome.Title}*";
                 feed.value = string.Join('\n', winningOutcome.TopPredictors.Select(p => $"**@{p.UserDisplayName}**\t+{p.Result!.Value.PointsWon}"));
@@ -186,22 +186,23 @@ internal class PredictionNotifications : BotModule
         int allUsers = outcomes.Sum(x => x.TotalUsers);
         int allPoints = outcomes.Sum(x => x.TotalPoints);
         StringBuilder sb = new();
-        sb.Append("👥 ");
-        if (outcome.TotalUsers > 1000)
-            sb.Append($"{Math.Round(outcome.TotalUsers / (double)1000, 1)}k users chose this outcome");
-        else
-            sb.Append($"{outcome.TotalUsers} users chose this outcome");
+        _ = sb.Append("👥 ");
+        _ = outcome.TotalUsers > 1000
+            ? sb.Append($"{Math.Round(outcome.TotalUsers / (double)1000, 1)}k users chose this outcome")
+            : sb.Append($"{outcome.TotalUsers} users chose this outcome");
 
-        sb.AppendLine($" ({100 * outcome.TotalUsers / allUsers}%)");
-        sb.Append("💰 ");
+        _ = sb.AppendLine($" ({100 * outcome.TotalUsers / allUsers}%)");
+        _ = sb.Append("💰 ");
         if (outcome.TotalPoints > 1_000_000)
-            sb.Append($"{Math.Round(outcome.TotalPoints / (double)1_000_000, 2)}M points");
-        else if (outcome.TotalPoints > 1000)
-            sb.Append($"{Math.Round(outcome.TotalPoints / (double)1000, 1)}K points");
+            _ = sb.Append($"{Math.Round(outcome.TotalPoints / (double)1_000_000, 2)}M points");
         else
-            sb.Append($"{outcome.TotalPoints} points");
+        {
+            _ = outcome.TotalPoints > 1000
+            ? sb.Append($"{Math.Round(outcome.TotalPoints / (double)1000, 1)}K points")
+            : sb.Append($"{outcome.TotalPoints} points");
+        }
 
-        sb.AppendLine($" ({100L * outcome.TotalPoints / allPoints}%)");
+        _ = sb.AppendLine($" ({100L * outcome.TotalPoints / allPoints}%)");
         return sb.ToString();
     }
 
@@ -224,7 +225,7 @@ internal class PredictionNotifications : BotModule
 
     protected override async ValueTask OnModuleEnabled()
     {
-        foreach (var channel in Channels.Values.Where(c => c.PredictionsEnabled))
+        foreach (TwitchChannelDto? channel in Channels.Values.Where(c => c.PredictionsEnabled))
             _ = await TwitchPubSub.ListenTo(Topics.ChannelPredictions(channel.Id));
 
         TwitchPubSub.OnPredictionStarted += OnPredictionStarted;
@@ -235,7 +236,7 @@ internal class PredictionNotifications : BotModule
     }
     protected override async ValueTask OnModuleDisabled()
     {
-        foreach (var channel in Channels.Values.Where(c => c.PredictionsEnabled))
+        foreach (TwitchChannelDto? channel in Channels.Values.Where(c => c.PredictionsEnabled))
             _ = await TwitchPubSub.UnlistenTo(Topics.ChannelPredictions(channel.Id));
 
         TwitchPubSub.OnPredictionStarted -= OnPredictionStarted;

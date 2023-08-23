@@ -18,14 +18,14 @@ internal class MentionsRelay : BotModule
 
         if (_regex.Match(message.Content) is { Success: true } match)
         {
-            var builder = new DiscordMessageBuilder().AddEmbed(embed =>
+            DiscordMessageBuilder builder = new DiscordMessageBuilder().AddEmbed(embed =>
             {
                 embed.title = $"@{message.Author.Name} in #{message.Channel.Name}";
                 embed.description = message.Content;
                 embed.timestamp = DateTime.Now;
                 if (message.Reply.HasContent)
                 {
-                    embed.AddField(field =>
+                    _ = embed.AddField(field =>
                     {
                         field.name = $"Replying to @{message.Reply.ParentUsername}";
                         field.value = message.Reply.ParentMessage;
@@ -33,7 +33,7 @@ internal class MentionsRelay : BotModule
                 }
 
                 if (_imageHosts.Match(message.Content) is { Success: true } imageMatch)
-                    embed.SetImage(i => i.url = imageMatch.Value);
+                    _ = embed.SetImage(i => i.url = imageMatch.Value);
             });
 
             HttpResponseMessage response;

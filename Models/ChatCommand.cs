@@ -24,10 +24,12 @@ public abstract class ChatCommand : IChatCommand
         foreach (CommandArgument arg in _userArgs)
         {
             if (arg.Index > _messageArgs.Length - 1)
+            {
                 if (!arg.Optional)
                     return message.ReplyWith($"Argument {arg.Index} missing: {arg.Name} ({arg.OutType.Name})");
                 else
                     break;
+            }
 
             if (arg.OutType == typeof(long))
             {
@@ -63,7 +65,7 @@ public abstract class ChatCommand : IChatCommand
 
     protected bool TryGetArgument<T>(string name, out T value)
     {
-        if (_parsedArgs.TryGetValue(name, out var val))
+        if (_parsedArgs.TryGetValue(name, out object? val))
         {
             value = (T)val;
             return true;

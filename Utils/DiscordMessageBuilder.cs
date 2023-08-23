@@ -19,14 +19,14 @@ internal class DiscordMessageBuilder
 
     public DiscordMessageBuilder(string? content = null)
     {
-        Content = content;
+        this.Content = content;
     }
 
     public DiscordMessageBuilder AddEmbed(Action<DiscordEmbed> embedAction)
     {
         DiscordEmbed embed = new();
         embedAction(embed);
-        Embeds.Add(embed);
+        this.Embeds.Add(embed);
         return this;
     }
 

@@ -12,7 +12,7 @@ internal class ClassNameFilter : ILogEventFilter
         if (ClassName is null)
             return true;
 
-        if (logEvent.Properties.TryGetValue("ClassName", out var propValue))
+        if (logEvent.Properties.TryGetValue("ClassName", out LogEventPropertyValue? propValue))
             return propValue.ToString() == ClassName;
 
         return false;

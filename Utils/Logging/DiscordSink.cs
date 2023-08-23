@@ -166,7 +166,7 @@ public class DiscordSink : ILogEventSink
 
     private bool ShouldShowProperties(LogEvent logEvent)
     {
-        if (logEvent.Properties.TryGetValue("ShowProperties", out var value) && value.ToString()[0] == 'T')
+        if (logEvent.Properties.TryGetValue("ShowProperties", out LogEventPropertyValue? value) && value.ToString()[0] == 'T')
             return true;
 
         return LoggerSetup.LogSwitch.MinimumLevel <= _propsLevel;
