@@ -17,7 +17,7 @@ public class ChatUtils: BotModule
             "unix" => message.ReplyWith(DateTimeOffset.Now.ToUnixTimeSeconds().ToString()),
             { Length: >= 10 and < 13 } unix when long.TryParse(unix, out long time) => message.ReplyWith(DateTimeOffset.FromUnixTimeSeconds(time).ToString()),
             { Length: >= 13 } unixMs when long.TryParse(unixMs, out long time) => message.ReplyWith(DateTimeOffset.FromUnixTimeMilliseconds(time).ToString()),
-            { Length: >= 28 } date when DateTime.TryParse(date, out DateTime dateTime) => message.ReplyWith(dateTime.ToString("O")),
+            { Length: >= 28 } date when DateTimeOffset.TryParse(date, out var dateTime) => message.ReplyWith(dateTime.ToUnixTimeMilliseconds().ToString()),
             _ => default
         };
     }
