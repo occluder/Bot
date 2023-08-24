@@ -34,8 +34,8 @@ public static class ChatHandler
     private static ValueTask OnMessage(Privmsg arg)
     {
         ReadOnlySpan<char> content = arg.Content;
-        if (ChannelsById[arg.Channel.Id].Priority >= 50 && content.Length > Config.Prefix.Length + 1
-            && content.StartsWith(Config.Prefix, StringComparison.CurrentCulture))
+        if (ChannelsById[arg.Channel.Id].Priority >= 50 && content.Length > Config.Prefix.Length + 1 &&
+            content.StartsWith(Config.Prefix, StringComparison.CurrentCulture))
         {
             return HandleCommand(arg);
         }
@@ -45,11 +45,15 @@ public static class ChatHandler
 
     private static ValueTask HandleCommand(Privmsg message)
     {
+        if (message.Author.Id == Config.Ids["BotId"])
+            return default;
+
         ReadOnlySpan<char> content = message.Content;
         foreach (KeyValuePair<string, IChatCommand> kvp in _commands)
         {
             ReadOnlySpan<char> key = kvp.Key;
-            if (content[Config.Prefix.Length..].StartsWith(key) && message.Permits(kvp.Value) && !message.IsOnCooldown(kvp.Value))
+            if (content[Config.Prefix.Length..].StartsWith(key) && message.Permits(kvp.Value) &&
+                !message.IsOnCooldown(kvp.Value))
                 return kvp.Value.Run(message);
         }
 
