@@ -32,7 +32,7 @@ public class ChatUtils: BotModule
     {
         int year = DateTime.Now.Year;
         var date = ms ? DateTimeOffset.FromUnixTimeMilliseconds(time) : DateTimeOffset.FromUnixTimeSeconds(time);
-        return date.Year <= year + 5 || date.Year >= year - 5;
+        return date.Year <= year + 5 && date.Year >= year - 5;
     }
 
     protected override ValueTask OnModuleEnabled()
