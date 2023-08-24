@@ -10,7 +10,10 @@ public class ChatUtils: BotModule
         if (message.Channel.Id is not 11148817 and not 780092850)
             return default;
 
-        string[] args = message.Content.Split(' ');
+        string[] args = message.Content.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (args.Length > 1)
+            return default;
+
         return args[0] switch
         {
             "utc" => message.ReplyWith(DateTime.UtcNow.ToString("O")),
