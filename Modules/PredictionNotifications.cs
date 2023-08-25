@@ -38,7 +38,7 @@ internal class PredictionNotifications: BotModule
             _ = embed.SetFooter(footer =>
             {
                 int length = prediction.PredictionWindowSeconds;
-                footer.text = $"Prediction started by {prediction.CreatedBy.UserDisplayName} " +
+                footer.text = $"Prediction started by {prediction.CreatedBy.DisplayName} " +
                 $"• Closes in {(length > 120 ? (length / 60) + "m" : length + "s")}";
             });
         });
@@ -61,7 +61,7 @@ internal class PredictionNotifications: BotModule
 
             _ = embed.SetFooter(footer =>
             {
-                footer.text = $"Prediction locked by {prediction.LockedBy?.UserDisplayName}";
+                footer.text = $"Prediction locked by {prediction.LockedBy?.DisplayName}";
             });
 
             foreach (ChannelPredictions.Outcome outcome in prediction.Outcomes)
@@ -93,7 +93,7 @@ internal class PredictionNotifications: BotModule
 
             _ = embed.SetFooter(footer =>
             {
-                footer.text = $"Prediction started by {prediction.CreatedBy.UserDisplayName}";
+                footer.text = $"Prediction started by {prediction.CreatedBy.DisplayName}";
             });
 
             foreach (ChannelPredictions.Outcome outcome in prediction.Outcomes)
@@ -125,7 +125,7 @@ internal class PredictionNotifications: BotModule
 
             _ = embed.SetFooter(footer =>
             {
-                footer.text = $"Prediction cancelled by {prediction.EndedBy?.UserDisplayName}";
+                footer.text = $"Prediction cancelled by {prediction.EndedBy?.DisplayName}";
             });
 
             foreach (ChannelPredictions.Outcome outcome in prediction.Outcomes)
@@ -157,7 +157,7 @@ internal class PredictionNotifications: BotModule
 
             _ = embed.SetFooter(footer =>
             {
-                footer.text = $"Prediction ended by {prediction.EndedBy?.UserDisplayName}";
+                footer.text = $"Prediction ended by {prediction.EndedBy?.DisplayName}";
             });
 
             foreach (ChannelPredictions.Outcome outcome in prediction.Outcomes)
@@ -174,7 +174,7 @@ internal class PredictionNotifications: BotModule
             _ = embed.AddField(feed =>
             {
                 feed.name = $"🏆 Winning outcome: *{winningOutcome.Title}*";
-                feed.value = string.Join('\n', winningOutcome.TopPredictors.Select(p => $"**@{p.UserDisplayName}**\t+{p.Result!.Value.PointsWon}"));
+                feed.value = string.Join('\n', winningOutcome.TopPredictors.Select(p => $"**@{p.DisplayName}**\t+{p.Result!.Value.PointsWon}"));
             });
         });
 

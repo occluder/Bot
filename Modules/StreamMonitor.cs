@@ -28,7 +28,7 @@ internal class StreamMonitor: BotModule
         }
     }
 
-    private async ValueTask OnStreamUp(ChannelId channelId, IStreamUp _)
+    private static async ValueTask OnStreamUp(ChannelId channelId, IStreamUp _)
     {
         if ((DateTime.Now - _offlineAt[channelId]).TotalMinutes <= 5)
             return;
@@ -41,10 +41,11 @@ internal class StreamMonitor: BotModule
             _logger.Warning("Failed to listen to {TopicKey}: {Error}", r.TopicKey, r.Error);
 
         _logger.Information("{Channel} went live {@StreamData}", ChannelsById[channelId].DisplayName, _);
-        await MainClient.SendMessage(Config.RelayChannel, $"🟩 ppBounce @{ChannelsById[channelId].DisplayName} went live!", true);
+        await MainClient.SendMessage(Config.RelayChannel,
+            $"ppBounce @{ChannelsById[channelId].DisplayName} went live!", true);
     }
 
-    private async ValueTask OnViewerCountUpdate(ChannelId channelId, IViewerCountUpdate _)
+    private static async ValueTask OnViewerCountUpdate(ChannelId channelId, IViewerCountUpdate _)
     {
         if ((DateTime.Now - _offlineAt[channelId]).TotalMinutes <= 5)
             return;
@@ -62,7 +63,7 @@ internal class StreamMonitor: BotModule
         }
     }
 
-    private async ValueTask OnStreamDown(ChannelId channelId, IStreamDown _)
+    private static async ValueTask OnStreamDown(ChannelId channelId, IStreamDown _)
     {
         _streams[channelId] = false;
         _offlineAt[channelId] = DateTime.Now;
@@ -73,23 +74,24 @@ internal class StreamMonitor: BotModule
             _logger.Warning("Failed to unlisten to {TopicKey}: {Error}", r.TopicKey, r.Error);
 
         _logger.Information("{Channel} went offline! {@StreamData}", ChannelsById[channelId].DisplayName, _);
-        await MainClient.SendMessage(Config.RelayChannel, $"🟥 Sleepo @{ChannelsById[channelId].DisplayName} is now offline!");
+        await MainClient.SendMessage(Config.RelayChannel,
+            $"Sleepo @{ChannelsById[channelId].DisplayName} is now offline!");
     }
 
-    private ValueTask OnBroadcastSettingsUpdate(ChannelId channelId, BroadcastSettingsUpdate settings)
+    private ValueTask OnGameChange(ChannelId channelId, IGameChange update)
     {
-        if (settings.OldTitle != settings.NewTitle && settings.OldGame != settings.NewGame)
-            return MainClient.SendMessage(Config.RelayChannel, $"🟦 ppSlide @{ChannelsById[channelId].DisplayName} updated their stream: {settings.OldTitle} -> {settings.NewTitle} -- {settings.OldGame} -> {settings.NewGame}");
-        else if (settings.OldTitle != settings.NewTitle)
-            return MainClient.SendMessage(Config.RelayChannel, $"🟦 ppSlide @{ChannelsById[channelId].DisplayName} changed title: {settings.OldTitle} -> {settings.NewTitle}");
-        else if (settings.OldGameId != settings.NewGameId)
-            return MainClient.SendMessage(Config.RelayChannel, $"🟦 ppSlide @{ChannelsById[channelId].DisplayName} changed game: {settings.OldGame} -> {settings.NewGame}");
-
-        return ValueTask.CompletedTask;
+        return MainClient.SendMessage(Config.RelayChannel,
+            $"ApuSkate @{ChannelsById[channelId].DisplayName} changed game: {update.OldGame} ➡ {update.NewGame}");
     }
 
+    private ValueTask OnTitleChange(ChannelId channelId, ITitleChange update)
+    {
+        return MainClient.SendMessage(Config.RelayChannel,
+            $"FeelsDankMan ✏ @{ChannelsById[channelId].DisplayName} changed title: {update.OldTitle} ➡ {update.NewTitle}");
+    }
 
-    private static IEnumerable<long> GetMonitoredChannelIds() => Channels.Values.Where(x => x.Priority >= 0).Select(x => x.Id);
+    private static IEnumerable<long> GetMonitoredChannelIds() =>
+        Channels.Values.Where(x => x.Priority >= 0).Select(x => x.Id);
 
     protected override async ValueTask OnModuleEnabled()
     {
@@ -99,8 +101,10 @@ internal class StreamMonitor: BotModule
         TwitchPubSub.OnStreamUp += OnStreamUp;
         TwitchPubSub.OnViewerCountUpdate += OnViewerCountUpdate;
         TwitchPubSub.OnStreamDown += OnStreamDown;
-        TwitchPubSub.OnBroadcastSettingsUpdate += OnBroadcastSettingsUpdate;
+        TwitchPubSub.OnTitleChange += OnTitleChange;
+        TwitchPubSub.OnGameChange += OnGameChange;
     }
+
     protected override async ValueTask OnModuleDisabled()
     {
         foreach (long channelId in GetMonitoredChannelIds())
@@ -112,6 +116,7 @@ internal class StreamMonitor: BotModule
         TwitchPubSub.OnStreamUp -= OnStreamUp;
         TwitchPubSub.OnViewerCountUpdate -= OnViewerCountUpdate;
         TwitchPubSub.OnStreamDown -= OnStreamDown;
-        TwitchPubSub.OnBroadcastSettingsUpdate -= OnBroadcastSettingsUpdate;
+        TwitchPubSub.OnTitleChange -= OnTitleChange;
+        TwitchPubSub.OnGameChange -= OnGameChange;
     }
 }
