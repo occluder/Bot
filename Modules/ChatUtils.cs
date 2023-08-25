@@ -40,11 +40,11 @@ public class ChatUtils: BotModule
         if (unix is not null)
         {
             var offset = ms ? DateTimeOffset.FromUnixTimeMilliseconds(unix.Value) : DateTimeOffset.FromUnixTimeSeconds(unix.Value);
-            return $"{offset} [{offset:O}]";
+            return $"{offset:yyyy-M-d} {offset:h:mm:ss tt zz} [{offset:O}]";
         }
 
         var date = DateTime.UtcNow.AddHours(hourOffset);
-        return $"{date} [{date:O}]";
+        return $"{date:yyyy-M-d} {date:h:mm:ss tt zz} [{date:O}]";
     }
 
     private static bool WithinReasonableTime(long time, bool ms = false)
