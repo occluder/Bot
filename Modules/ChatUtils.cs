@@ -35,7 +35,7 @@ public class ChatUtils: BotModule
         };
     }
 
-    private static string Date(int hourOffset = 0, long? unix = null, bool ms = false)
+    private static string Date(double hourOffset = 0, long? unix = null, bool ms = false)
     {
         if (unix is not null)
         {
@@ -45,8 +45,10 @@ public class ChatUtils: BotModule
             return $"{offset:yyyy-M-d} {offset:h:mm:ss tt} [{offset:O}]";
         }
 
-        var date = DateTime.UtcNow;
-        return $"{date:yyyy-M-d} {date:h:mm:ss tt} [{date:O}]";
+        var utc = DateTimeOffset.UtcNow;
+        TimeZoneInfo tz = TimeZoneInfo.GetSystemTimeZones().First(t => t.BaseUtcOffset.TotalHours == hourOffset);
+        var date = TimeZoneInfo.ConvertTime(utc, tz);
+        return $"{date:yyyy-M-d} {date:h:mm:ss tt zz} [{date:O}]";
     }
 
     private static bool WithinReasonableTime(long time, bool ms = false)
