@@ -39,12 +39,14 @@ public class ChatUtils: BotModule
     {
         if (unix is not null)
         {
-            var offset = ms ? DateTimeOffset.FromUnixTimeMilliseconds(unix.Value) : DateTimeOffset.FromUnixTimeSeconds(unix.Value);
-            return $"{offset:yyyy-M-d} {offset:h:mm:ss tt zz} [{offset:O}]";
+            var offset = ms
+                ? DateTimeOffset.FromUnixTimeMilliseconds(unix.Value)
+                : DateTimeOffset.FromUnixTimeSeconds(unix.Value);
+            return $"{offset:yyyy-M-d} {offset:h:mm:ss tt} [{offset:O}]";
         }
 
-        var date = DateTime.UtcNow.AddHours(hourOffset);
-        return $"{date:yyyy-M-d} {date:h:mm:ss tt zz} [{date:O}]";
+        var date = DateTime.UtcNow;
+        return $"{date:yyyy-M-d} {date:h:mm:ss tt} [{date:O}]";
     }
 
     private static bool WithinReasonableTime(long time, bool ms = false)
