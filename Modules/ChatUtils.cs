@@ -16,19 +16,35 @@ public class ChatUtils: BotModule
 
         return args[0] switch
         {
-            "utc" => message.ReplyWith(DateTime.UtcNow.ToString("O")),
+            "eest" or "ast" => message.ReplyWith(Date(3)),
+            "cest" or "eet" => message.ReplyWith(Date(2)),
+            "cet" => message.ReplyWith(Date(1)),
+            "utc" or "gmt" => message.ReplyWith(Date()),
+            "pt" or "pdt" => message.ReplyWith(Date(-7)),
             "unix" => message.ReplyWith(DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString()),
             { Length: >= 10 and < 13 } unix when long.TryParse(unix, out long time) && WithinReasonableTime(time) =>
-                message.ReplyWith(DateTimeOffset.FromUnixTimeSeconds(time).ToString("O")),
+                message.ReplyWith(Date(unix: time)),
 
             { Length: >= 13 } unixMs when long.TryParse(unixMs, out long time) && WithinReasonableTime(time, true) =>
-                message.ReplyWith(DateTimeOffset.FromUnixTimeMilliseconds(time).ToString("O")),
+                message.ReplyWith(Date(unix: time, ms: true)),
 
             { Length: >= 28 } date when DateTimeOffset.TryParse(date, out var dateTime) => message.ReplyWith(
                 dateTime.ToUnixTimeMilliseconds().ToString()),
 
             _ => default
         };
+    }
+
+    private static string Date(int hourOffset = 0, long? unix = null, bool ms = false)
+    {
+        if (unix is not null)
+        {
+            var offset = ms ? DateTimeOffset.FromUnixTimeMilliseconds(unix.Value) : DateTimeOffset.FromUnixTimeSeconds(unix.Value);
+            return $"{offset} [{offset:O}]";
+        }
+
+        var date = DateTime.UtcNow.AddHours(hourOffset);
+        return $"{date} [{date:O}]";
     }
 
     private static bool WithinReasonableTime(long time, bool ms = false)

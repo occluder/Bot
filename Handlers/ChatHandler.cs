@@ -21,11 +21,10 @@ public static class ChatHandler
         Type interfaceType = typeof(IChatCommand);
         foreach (Type type in interfaceType.Assembly.GetTypes().Where(interfaceType.IsAssignableFrom))
         {
-            if (!type.IsInterface && !type.IsAbstract && Activator.CreateInstance(type) is IChatCommand command)
-            {
-                _commands.Add(command.Info.Name, command);
-                Debug("Loaded command: {CommandName}", command.Info.Name);
-            }
+            if (type.IsInterface || type.IsAbstract ||
+                Activator.CreateInstance(type) is not IChatCommand command) continue;
+            _commands.Add(command.Info.Name, command);
+            Debug("Loaded command: {CommandName}", command.Info.Name);
         }
 
         Information("{CommandCount} commands were dynamically loaded", _commands.Count);
