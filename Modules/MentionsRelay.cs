@@ -16,7 +16,7 @@ internal class MentionsRelay: BotModule
         if (BlackListedUserIds.Contains(message.Author.Id))
             return;
 
-        if (_regex.Match(message.Content) is { Success: true } match)
+        if (_regex.Match(message.Content) is { Success: true })
         {
             DiscordMessageBuilder builder = new DiscordMessageBuilder().AddEmbed(embed =>
             {
