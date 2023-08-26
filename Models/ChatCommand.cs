@@ -58,7 +58,7 @@ public abstract class ChatCommand: IChatCommand
             }
         }
 
-        return default;
+        return ValueTask.CompletedTask;
     }
 
     protected T GetArgument<T>(string name) => (T)_parsedArgs[name];
@@ -75,10 +75,23 @@ public abstract class ChatCommand: IChatCommand
         return false;
     }
 
-    protected record CommandArgument(string Name, uint Index, Type OutType, bool Optional = false);
+    public ValueTask ArgExec(Privmsg message)
+    {
+        ValueTask check = CheckArguments(message);
+        if (!check.IsCompleted)
+            return check;
 
+        try
+        {
+            return Run(message);
+        }
+        finally
+        {
+            _parsedArgs.Clear();
+        }
+    }
+    
     public abstract CommandInfo Info { get; }
-
     public abstract ValueTask Run(Privmsg message);
-
+    protected record CommandArgument(string Name, uint Index, Type OutType, bool Optional = false);
 }

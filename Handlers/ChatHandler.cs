@@ -1,4 +1,5 @@
 ﻿using Bot.Interfaces;
+using Bot.Models;
 using Bot.Utils;
 using MiniTwitch.Irc.Models;
 
@@ -53,7 +54,9 @@ public static class ChatHandler
             ReadOnlySpan<char> key = kvp.Key;
             if (content[Config.Prefix.Length..].StartsWith(key) && message.Permits(kvp.Value) &&
                 !message.IsOnCooldown(kvp.Value))
-                return kvp.Value.Run(message);
+            {
+                return kvp.Value is ChatCommand chatCommand ? chatCommand.ArgExec(message) : kvp.Value.Run(message);
+            }
         }
 
         return default;
