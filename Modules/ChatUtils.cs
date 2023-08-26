@@ -49,7 +49,7 @@ public class ChatUtils: BotModule
         var utc = DateTimeOffset.UtcNow;
         TimeZoneInfo tz = TimeZoneInfo.GetSystemTimeZones().First(t => t.BaseUtcOffset.TotalHours == hourOffset);
         var date = TimeZoneInfo.ConvertTime(utc, tz);
-        return $"{date:yyyy-M-d} {date:h:mm:ss tt zz} [{date:O}]";
+        return $"{date:yyyy-M-d} {date:h:mm:ss tt (zz)} [{date:O}]";
     }
 
     private static bool WithinReasonableTime(long time, bool ms = false)
