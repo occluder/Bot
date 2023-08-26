@@ -20,6 +20,7 @@ public class ChatUtils: BotModule
             "cest" or "eet" => message.ReplyWith(Date(2)),
             "cet" => message.ReplyWith(Date(1)),
             "utc" or "gmt" => message.ReplyWith(Date()),
+            "et" or "edt" => message.ReplyWith(Date(-4)),
             "pt" or "pdt" => message.ReplyWith(Date(-7)),
             "unix" => message.ReplyWith(DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString()),
             { Length: >= 10 and < 13 } unix when long.TryParse(unix, out long time) && WithinReasonableTime(time) =>
