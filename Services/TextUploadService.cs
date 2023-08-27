@@ -14,7 +14,7 @@ public class TextUploadService
         HttpResponseMessage response = await _requests.PostAsync(link, content);
         ForContext<TextUploadService>().Debug("[{Result}] POST {Link}", response.StatusCode, link);
         if (!response.IsSuccessStatusCode)
-            return new HttpRequestException("Response code does not indicate success");
+            return new HttpRequestException($"Response code does not indicate success: {(int)response.StatusCode}");
 
         Dictionary<string, string>? result;
         try
