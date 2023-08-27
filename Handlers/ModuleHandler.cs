@@ -14,6 +14,10 @@ public class ModuleHandler
 
     public string GetAllModules() => string.Join(", ", _modules.Keys);
 
+    public bool Exists(string name) => _modules.ContainsKey(name);
+
+    public bool IsEnabled(string name) => _modules[name].Enabled;
+
     public async ValueTask<bool> EnableModule(string name)
     {
         if (!_modules.ContainsKey(name))
@@ -23,13 +27,13 @@ public class ModuleHandler
         }
         else if (_modules[name].Enabled)
         {
-            _logger.Error("Cannot enabled module {ModuleName} because it is already enabled", name);
+            _logger.Error("Cannot enable module {ModuleName} because it is already enabled", name);
             return false;
         }
 
         try
         {
-            await _modules[name].Disable();
+            await _modules[name].Enable();
         }
         catch (Exception ex)
         {
