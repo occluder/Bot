@@ -1,7 +1,6 @@
 ﻿using Bot.Models;
 using MiniTwitch.PubSub.Interfaces;
 using MiniTwitch.PubSub.Models;
-using MiniTwitch.PubSub.Models.Payloads;
 
 namespace Bot.Modules;
 
