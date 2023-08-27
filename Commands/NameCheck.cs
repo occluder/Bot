@@ -15,13 +15,6 @@ public class NameCheck: ChatCommand
 
     public override async ValueTask Run(Privmsg message)
     {
-        ValueTask check = CheckArguments(message);
-        if (!check.IsCompleted)
-        {
-            await check;
-            return;
-        }
-
         IEnumerable<UserDto> queryResult = await Postgres.QueryAsync<UserDto>("SELECT username, user_id FROM collected_users WHERE user_id = @UserId", new
         {
             UserId = GetArgument<long>("UserId")

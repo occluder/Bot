@@ -17,13 +17,6 @@ internal class Join: ChatCommand
 
     public override async ValueTask Run(Privmsg message)
     {
-        ValueTask check = CheckArguments(message);
-        if (!check.IsCompleted)
-        {
-            await check;
-            return;
-        }
-
         string login = GetArgument<string>("Login");
         _ = TryGetArgument<int?>("Priority", out int? priority);
         _ = TryGetArgument<bool?>("IsLogged", out bool? logged);

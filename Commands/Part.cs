@@ -14,13 +14,6 @@ internal class Part: ChatCommand
 
     public override async ValueTask Run(Privmsg message)
     {
-        ValueTask check = CheckArguments(message);
-        if (!check.IsCompleted)
-        {
-            await check;
-            return;
-        }
-
         long id = GetArgument<long>("ChannelId");
         if (ChannelsById.ContainsKey(id))
         {

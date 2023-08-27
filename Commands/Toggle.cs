@@ -15,13 +15,6 @@ public class Toggle: ChatCommand
 
     public override async ValueTask Run(Privmsg message)
     {
-        ValueTask check = CheckArguments(message);
-        if (!check.IsCompleted)
-        {
-            await check;
-            return;
-        }
-
         string module = GetArgument<string>("Module");
         bool success = Module.Exists(module) && Module.IsEnabled(module)
             ? await Module.DisableModule(module)
