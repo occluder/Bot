@@ -5,60 +5,73 @@ namespace Bot.Models;
 
 public abstract class ChatCommand: IChatCommand
 {
-    private static readonly Type[] _parsables = new[] { typeof(long), typeof(int), typeof(bool) };
     private readonly List<CommandArgument> _userArgs = new(2);
     private readonly Dictionary<string, object> _parsedArgs = new(2);
     private string[] _messageArgs = Array.Empty<string>();
 
-    protected void AddArgument(CommandArgument argument)
-    {
-        if (!_parsables.Contains(argument.OutType) && argument.OutType != typeof(string))
-            throw new NotSupportedException($"The type \"{argument.OutType.Name}\" is not supported for arguments");
+    protected void AddArgument(CommandArgument argument) => _userArgs.Add(argument);
 
-        _userArgs.Add(argument);
-    }
-
-    protected ValueTask CheckArguments(Privmsg message)
+    protected async ValueTask<bool> CheckArguments(Privmsg message)
     {
         _messageArgs = message.Content.Split(' ');
         foreach (CommandArgument arg in _userArgs)
         {
             if (arg.Index > _messageArgs.Length - 1)
             {
-                if (!arg.Optional)
-                    return message.ReplyWith($"Argument {arg.Index} missing: {arg.Name} ({arg.OutType.Name})");
-                else
+                if (arg.Optional)
                     break;
+
+                await message.ReplyWith($"Argument {arg.Index} missing: {arg.Name} ({arg.OutType.Name})");
+                return false;
             }
 
-            if (arg.OutType == typeof(long))
+            bool argParse = arg.OutType.Name switch
             {
-                if (long.TryParse(_messageArgs[arg.Index], out long @long))
-                    _parsedArgs[arg.Name] = @long;
-                else
-                    return message.ReplyWith($"Argument {arg.Index} error: {arg.Name} must be of type {arg.OutType.Name}");
-            }
-            else if (arg.OutType == typeof(int))
-            {
-                if (int.TryParse(_messageArgs[arg.Index], out int @int))
-                    _parsedArgs[arg.Name] = @int;
-                else
-                    return message.ReplyWith($"Argument {arg.Index} error: {arg.Name} must be of type {arg.OutType.Name}");
-            }
-            else if (arg.OutType == typeof(bool))
-            {
-                if (bool.TryParse(_messageArgs[arg.Index], out bool @bool))
-                    _parsedArgs[arg.Name] = @bool;
-                else
-                    return message.ReplyWith($"Argument {arg.Index} error: {arg.Name} must be of type {arg.OutType.Name}");
-            }
-            else
-            {
-                _parsedArgs[arg.Name] = _messageArgs[arg.Index];
-            }
+                "Int32" => Parse<int>(ref message, arg),
+                "Int64" => Parse<long>(ref message, arg),
+                "Single" => Parse<float>(ref message, arg),
+                "Boolean" => ParseBool(ref message, arg),
+                "String" => AddString(arg),
+                _ => throw new NotSupportedException(
+                    $"The type {arg.OutType.Name} is not support for command arguments")
+            };
+
+            if (argParse)
+                continue;
+
+            await message.ReplyWith($"Argument {arg.Index} error: {arg.Name} must be of type {arg.OutType.Name}");
+            return false;
         }
 
-        return ValueTask.CompletedTask;
+        return true;
+    }
+
+    private bool Parse<T>(ref Privmsg message, CommandArgument arg) where T : ISpanParsable<T>
+    {
+        if (!T.TryParse(_messageArgs[arg.Index], null, out T? value) && !arg.Optional)
+            return false;
+        if (value is not null)
+            _parsedArgs[arg.Name] = value!;
+
+        return true;
+    }
+
+    private bool ParseBool(ref Privmsg message, CommandArgument arg)
+    {
+        if (!bool.TryParse(_messageArgs[arg.Index], out bool value) && !arg.Optional)
+            return false;
+
+        _parsedArgs[arg.Name] = value;
+        return true;
+    }
+
+    private bool AddString(CommandArgument arg)
+    {
+        if (arg.Index > _messageArgs.Length && arg.Optional)
+            return false;
+
+        _parsedArgs[arg.Name] = _messageArgs[arg.Index];
+        return true;
     }
 
     protected T GetArgument<T>(string name) => (T)_parsedArgs[name];
@@ -75,23 +88,37 @@ public abstract class ChatCommand: IChatCommand
         return false;
     }
 
-    public ValueTask ArgExec(Privmsg message)
+    public async ValueTask ArgExec(Privmsg message)
     {
-        ValueTask check = CheckArguments(message);
-        if (!check.IsCompleted)
-            return check;
+        if (!await CheckArguments(message))
+            return;
 
         try
         {
-            return Run(message);
+            await Run(message);
         }
         finally
         {
             _parsedArgs.Clear();
         }
     }
-    
+
     public abstract CommandInfo Info { get; }
     public abstract ValueTask Run(Privmsg message);
+
     protected record CommandArgument(string Name, uint Index, Type OutType, bool Optional = false);
+
+    private readonly struct TypeHash
+    {
+        public int Value => HashCode.Combine(_t.FullName, _t.Assembly.FullName);
+
+        private readonly Type _t;
+
+        private TypeHash(Type t)
+        {
+            _t = t;
+        }
+
+        public static implicit operator TypeHash(Type t) => new(t);
+    }
 }

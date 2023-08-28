@@ -19,10 +19,6 @@ public class EditUser: ChatCommand
 
     public override ValueTask Run(Privmsg message)
     {
-        ValueTask check = CheckArguments(message);
-        if (!check.IsCompleted)
-            return check;
-
         return GetArgument<string>("Action") switch
         {
             "blacklist" => BlackList(message),

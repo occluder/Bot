@@ -43,6 +43,7 @@ internal class ChannelsSetup: IWorkflow
         else
             Information("MainClient finished joining Channels");
 
+#if !DEBUG
         Information("Joining AnonClient channels");
         LoggerSetup.LogSwitch.MinimumLevel = LogEventLevel.Warning;
         bool success2 = await AnonClient.JoinChannels(channels.Where(x => x.Priority is < 50 and > -10).Select(x => x.Username));
@@ -51,6 +52,7 @@ internal class ChannelsSetup: IWorkflow
             Warning("AnonClient failed to join some channels");
         else
             Information("AnonClient finished joining Channels");
+#endif
 
         return WorkflowState.Completed;
     }
