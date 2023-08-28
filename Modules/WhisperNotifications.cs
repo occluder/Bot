@@ -27,7 +27,7 @@ internal class WhisperNotifications: BotModule
 
         DiscordMessageBuilder builder = new DiscordMessageBuilder(Config.Secrets["ParentHandle"]).AddEmbed(embed =>
         {
-            embed.title = $"@`{whisper.Author.Name}` sent you a whisper";
+            embed.title = $"@`{whisper.Author.Name}` ({whisper.Author.Id}) sent you a whisper";
             embed.color = 2393480;
             embed.description = whisper.Content;
             embed.timestamp = DateTime.Now;
