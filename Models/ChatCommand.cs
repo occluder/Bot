@@ -107,18 +107,4 @@ public abstract class ChatCommand: IChatCommand
     public abstract ValueTask Run(Privmsg message);
 
     protected record CommandArgument(string Name, uint Index, Type OutType, bool Optional = false);
-
-    private readonly struct TypeHash
-    {
-        public int Value => HashCode.Combine(_t.FullName, _t.Assembly.FullName);
-
-        private readonly Type _t;
-
-        private TypeHash(Type t)
-        {
-            _t = t;
-        }
-
-        public static implicit operator TypeHash(Type t) => new(t);
-    }
 }
