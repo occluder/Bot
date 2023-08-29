@@ -17,6 +17,8 @@ public static class ChatHandler
         LoadCommands();
     }
 
+    public static IEnumerable<IChatCommand> GetCommands() => _commands.Values;
+
     private static void LoadCommands()
     {
         Type interfaceType = typeof(IChatCommand);
