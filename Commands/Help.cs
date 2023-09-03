@@ -19,7 +19,7 @@ public class Help: ChatCommand
     public override ValueTask Run(Privmsg message)
     {
         IChatCommand[] commands = ChatHandler.GetCommands().ToArray();
-        if (!TryGetArgument<string>("CommandName", out string commandName))
+        if (!TryGetArgument("CommandName", out string commandName))
             return message.ReplyWith($"All commands: {string.Join(", ", commands.Select(x => x.Info.Name))}");
 
         if (commands.FirstOrDefault(x => x.Info.Name == commandName) is { } cmd)

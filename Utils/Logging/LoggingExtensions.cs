@@ -13,4 +13,7 @@ public static class LoggingExtensions
         ArgumentNullException.ThrowIfNull(cfg, nameof(cfg));
         return cfg.With(new HeapSizeEnricher(maxEnrichmentLevel));
     }
+
+    public static LoggerConfiguration WithUptime(this LoggerEnrichmentConfiguration cfg) =>
+        cfg.With(new UptimeEnricher());
 }

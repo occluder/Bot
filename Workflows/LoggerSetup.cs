@@ -21,6 +21,7 @@ public class LoggerSetup: IWorkflow
             .Filter.With<ClassNameFilter>()
             .Enrich.WithClassName()
             .Enrich.WithHeapSize()
+            .Enrich.WithUptime()
             .WriteTo.Console(outputTemplate: "[{Timestamp:yyyy.mm.dd HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}{NewLine}")
             .WriteTo.File(new CompactJsonFormatter(), "data.log", flushToDiskInterval: TimeSpan.FromMinutes(2.5), rollingInterval: RollingInterval.Month)
             .WriteTo.File("readable_data.log", flushToDiskInterval: TimeSpan.FromMinutes(2.5), rollingInterval: RollingInterval.Month)

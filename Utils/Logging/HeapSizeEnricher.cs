@@ -11,8 +11,8 @@ public class HeapSizeEnricher: ILogEventEnricher
         if (logEvent.Level > _maxEnrichmentLevel)
             return;
 
-        string memory = $"{Math.Round(GC.GetTotalMemory(false) / 1000000M, 2)} MB";
-        logEvent.AddPropertyIfAbsent(propertyFactory.CreateProperty("HeapSize", memory));
+        logEvent.AddPropertyIfAbsent(propertyFactory.CreateProperty("HeapSizeMB",
+            Math.Round(GC.GetTotalMemory(false) / 1000000M, 2)));
     }
 
     public HeapSizeEnricher(LogEventLevel maxEnrichmentLevel)
