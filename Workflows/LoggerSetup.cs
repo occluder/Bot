@@ -18,12 +18,14 @@ public class LoggerSetup: IWorkflow
     public ValueTask<WorkflowState> Run()
     {
         Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.ControlledBy(LogSwitch)
             .Filter.With<ClassNameFilter>()
             .Enrich.WithClassName()
             .Enrich.WithHeapSize()
             .Enrich.WithUptime()
-            .WriteTo.Console(outputTemplate: "[{Timestamp:yyyy.mm.dd HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}{NewLine}")
+            .WriteTo.Console(
+                outputTemplate:
+                "[{Timestamp:yyyy.mm.dd HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}{NewLine}",
+                levelSwitch: LogSwitch)
             .WriteTo.File(new CompactJsonFormatter(), "data.log", flushToDiskInterval: TimeSpan.FromMinutes(2.5), rollingInterval: RollingInterval.Month)
             .WriteTo.File("readable_data.log", flushToDiskInterval: TimeSpan.FromMinutes(2.5), rollingInterval: RollingInterval.Month)
             .WriteTo.Discord(Config.Links["Webhook"])

@@ -15,6 +15,7 @@ public class DiscordSink: ILogEventSink
     {
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
     };
+
     private readonly ILogger _logger = ForContext("ShouldLogToDiscord", false).ForContext<DiscordSink>();
     private readonly ConcurrentQueue<object> _logQueue = new();
     private readonly HttpClient _client = new();
@@ -23,7 +24,8 @@ public class DiscordSink: ILogEventSink
     private readonly LogEventLevel _propsLevel;
     private readonly Task _caller;
 
-    public DiscordSink(string webhookUrl, LogEventLevel restrictedToMinimumLevel, LogEventLevel propsRestrictedToMaximumLevel)
+    public DiscordSink(string webhookUrl, LogEventLevel restrictedToMinimumLevel,
+        LogEventLevel propsRestrictedToMaximumLevel)
     {
         _webhookUrl = webhookUrl;
         _logLevel = restrictedToMinimumLevel;
@@ -69,7 +71,7 @@ public class DiscordSink: ILogEventSink
                 new
                 {
                     title,
-                    description =  $"`{log.Exception!.GetType().Name}:` {log.RenderMessage()}",
+                    description = $"`{log.Exception!.GetType().Name}:` {log.RenderMessage()}",
                     color,
                     fields = new[]
                     {
@@ -108,14 +110,16 @@ public class DiscordSink: ILogEventSink
                     title,
                     description = log.RenderMessage(),
                     color,
-                    fields = ShouldShowProperties(log) ? new[]
-                    {
-                        new
+                    fields = ShouldShowProperties(log)
+                        ? new[]
                         {
-                            name = "Properties:",
-                            value = FormatProperties(log)
+                            new
+                            {
+                                name = "Properties:",
+                                value = FormatProperties(log)
+                            }
                         }
-                    } : null
+                        : null
                 }
             }
         };
@@ -157,17 +161,15 @@ public class DiscordSink: ILogEventSink
         _ => default
     };
 
-    private bool ShouldLogEvent(LogEvent logEvent)
-    {
-        if (logEvent.Level < _logLevel || (logEvent.Properties.ContainsKey("ShouldLogToDiscord") && !bool.Parse(logEvent.Properties["ShouldLogToDiscord"].ToString())))
-            return false;
-
-        return true;
-    }
+    private bool ShouldLogEvent(LogEvent logEvent) =>
+        logEvent.Level >= LoggerSetup.LogSwitch.MinimumLevel &&
+        (!logEvent.Properties.ContainsKey("ShouldLogToDiscord") ||
+         bool.Parse(logEvent.Properties["ShouldLogToDiscord"].ToString()));
 
     private bool ShouldShowProperties(LogEvent logEvent)
     {
-        if (logEvent.Properties.TryGetValue("ShowProperties", out LogEventPropertyValue? value) && value.ToString()[0] == 'T')
+        if (logEvent.Properties.TryGetValue("ShowProperties", out LogEventPropertyValue? value) &&
+            value.ToString()[0] == 'T')
             return true;
 
         return LoggerSetup.LogSwitch.MinimumLevel <= _propsLevel;
