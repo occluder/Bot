@@ -8,5 +8,6 @@ public class UptimeEnricher: ILogEventEnricher
     private static readonly DateTime _startTime = DateTime.Now;
 
     public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory) =>
-        logEvent.AddPropertyIfAbsent(propertyFactory.CreateProperty("Uptime", DateTime.Now - _startTime));
+        logEvent.AddPropertyIfAbsent(propertyFactory.CreateProperty("Uptime",
+            (long)(DateTime.Now - _startTime).TotalSeconds));
 }

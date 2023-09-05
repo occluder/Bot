@@ -7,6 +7,7 @@ using Serilog.Core;
 using Serilog.Enrichers.ClassName;
 using Serilog.Events;
 using Serilog.Formatting.Compact;
+using Serilog.Sinks.Grafana.Loki;
 
 namespace Bot.Workflows;
 
@@ -26,6 +27,13 @@ public class LoggerSetup: IWorkflow
             .WriteTo.File(new CompactJsonFormatter(), "data.log", flushToDiskInterval: TimeSpan.FromMinutes(2.5), rollingInterval: RollingInterval.Month)
             .WriteTo.File("readable_data.log", flushToDiskInterval: TimeSpan.FromMinutes(2.5), rollingInterval: RollingInterval.Month)
             .WriteTo.Discord(Config.Links["Webhook"])
+            .WriteTo.GrafanaLoki("http://localhost:3100", new[]
+            {
+                new LokiLabel { Key = "Application", Value = "Bot" }
+            }, new[]
+            {
+                "SourceContext", "ClassName"
+            })
             .CreateLogger();
 
         return ValueTask.FromResult(WorkflowState.Completed);
