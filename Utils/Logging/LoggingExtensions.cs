@@ -11,7 +11,7 @@ public static class LoggingExtensions
     public static LoggerConfiguration WithHeapSize(this LoggerEnrichmentConfiguration cfg, LogEventLevel maxEnrichmentLevel = LogEventLevel.Debug)
     {
         ArgumentNullException.ThrowIfNull(cfg, nameof(cfg));
-        return cfg.With(new HeapSizeEnricher(maxEnrichmentLevel));
+        return cfg.With(new HeapSizeEnricher());
     }
 
     public static LoggerConfiguration WithUptime(this LoggerEnrichmentConfiguration cfg) =>
