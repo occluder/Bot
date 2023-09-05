@@ -29,7 +29,7 @@ public class ChatUtils: BotModule
             { Length: >= 13 } unixMs when long.TryParse(unixMs, out long time) && WithinReasonableTime(time, true) =>
                 message.ReplyWith(Date(unix: time, ms: true)),
 
-            { Length: >= 28 } date when DateTimeOffset.TryParse(date, out var dateTime) => message.ReplyWith(
+            { Length: >= 19 } date when DateTimeOffset.TryParse(date, out DateTimeOffset dateTime) => message.ReplyWith(
                 dateTime.ToUnixTimeMilliseconds().ToString()),
 
             _ => default
