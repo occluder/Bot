@@ -18,6 +18,7 @@ public class LoggerSetup: IWorkflow
     public ValueTask<WorkflowState> Run()
     {
         Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Verbose()
             .Filter.With<ClassNameFilter>()
             .Enrich.WithClassName()
             .Enrich.WithHeapSize()
