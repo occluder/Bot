@@ -7,7 +7,7 @@ namespace Bot.Modules;
 
 public class SubCollector: BotModule
 {
-    private static IRedisSet<Sub> Subs => Collections.GetRedisSet<Sub>("bot:chat:sub_notices");
+    private static IRedisSet<Sub> Subs => Collections.GetRedisSet<Sub>("bot:chat:sub_notices", 100);
     private readonly BackgroundTimer _timer;
 
     public SubCollector()
