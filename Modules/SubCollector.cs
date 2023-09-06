@@ -7,7 +7,7 @@ namespace Bot.Modules;
 
 public class SubCollector: BotModule
 {
-    private static IRedisSet<Sub> Subs => Collections.GetRedisSet<Sub>("bot:chat:sub_notices", 100);
+    private static IRedisList<Sub> Subs => Collections.GetRedisList<Sub>("bot:chat:sub_list");
     private readonly BackgroundTimer _timer;
 
     public SubCollector()
@@ -30,13 +30,13 @@ public class SubCollector: BotModule
             notice.SentTimestamp.DateTime
         );
 
-        _ = await Subs.AddAsync(sub);
+        await Subs.AddAsync(sub);
         ForContext<SubCollector>().Verbose("New sub: {@SubData}", sub);
     }
 
     private async Task Commit()
     {
-        if (!base.Enabled || await Subs.GetCountAsync() == 0)
+        if (!this.Enabled || Subs.Count == 0)
             return;
 
         Sub[] subs = Subs.ToArray();
