@@ -21,8 +21,6 @@ public class LoggerSetup: IWorkflow
             .MinimumLevel.Verbose()
             .Filter.With<ClassNameFilter>()
             .Enrich.WithClassName()
-            .Enrich.WithHeapSize()
-            .Enrich.WithUptime()
             .WriteTo.Console(
                 outputTemplate:
                 "[{Timestamp:yyyy.mm.dd HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}{NewLine}",
