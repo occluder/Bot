@@ -24,7 +24,7 @@ public class RedisSetup: IWorkflow
         {
             ConnectionMultiplexer multiplexer = await ConnectionMultiplexer.ConnectAsync($"{Config.Links["Redis"]},password={Config.Secrets["RedisPass"]}");
             context = new(multiplexer, new JsonSerializer(new() { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull }));
-            RedisDatabaseAsync = multiplexer.GetDatabase(1);
+            RedisDatabaseAsync = multiplexer.GetDatabase(0);
         }
         catch (Exception)
         {
