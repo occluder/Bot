@@ -21,7 +21,8 @@ internal class Program
            .Add<PubSubSetup>()
            .Add<LoadWhiteListBlackList>()
            .Add<LoadModules>()
-           .Add<InitHandlers>();
+           .Add<InitHandlers>()
+           .Add<StartMetrics>();
 
         await foreach (WorkflowState result in runner.RunAll())
         {
