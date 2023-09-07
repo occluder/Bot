@@ -15,6 +15,7 @@ public class RedisSetup: IWorkflow
     public static ICacheProviderAsync Cache { get; private set; } = default!;
     public static ICollectionProvider Collections { get; private set; } = default!;
     public static IPubSubProviderAsync PubSub { get; private set; } = default!;
+    public static IDatabaseAsync RedisDatabaseAsync { get; private set; } = default!;
 
     public async ValueTask<WorkflowState> Run()
     {
@@ -23,6 +24,7 @@ public class RedisSetup: IWorkflow
         {
             ConnectionMultiplexer multiplexer = await ConnectionMultiplexer.ConnectAsync($"{Config.Links["Redis"]},password={Config.Secrets["RedisPass"]}");
             context = new(multiplexer, new JsonSerializer(new() { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull }));
+            RedisDatabaseAsync = multiplexer.GetDatabase(1);
         }
         catch (Exception)
         {
