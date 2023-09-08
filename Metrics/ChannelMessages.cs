@@ -35,6 +35,10 @@ public class ChannelMessages: IMetric
             await Postgres.ExecuteAsync("insert into metrics_channel_messages values (@Channel, @MessageCount)",
                 values);
         }
+        catch (Exception ex)
+        {
+            ForContext<ChannelMessages>().Error(ex, "Something went wrong {InvocationCount}", _invc);
+        }
         finally
         {
             PostgresQueryLock.Release();
