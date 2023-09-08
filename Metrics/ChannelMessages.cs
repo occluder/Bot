@@ -8,7 +8,7 @@ public class ChannelMessages: IMetric
     private readonly Dictionary<long, int> _messageCount = new();
     private uint _invc;
 
-    private ChannelMessages()
+    public ChannelMessages()
     {
         AnonClient.OnMessage += OnMessage;
         MainClient.OnMessage += OnMessage;
