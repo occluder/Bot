@@ -29,9 +29,8 @@ public class ChannelMessages: IMetric
         await PostgresQueryLock.WaitAsync();
         try
         {
-            (string Channel, int MessageCount)[] values =
-                _messageCount.Select(kvp => (ChannelsById[kvp.Key].Username, kvp.Value)).ToArray();
-
+            Point[] values = _messageCount.Select(kvp => new Point(ChannelsById[kvp.Key].Username, kvp.Value))
+                .ToArray();
             await Postgres.ExecuteAsync("insert into metrics_channel_messages values (@Channel, @MessageCount)",
                 values);
         }
@@ -47,3 +46,5 @@ public class ChannelMessages: IMetric
         _messageCount.Clear();
     }
 }
+
+file readonly record struct Point(string Channel, int MessageCount);
