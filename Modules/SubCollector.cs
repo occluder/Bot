@@ -8,14 +8,15 @@ namespace Bot.Modules;
 public class SubCollector: BotModule
 {
     private static IRedisList<Sub> Subs => Collections.GetRedisList<Sub>("bot:chat:sub_list");
+    private static readonly ILogger _logger = ForContext<SubCollector>();
     private readonly BackgroundTimer _timer;
 
     public SubCollector()
     {
-        _timer = new(TimeSpan.FromHours(1), Commit, PostgresQueryLock);
+        _timer = new(TimeSpan.FromMinutes(30), Commit, PostgresQueryLock);
     }
 
-    private async ValueTask OnSub(ISubNotice notice)
+    private static async ValueTask OnSub(ISubNotice notice)
     {
         if (!ChannelsById[notice.Channel.Id].IsLogged)
             return;
@@ -31,24 +32,26 @@ public class SubCollector: BotModule
         );
 
         await Subs.AddAsync(sub);
-        ForContext<SubCollector>().Verbose("New sub: {@SubData}", sub);
+        _logger.Verbose("New sub: {@SubData}", sub);
     }
 
     private async Task Commit()
     {
+        _logger.Verbose("Committing collected subs...");
         if (!this.Enabled || Subs.Count == 0)
             return;
 
         Sub[] subs = Subs.ToArray();
+        _logger.Debug("Attempting to insert {SubCount} subs", subs.Length);
         try
         {
             int inserted = await Postgres.ExecuteAsync("insert into collected_subs values (@FromUser, @FromUserId, @ToChannel, @ToChannelId, @CumulativeMonths, @Tier, @TimeSent)", subs);
-            ForContext<SubCollector>().Debug("{InsertedCount} subs inserted", inserted);
+            _logger.Debug("{InsertedCount} subs inserted", inserted);
             await Subs.ClearAsync();
         }
         catch (Exception ex)
         {
-            ForContext<SubCollector>().Error(ex, "Failed to insert sub logs");
+            _logger.Error(ex, "Failed to insert sub logs");
         }
     }
 
