@@ -45,15 +45,8 @@ public class SubCollector: BotModule
             return;
 
         List<Sub> subs = new((int)length);
-        for (long i = 0; i < length;)
-        {
-            long stopIndex = length - i < 1000 ? length - i : i + 1000;
-            subs.AddRange(from value in await RedisDatabaseAsync.ListRangeAsync(KEY, i, stopIndex)
-                select JsonSerializer.Deserialize<Sub>(value.ToString()));
-
-            if (i + 1000 < length) i += 1000;
-            else i += length - i;
-        }
+        subs.AddRange(from value in await RedisDatabaseAsync.ListRangeAsync(KEY)
+            select JsonSerializer.Deserialize<Sub>(value.ToString()));
 
         _logger.Debug("Attempting to insert {SubCount} subs", subs.Count);
         try
