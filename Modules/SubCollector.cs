@@ -1,4 +1,5 @@
-﻿using Bot.Models;
+﻿using System.Text.Json;
+using Bot.Models;
 using Bot.Utils;
 using CachingFramework.Redis.Contracts.RedisObjects;
 using MiniTwitch.Irc.Interfaces;
@@ -7,7 +8,8 @@ namespace Bot.Modules;
 
 public class SubCollector: BotModule
 {
-    private static IRedisList<Sub> Subs => Collections.GetRedisList<Sub>("bot:chat:sub_list");
+    private const string KEY = "bot:chat:sub_list";
+    private static IRedisList<Sub> Subs => Collections.GetRedisList<Sub>(KEY);
     private static readonly ILogger _logger = ForContext<SubCollector>();
     private readonly BackgroundTimer _timer;
 
@@ -38,14 +40,28 @@ public class SubCollector: BotModule
     private async Task Commit()
     {
         _logger.Verbose("Committing collected subs...");
-        if (!this.Enabled || Subs.Count == 0)
+        long length = await RedisDatabaseAsync.ListLengthAsync(KEY);
+        if (!this.Enabled || length == 0)
             return;
 
-        Sub[] subs = Subs.ToArray();
-        _logger.Debug("Attempting to insert {SubCount} subs", subs.Length);
+        List<Sub> subs = new((int)length);
+        for (long i = 0; i < length;)
+        {
+            long stopIndex = length - i < 1000 ? length - i : i + 1000;
+            subs.AddRange(from value in await RedisDatabaseAsync.ListRangeAsync(KEY, i, stopIndex)
+                select JsonSerializer.Deserialize<Sub>(value.ToString()));
+
+            if (i + 1000 < length) i += 1000;
+            else i += length - i;
+        }
+
+        _logger.Debug("Attempting to insert {SubCount} subs", subs.Count);
         try
         {
-            int inserted = await Postgres.ExecuteAsync("insert into collected_subs values (@FromUser, @FromUserId, @ToChannel, @ToChannelId, @CumulativeMonths, @Tier, @TimeSent)", subs);
+            int inserted = await Postgres.ExecuteAsync(
+                "insert into collected_subs values (@FromUser, @FromUserId, @ToChannel, @ToChannelId, @CumulativeMonths, @Tier, @TimeSent)",
+                subs);
+
             _logger.Debug("{InsertedCount} subs inserted", inserted);
             await Subs.ClearAsync();
         }
