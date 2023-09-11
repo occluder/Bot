@@ -1,9 +1,9 @@
-﻿using Bot.Interfaces;
-using MiniTwitch.Irc.Models;
+﻿using MiniTwitch.Irc.Models;
 
 namespace Bot.Metrics;
 
-public class ChannelMessages: IMetric
+// Uncomment interface to enable
+public class ChannelMessages //: IMetric
 {
     private readonly Dictionary<long, int> _messageCount = new();
     private uint _invc;
