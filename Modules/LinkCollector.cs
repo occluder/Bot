@@ -15,7 +15,7 @@ internal class LinkCollector: BotModule
     private static readonly SemaphoreSlim _ss = new(1);
     private static readonly HashSet<string> _bots = new()
     {
-        "streamelements", "streamlabs", "scriptorex", "apulxd", "rewardmore", "iogging", "ttdb", "supibot", "nightbot"
+        "streamelements", "streamlabs", "scriptorex", "apulxd", "rewardmore", "iogging", "ttdb"
     };
     private readonly BackgroundTimer _timer;
 
@@ -79,14 +79,10 @@ internal class LinkCollector: BotModule
             return false;
 
         ReadOnlySpan<char> nameSpan = name;
-        if (nameSpan.EndsWith(bot, StringComparison.CurrentCultureIgnoreCase))
-        {
-            if (_bots.Add(bot))
-                _logger.Verbose("New bot detected: {BotUsername}", name);
-            return true;
-        }
-
-        return false;
+        if (!nameSpan.Contains(bot, StringComparison.CurrentCultureIgnoreCase)) return false;
+        if (_bots.Add(bot))
+            _logger.Verbose("New bot detected: {BotUsername}", name);
+        return true;
     }
 
     protected override ValueTask OnModuleEnabled()
