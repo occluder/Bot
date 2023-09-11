@@ -7,15 +7,15 @@ public class ChatUtils: BotModule
 {
     private static ValueTask OnMessage(Privmsg message)
     {
-        if (message.Channel.Id is not 11148817 and not 780092850)
-            return default;
-
         string[] args = message.Content.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         if (args.Length > 1)
             return default;
 
         return args[0] switch
         {
+            "aest" => message.ReplyWith(Date(10)),
+            "acst" => message.ReplyWith(Date(9.5)),
+            "awst" => message.ReplyWith(Date(8)),
             "eest" or "ast" => message.ReplyWith(Date(3)),
             "cest" or "eet" => message.ReplyWith(Date(2)),
             "cet" => message.ReplyWith(Date(1)),
