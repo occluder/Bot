@@ -38,6 +38,7 @@ public class ModuleHandler
         catch (Exception ex)
         {
             _logger.Error(ex, "Failed to enable module {ModuleName}", name);
+            return false;
         }
 
         return true;
@@ -63,6 +64,7 @@ public class ModuleHandler
         catch (Exception ex)
         {
             _logger.Error(ex, "Failed to disable module {ModuleName}", name);
+            return false;
         }
 
         return true;
