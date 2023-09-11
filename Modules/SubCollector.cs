@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using Bot.Models;
+﻿using Bot.Models;
 using Bot.Utils;
 using CachingFramework.Redis.Contracts.RedisObjects;
 using MiniTwitch.Irc.Interfaces;
@@ -15,7 +14,7 @@ public class SubCollector: BotModule
 
     public SubCollector()
     {
-        _timer = new(TimeSpan.FromMinutes(30), Commit, PostgresQueryLock);
+        _timer = new(TimeSpan.FromMinutes(60), Commit, PostgresQueryLock);
     }
 
     private static async ValueTask OnSub(ISubNotice notice)
@@ -44,11 +43,8 @@ public class SubCollector: BotModule
         if (!this.Enabled || length == 0)
             return;
 
-        List<Sub> subs = new((int)length);
-        subs.AddRange(from value in await RedisDatabaseAsync.ListRangeAsync(KEY)
-            select JsonSerializer.Deserialize<Sub>(value.ToString()));
-
-        _logger.Debug("Attempting to insert {SubCount} subs", subs.Count);
+        Sub[] subs = (await Collections.GetRedisList<Sub>(KEY).GetRangeAsync()).ToArray();
+        _logger.Debug("Attempting to insert {SubCount} subs", subs.Length);
         try
         {
             int inserted = await Postgres.ExecuteAsync(
