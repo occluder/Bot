@@ -10,7 +10,8 @@ internal class BitCollection: BotModule
         if (message.Bits == 0 || !ChannelsById[message.Channel.Id].IsLogged)
             return;
 
-        ForContext<HypeChatCollector>().Verbose("@{User} sent {Amount} bits to #{Channel}!", message.Author.Name, message.Bits, message.Channel.Name);
+        ForContext<BitCollection>().Verbose("@{User} sent {Amount} bits to #{Channel}!", message.Author.Name,
+            message.Bits, message.Channel.Name);
         await PostgresQueryLock.WaitAsync();
         try
         {
