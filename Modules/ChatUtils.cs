@@ -29,11 +29,11 @@ public class ChatUtils: BotModule
                 "pt" or "pdt" => message.ReplyWith(Date(-7)),
                 "pst" => message.ReplyWith(Date(-8)),
                 "unix" => message.ReplyWith(DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString()),
-                { Length: >= 10 and < 13 } unix when long.TryParse(unix, out long time) && WithinReasonableTime(time) =>
+                { Length: 10 } unix when long.TryParse(unix, out long time) && WithinReasonableTime(time) =>
                     message.ReplyWith(Date(unix: time)),
 
-                { Length: >= 13 } unixMs when long.TryParse(unixMs, out long time) && WithinReasonableTime(time, true)
-                    => message.ReplyWith(Date(unix: time, ms: true)),
+                { Length: 13 } unixMs when long.TryParse(unixMs, out long time) && WithinReasonableTime(time, true) =>
+                    message.ReplyWith(Date(unix: time, ms: true)),
 
                 { Length: >= 19 } date when DateTimeOffset.TryParse(date, out DateTimeOffset dateTime) => message
                     .ReplyWith(
