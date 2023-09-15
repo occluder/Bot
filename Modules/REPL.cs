@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using Bot.Models;
+using Bot.Services;
 using MiniTwitch.Irc.Models;
 
 namespace Bot.Modules;
@@ -164,34 +165,16 @@ internal partial class REPL: BotModule
 
     private async Task<string?> UploadToHaste(string data)
     {
-        string link = Config.Links["Haste"];
-        StringContent content = new(data, Encoding.UTF8);
-        HttpResponseMessage response = await _requests.PostAsync(link, content);
-        ForContext<REPL>().Debug("[{Result}] POST {Link}", response.StatusCode, link);
-        if (!response.IsSuccessStatusCode)
-            return null;
-
-        Dictionary<string, string>? result;
-        try
-        {
-            result = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
-        }
-        catch (Exception ex)
+        OneOf<string, Exception> response = await TextUploadService.UploadToHaste(data);
+        return response.Match(success => success,
+            failure =>
         {
             ForContext<REPL>()
                 .ForContext("Data", data)
-                .ForContext("HasteLink", link)
-                .Error(ex, "Failed to upload data to haste");
+                .Error(failure, "Failed to upload data to haste");
 
-            return null;
-        }
-
-        if (result?["key"] is string key)
-        {
-            return $"https://haste.occluder.space/{key}";
-        }
-
-        return null;
+            return null!;
+        });
     }
 
     [GeneratedRegex("^[cC]#[!?]v? ")]
