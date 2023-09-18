@@ -17,9 +17,11 @@ public class FollowersCollector: BotModule
     private async ValueTask OnFollow(ChannelId channelId, Follower follower)
     {
         _batch.Add((channelId, follower));
+        _logger.Verbose("{@Data}", follower);
 
         if (_batch.Count < MAX_BATCH_SIZE) return;
         await Followers.AddRangeAsync(_batch);
+        _logger.Debug("{FollowerCount} followers added to Redis", _batch.Count);
         _batch.Clear();
 
         if (Followers.Count < MAX_REDIS_LIST_SIZE) return;
