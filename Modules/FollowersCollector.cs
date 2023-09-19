@@ -26,7 +26,8 @@ public class FollowersCollector: BotModule
         try
         {
             int inserted = await Postgres.ExecuteAsync(
-                "insert into collected_users values (@Username, @UserId, @ChannelName, @TimeFollowed)", redisFollowers);
+                "insert into collected_users values (@Username, @UserId, @ChannelName, @TimeFollowed) " +
+                "on conflict on constraint unique_username do nothing", redisFollowers);
 
             _logger.Debug("Inserted {UserCount} followers into {TableName}", inserted, "collected_users");
             await Followers.ClearAsync();
