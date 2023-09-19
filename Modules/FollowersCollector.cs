@@ -7,31 +7,26 @@ namespace Bot.Modules;
 
 public class FollowersCollector: BotModule
 {
-    private const int MAX_BATCH_SIZE = 25;
-    private const int MAX_REDIS_LIST_SIZE = MAX_BATCH_SIZE * 100;
+    private const int MAX_REDIS_LIST_SIZE = 25;
 
     private static IRedisList<FollowData> Followers => Collections.GetRedisList<FollowData>("bot:chat:follow_list");
     private static readonly ILogger _logger = ForContext<FollowersCollector>();
-    private readonly List<FollowData> _batch = new(MAX_BATCH_SIZE);
+    private int _inserted;
 
     private async ValueTask OnFollow(ChannelId channelId, Follower follower)
     {
-        _batch.Add((channelId, follower));
-        _logger.Verbose("{@Data}", follower);
+        _logger.Verbose("New follower: {@Data}", follower);
+        await Followers.AddAsync((channelId, follower));
+        _inserted++;
 
-        if (_batch.Count < MAX_BATCH_SIZE) return;
-        await Followers.AddRangeAsync(_batch);
-        _logger.Debug("{FollowerCount} followers added to Redis", _batch.Count);
-        _batch.Clear();
-
-        if (Followers.Count < MAX_REDIS_LIST_SIZE) return;
+        if (_inserted % 10 == 0 && Followers.Count < MAX_REDIS_LIST_SIZE) return;
         FollowData[] redisFollowers = (await Followers.GetRangeAsync()).ToArray();
+        _logger.Verbose("Attempting to insert {FollowerCount} followers", redisFollowers.Length);
         await PostgresQueryLock.WaitAsync();
         try
         {
             int inserted = await Postgres.ExecuteAsync(
-                "insert into collected_users" +
-                " values (@Username, @UserId, @ChannelName, @TimeFollowed)", redisFollowers);
+                "insert into collected_users values (@Username, @UserId, @ChannelName, @TimeFollowed)", redisFollowers);
 
             _logger.Debug("Inserted {UserCount} followers into {TableName}", inserted, "collected_users");
             await Followers.ClearAsync();
