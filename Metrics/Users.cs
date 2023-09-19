@@ -14,7 +14,9 @@ public class Users: IMetric
         await PostgresQueryLock.WaitAsync();
         try
         {
-            int userCount = (int)await Postgres.QuerySingleAsync("select COUNT(*) from collected_users");
+            int userCount = (await Postgres.QuerySingleAsync<Dictionary<string, int>>(
+                "select COUNT(*) from collected_users")).Single().Value;
+
             await RedisDatabaseAsync.StringSetAsync(KEY, userCount, TimeSpan.FromHours(6));
         }
         catch (Exception ex)
