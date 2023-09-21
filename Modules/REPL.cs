@@ -165,7 +165,17 @@ internal partial class REPL: BotModule
 
     private async Task<string?> UploadToHaste(string data)
     {
-        OneOf<string, Exception> response = await TextUploadService.UploadToHaste(data);
+        string? beautifiedJson;
+        try
+        {
+            beautifiedJson = JsonSerializer.Serialize(JsonDocument.Parse(data), _jsop);
+        }
+        catch
+        {
+            beautifiedJson = null;
+        }
+
+        OneOf<string, Exception> response = await TextUploadService.UploadToHaste(beautifiedJson ?? data);
         return response.Match(success => success,
             failure =>
         {
