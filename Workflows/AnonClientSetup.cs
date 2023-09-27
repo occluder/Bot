@@ -2,6 +2,7 @@
 using Bot.Enums;
 using Bot.Interfaces;
 using Microsoft.Extensions.Logging;
+using MiniTwitch.Common.Extensions;
 using MiniTwitch.Irc;
 
 namespace Bot.Workflows;
@@ -19,6 +20,13 @@ internal class AnonClientSetup: IWorkflow
             options.Logger = new LoggerFactory().AddSerilog(ForContext("IsSubLogger", true).ForContext("Client", "Anon")).CreateLogger<IrcClient>();
         });
 
+        AnonClient.ExceptionHandler = exception =>
+        {
+            if (exception.GetType() == typeof(KeyNotFoundException))
+                AnonClient.ReconnectAsync().StepOver();
+            else
+                ForContext<AnonClientSetup>().Error(exception, "Exception in anonymous client");
+        };
         bool connected = await AnonClient.ConnectAsync();
         if (!connected)
         {
