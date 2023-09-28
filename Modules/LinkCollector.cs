@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using Bot.Models;
 using Bot.Utils;
+using CachingFramework.Redis.Contracts.RedisObjects;
 using MiniTwitch.Irc.Models;
 
 namespace Bot.Modules;
@@ -13,22 +14,24 @@ internal class LinkCollector: BotModule
     private static readonly ILogger _logger = ForContext<LinkCollector>();
     private static readonly List<LinkData> _links = new(MAX_LINKS);
     private static readonly SemaphoreSlim _ss = new(1);
-    private static readonly HashSet<string> _bots = new()
-    {
-        "streamelements", "streamlabs", "scriptorex", "apulxd", "rewardmore", "iogging", "ttdb"
-    };
+    private static readonly IRedisSet<long> _redisBotList = Collections.GetRedisSet<long>("bot:chat:bot_list");
+    private readonly HashSet<long> _bots;
     private readonly BackgroundTimer _timer;
 
     public LinkCollector()
     {
         _timer = new(TimeSpan.FromMinutes(5), Commit, PostgresQueryLock);
+        _bots = _redisBotList.ToHashSet();
     }
 
     private async ValueTask OnMessage(Privmsg arg)
     {
         try
         {
-            if (!ChannelsById[arg.Channel.Id].IsLogged || arg.Content.Length < 10 || _bots.Contains(arg.Author.Name) || IsBot(arg.Author.Name, arg.Nonce))
+            if (!ChannelsById[arg.Channel.Id].IsLogged
+                || arg.Content.Length < 10
+                || _bots.Contains(arg.Author.Id)
+                || IsBot(arg.Author, arg.Nonce))
                 return;
 
             if (_regex.Match(arg.Content) is { Success: true, Length: > 10 } match && match.Value[0] == 'h')
@@ -68,20 +71,18 @@ internal class LinkCollector: BotModule
         finally
         {
             _ = _ss.Release();
+            await _redisBotList.AddRangeAsync(_bots);
         }
     }
 
-    private static bool IsBot(string name, string nonce)
+    private bool IsBot(MessageAuthor author, string nonce)
     {
-        const string bot = "bot";
-
         if (nonce.Length > 0)
             return false;
 
-        ReadOnlySpan<char> nameSpan = name;
-        if (!nameSpan.Contains(bot, StringComparison.CurrentCultureIgnoreCase)) return false;
-        if (_bots.Add(name))
-            _logger.Verbose("New bot detected: {BotUsername}", name);
+        ReadOnlySpan<char> nameSpan = author.Name;
+        if (!nameSpan.Contains("bot", StringComparison.OrdinalIgnoreCase)) return false;
+        if (_bots.Add(author.Id)) _logger.Verbose("New bot detected: {BotUsername}", author.Name);
         return true;
     }
 
