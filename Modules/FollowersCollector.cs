@@ -19,7 +19,7 @@ public class FollowersCollector: BotModule
         await Followers.AddAsync((channelId, follower));
         _inserted++;
 
-        if (_inserted % 10 == 0 && Followers.Count < MAX_REDIS_LIST_SIZE) return;
+        if (_inserted % 50 == 0 && Followers.Count < MAX_REDIS_LIST_SIZE) return;
         FollowData[] redisFollowers = (await Followers.GetRangeAsync()).ToArray();
         _logger.Verbose("Attempting to insert {FollowerCount} followers", redisFollowers.Length);
         await PostgresQueryLock.WaitAsync();
