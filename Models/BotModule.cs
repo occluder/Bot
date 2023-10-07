@@ -21,7 +21,7 @@ public abstract class BotModule
 
         await OnModuleDisabled();
         this.Enabled = false;
-        await Settings.EnableModule(this.Name);
+        await Settings.DisableModule(this.Name);
     }
 
     protected virtual ValueTask OnModuleEnabled() => default;
