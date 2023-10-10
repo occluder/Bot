@@ -1,4 +1,6 @@
 ﻿using Bot.Models;
+using Bot.Services;
+using MiniTwitch.Helix.Models;
 using MiniTwitch.PubSub.Interfaces;
 using MiniTwitch.PubSub.Models;
 
@@ -40,8 +42,15 @@ internal class StreamMonitor: BotModule
             _logger.Warning("Failed to listen to {TopicKey}: {Error}", r.TopicKey, r.Error);
 
         _logger.Information("{Channel} went live {@StreamData}", ChannelsById[channelId].DisplayName, _);
+        string? streamInfo = null;
+        if (await HelixApi.Client.GetChannelInformation(channelId) is { Success: true } result)
+        {
+            Responses.GetChannelInformation.Datum datum = result.Value.Data[0];
+            streamInfo = $"{datum.Title} [{datum.GameName}]";
+        }
+        
         await MainClient.SendMessage(Config.RelayChannel,
-            $"ppBounce @{ChannelsById[channelId].DisplayName} went live!", true);
+            $"ppBounce @{ChannelsById[channelId].DisplayName} went live! {streamInfo}", true);
     }
 
     private static async ValueTask OnViewerCountUpdate(ChannelId channelId, IViewerCountUpdate _)

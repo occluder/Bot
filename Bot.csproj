@@ -27,6 +27,13 @@
 
     <ItemGroup>
         <Content Include="Config.json" CopyToOutputDirectory="PreserveNewest" />
+        <Content Include="MiniTwitch.Helix.dll" CopyToOutputDirectory="PreserveNewest"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Reference Include="MiniTwitch.Helix">
+            <HintPath>MiniTwitch.Helix.dll</HintPath>
+        </Reference>
     </ItemGroup>
 
 </Project>
