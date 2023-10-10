@@ -20,6 +20,7 @@ internal class Program
            .Add<ChannelsSetup>()
            .Add<PubSubSetup>()
            .Add<LoadWhiteListBlackList>()
+           .Add<CreateHelixClient>()
            .Add<LoadModules>()
            .Add<InitHandlers>()
            .Add<StartMetrics>();

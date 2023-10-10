@@ -48,7 +48,7 @@ internal class StreamMonitor: BotModule
             Responses.GetChannelInformation.Datum datum = result.Value.Data[0];
             streamInfo = $"{datum.Title} [{datum.GameName}]";
         }
-        
+
         await MainClient.SendMessage(Config.RelayChannel,
             $"ppBounce @{ChannelsById[channelId].DisplayName} went live! {streamInfo}", true);
     }
