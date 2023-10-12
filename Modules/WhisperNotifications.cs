@@ -18,6 +18,8 @@ internal class WhisperNotifications: BotModule
             options.OAuth = Config.Secrets["ParentToken"];
             options.ReconnectionDelay = TimeSpan.FromMinutes(5);
         });
+
+        _whisperClient.DefaultLogger.Enabled = false;
     }
 
     private async ValueTask OnWhisperReceived(Whisper whisper)
