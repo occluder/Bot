@@ -55,11 +55,11 @@ internal class Program
                 ClassNameFilter.ClassName = args[1];
                 Console.WriteLine($"ClassNameFilter set to {args[1]}");
             }
-            else if (input == "l!unfilter")
-            {
-                ClassNameFilter.ClassName = null;
-                Console.WriteLine("Removed all filters");
-            }
+            // else if (input == "l!unfilter")
+            // {
+            //     ClassNameFilter.ClassName = null;
+            //     Console.WriteLine("Removed all filters");
+            // }
         }
     }
 }
