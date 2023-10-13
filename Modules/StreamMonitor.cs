@@ -1,5 +1,6 @@
 ﻿using Bot.Models;
 using Bot.Services;
+using MiniTwitch.Helix.Enums;
 using MiniTwitch.Helix.Models;
 using MiniTwitch.PubSub.Interfaces;
 using MiniTwitch.PubSub.Models;
@@ -41,7 +42,7 @@ internal class StreamMonitor: BotModule
         else
             _logger.Warning("Failed to listen to {TopicKey}: {Error}", r.TopicKey, r.Error);
 
-        _logger.Information("{Channel} went live {@StreamData}", ChannelsById[channelId].DisplayName, _);
+        _logger.Information("{Channel} went live", ChannelsById[channelId].DisplayName);
         string? streamInfo = null;
         if (await HelixApi.Client.GetChannelInformation(channelId) is { Success: true } result)
         {
@@ -49,8 +50,10 @@ internal class StreamMonitor: BotModule
             streamInfo = $"{datum.Title} [{datum.GameName}]";
         }
 
+        HelixResult cResult = await HelixApi.Client.UpdateUserChatColor(Config.Ids["BotId"], ChatColor.green);
         await MainClient.SendMessage(Config.RelayChannel,
-            $"ppBounce @{ChannelsById[channelId].DisplayName} went live! {streamInfo}", true);
+            $"ppBounce @{ChannelsById[channelId].DisplayName} went live! {streamInfo}",
+            cResult.Success);
     }
 
     private static async ValueTask OnViewerCountUpdate(ChannelId channelId, IViewerCountUpdate _)
@@ -66,7 +69,7 @@ internal class StreamMonitor: BotModule
             else
                 _logger.Warning("Failed to listen to {TopicKey}: {Error}", r.TopicKey, r.Error);
 
-            _logger.Debug("{Channel} is already live: {@StreamData}", ChannelsById[channelId].DisplayName, _);
+            _logger.Debug("{Channel} is already live", ChannelsById[channelId].DisplayName);
             _streams[channelId] = true;
         }
     }
@@ -81,21 +84,27 @@ internal class StreamMonitor: BotModule
         else
             _logger.Warning("Failed to unlisten to {TopicKey}: {Error}", r.TopicKey, r.Error);
 
-        _logger.Information("{Channel} went offline! {@StreamData}", ChannelsById[channelId].DisplayName, _);
+        _logger.Information("{Channel} went offline!", ChannelsById[channelId].DisplayName);
+        HelixResult result = await HelixApi.Client.UpdateUserChatColor(Config.Ids["BotId"], ChatColor.orange_red);
         await MainClient.SendMessage(Config.RelayChannel,
-            $"Sleepo @{ChannelsById[channelId].DisplayName} is now offline!");
+            $"Sleepo @{ChannelsById[channelId].DisplayName} is now offline!",
+            result.Success);
     }
 
-    private ValueTask OnGameChange(ChannelId channelId, IGameChange update)
+    private static async ValueTask OnGameChange(ChannelId channelId, IGameChange update)
     {
-        return MainClient.SendMessage(Config.RelayChannel,
-            $"ApuSkate @{ChannelsById[channelId].DisplayName} changed game: {update.OldGame} ➡ {update.NewGame}");
+        HelixResult result = await HelixApi.Client.UpdateUserChatColor(Config.Ids["BotId"], ChatColor.dodger_blue);
+        await MainClient.SendMessage(Config.RelayChannel,
+            $"ApuSkate @{ChannelsById[channelId].DisplayName} changed game: {update.OldGame} ➡ {update.NewGame}",
+            result.Success);
     }
 
-    private ValueTask OnTitleChange(ChannelId channelId, ITitleChange update)
+    private static async ValueTask OnTitleChange(ChannelId channelId, ITitleChange update)
     {
-        return MainClient.SendMessage(Config.RelayChannel,
-            $"FeelsDankMan ✏ @{ChannelsById[channelId].DisplayName} changed title: {update.OldTitle} ➡ {update.NewTitle}");
+        HelixResult result = await HelixApi.Client.UpdateUserChatColor(Config.Ids["BotId"], ChatColor.dodger_blue);
+        await MainClient.SendMessage(Config.RelayChannel,
+            $"ApuSkate @{ChannelsById[channelId].DisplayName} changed title: {update.OldTitle} ➡ {update.NewTitle}",
+            result.Success);
     }
 
     private static IEnumerable<long> GetMonitoredChannelIds() =>
@@ -103,9 +112,7 @@ internal class StreamMonitor: BotModule
 
     protected override async ValueTask OnModuleEnabled()
     {
-        foreach (long channelId in GetMonitoredChannelIds())
-            _ = await TwitchPubSub.ListenTo(Topics.VideoPlayback(channelId));
-
+        _ = await TwitchPubSub.ListenTo(GetMonitoredChannelIds().Select(x => Topics.VideoPlayback(x)));
         TwitchPubSub.OnStreamUp += OnStreamUp;
         TwitchPubSub.OnViewerCountUpdate += OnViewerCountUpdate;
         TwitchPubSub.OnStreamDown += OnStreamDown;
@@ -115,11 +122,9 @@ internal class StreamMonitor: BotModule
 
     protected override async ValueTask OnModuleDisabled()
     {
-        foreach (long channelId in GetMonitoredChannelIds())
-        {
-            _ = await TwitchPubSub.UnlistenTo(Topics.VideoPlayback(channelId));
-            _ = await TwitchPubSub.UnlistenTo(Topics.BroadcastSettingsUpdate(channelId));
-        }
+        _ = await TwitchPubSub.UnlistenTo(TwitchPubSub.ActiveTopics.Where(x =>
+            x.Key.StartsWith("video-playback-by-id.") || x.Key.StartsWith("broadcast-settings-update."))
+        );
 
         TwitchPubSub.OnStreamUp -= OnStreamUp;
         TwitchPubSub.OnViewerCountUpdate -= OnViewerCountUpdate;
