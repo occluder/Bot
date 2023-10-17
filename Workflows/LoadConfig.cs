@@ -1,5 +1,4 @@
-﻿global using static Bot.Workflows.LoadConfig;
-using Bot.Enums;
+﻿using Bot.Enums;
 using Bot.Interfaces;
 using Bot.Models;
 using Microsoft.Extensions.Configuration;

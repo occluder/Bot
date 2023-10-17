@@ -1,5 +1,4 @@
-﻿global using static Bot.Workflows.LoadModules;
-using Bot.Enums;
+﻿using Bot.Enums;
 using Bot.Handlers;
 using Bot.Interfaces;
 using Bot.Models;

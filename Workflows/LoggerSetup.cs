@@ -1,6 +1,4 @@
-﻿global using Serilog;
-global using static Serilog.Log;
-using Bot.Enums;
+﻿using Bot.Enums;
 using Bot.Interfaces;
 using Bot.Utils.Logging;
 using Serilog.Core;

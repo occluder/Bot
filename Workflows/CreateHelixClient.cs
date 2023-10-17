@@ -10,7 +10,7 @@ public class CreateHelixClient: IWorkflow
 {
     public ValueTask<WorkflowState> Run()
     {
-        HelixApi.Client = new HelixClient(
+        Helix.HelixClient = new HelixClient(
             Config.Secrets["BotToken"],
             Config.Secrets["BotClientId"],
             new LoggerFactory().AddSerilog(Logger).CreateLogger<HelixClient>());

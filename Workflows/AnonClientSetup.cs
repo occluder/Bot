@@ -1,5 +1,4 @@
-﻿global using static Bot.Workflows.AnonClientSetup;
-using Bot.Enums;
+﻿using Bot.Enums;
 using Bot.Interfaces;
 using Microsoft.Extensions.Logging;
 using MiniTwitch.Common.Extensions;

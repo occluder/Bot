@@ -1,5 +1,4 @@
-﻿global using static Bot.Workflows.ChannelsSetup;
-using Bot.Enums;
+﻿using Bot.Enums;
 using Bot.Interfaces;
 using Bot.Models;
 using Serilog.Events;

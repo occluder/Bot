@@ -1,5 +1,4 @@
 ﻿using Bot.Models;
-using Bot.Services;
 using MiniTwitch.Helix.Enums;
 using MiniTwitch.Helix.Models;
 using MiniTwitch.PubSub.Interfaces;
@@ -13,14 +12,6 @@ internal class StreamMonitor: BotModule
     private static readonly Dictionary<long, DateTime> _offlineAt = new();
     private static readonly ILogger _logger = ForContext<StreamMonitor>();
 
-    public static bool IsLive(long channelId)
-    {
-        if (_streams.TryGetValue(channelId, out bool live) && live)
-            return true;
-
-        return false;
-    }
-
     public StreamMonitor()
     {
         foreach (long channelId in GetMonitoredChannelIds())
@@ -28,6 +19,14 @@ internal class StreamMonitor: BotModule
             _streams.Add(channelId, false);
             _offlineAt.Add(channelId, DateTime.MinValue);
         }
+    }
+
+    public static bool IsLive(long channelId)
+    {
+        if (_streams.TryGetValue(channelId, out bool live) && live)
+            return true;
+
+        return false;
     }
 
     private static async ValueTask OnStreamUp(ChannelId channelId, IStreamUp _)
@@ -44,13 +43,13 @@ internal class StreamMonitor: BotModule
 
         _logger.Information("{Channel} went live", ChannelsById[channelId].DisplayName);
         string? streamInfo = null;
-        if (await HelixApi.Client.GetChannelInformation(channelId) is { Success: true } result)
+        if (await HelixClient.GetChannelInformation(channelId) is { Success: true } result)
         {
             Responses.GetChannelInformation.Datum datum = result.Value.Data[0];
             streamInfo = $"{datum.Title} [{datum.GameName}]";
         }
 
-        HelixResult cResult = await HelixApi.Client.UpdateUserChatColor(Config.Ids["BotId"], ChatColor.green);
+        HelixResult cResult = await HelixClient.UpdateUserChatColor(Config.Ids["BotId"], ChatColor.green);
         await MainClient.SendMessage(Config.RelayChannel,
             $"ppBounce @{ChannelsById[channelId].DisplayName} went live! {streamInfo}",
             cResult.Success);
@@ -85,7 +84,7 @@ internal class StreamMonitor: BotModule
             _logger.Warning("Failed to unlisten to {TopicKey}: {Error}", r.TopicKey, r.Error);
 
         _logger.Information("{Channel} went offline!", ChannelsById[channelId].DisplayName);
-        HelixResult result = await HelixApi.Client.UpdateUserChatColor(Config.Ids["BotId"], ChatColor.orange_red);
+        HelixResult result = await HelixClient.UpdateUserChatColor(Config.Ids["BotId"], ChatColor.orange_red);
         await MainClient.SendMessage(Config.RelayChannel,
             $"Sleepo @{ChannelsById[channelId].DisplayName} is now offline!",
             result.Success);
@@ -93,7 +92,7 @@ internal class StreamMonitor: BotModule
 
     private static async ValueTask OnGameChange(ChannelId channelId, IGameChange update)
     {
-        HelixResult result = await HelixApi.Client.UpdateUserChatColor(Config.Ids["BotId"], ChatColor.dodger_blue);
+        HelixResult result = await HelixClient.UpdateUserChatColor(Config.Ids["BotId"], ChatColor.dodger_blue);
         await MainClient.SendMessage(Config.RelayChannel,
             $"ApuSkate @{ChannelsById[channelId].DisplayName} changed game: {update.OldGame} ➡ {update.NewGame}",
             result.Success);
@@ -101,7 +100,7 @@ internal class StreamMonitor: BotModule
 
     private static async ValueTask OnTitleChange(ChannelId channelId, ITitleChange update)
     {
-        HelixResult result = await HelixApi.Client.UpdateUserChatColor(Config.Ids["BotId"], ChatColor.dodger_blue);
+        HelixResult result = await HelixClient.UpdateUserChatColor(Config.Ids["BotId"], ChatColor.dodger_blue);
         await MainClient.SendMessage(Config.RelayChannel,
             $"ApuSkate @{ChannelsById[channelId].DisplayName} changed title: {update.OldTitle} ➡ {update.NewTitle}",
             result.Success);

@@ -1,5 +1,4 @@
-﻿global using static Bot.Workflows.LoadWhiteListBlackList;
-using Bot.Enums;
+﻿using Bot.Enums;
 using Bot.Interfaces;
 using Bot.Models;
 
