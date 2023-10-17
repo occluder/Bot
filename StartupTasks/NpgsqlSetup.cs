@@ -4,14 +4,14 @@ using Bot.Interfaces;
 using Bot.Utils;
 using Npgsql;
 
-namespace Bot.Workflows;
+namespace Bot.StartupTasks;
 
-public class NpgsqlSetup: IWorkflow
+public class NpgsqlSetup: IStartupTask
 {
     public static IDbConnection Postgres { get; private set; } = default!;
     public static SemaphoreSlim PostgresQueryLock { get; } = new(1);
 
-    public async ValueTask<WorkflowState> Run()
+    public async ValueTask<StartupTaskState> Run()
     {
         DefaultTypeMap.MatchNamesWithUnderscores = true;
         try
@@ -23,12 +23,12 @@ public class NpgsqlSetup: IWorkflow
         catch (Exception ex)
         {
             ForContext<NpgsqlSetup>().Fatal(ex, "[{ClassName}] Failed to setup Npgsql");
-            return WorkflowState.Failed;
+            return StartupTaskState.Failed;
         }
 
         ForContext("Version", typeof(NpgsqlConnection).GetAssemblyVersion()).ForContext("ShowProperties", true)
             .Information("Connected to Postgres database");
 
-        return WorkflowState.Completed;
+        return StartupTaskState.Completed;
     }
 }

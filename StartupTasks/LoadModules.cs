@@ -3,13 +3,13 @@ using Bot.Handlers;
 using Bot.Interfaces;
 using Bot.Models;
 
-namespace Bot.Workflows;
+namespace Bot.StartupTasks;
 
-internal class LoadModules: IWorkflow
+internal class LoadModules: IStartupTask
 {
     public static ModuleHandler Module { get; private set; } = default!;
 
-    public async ValueTask<WorkflowState> Run()
+    public async ValueTask<StartupTaskState> Run()
     {
         List<BotModule> modules = new();
         Type abstractType = typeof(BotModule);
@@ -31,7 +31,7 @@ internal class LoadModules: IWorkflow
         return await VerifyModulesPresence(modules);
     }
 
-    private async ValueTask<WorkflowState> VerifyModulesPresence(List<BotModule> modules)
+    private async ValueTask<StartupTaskState> VerifyModulesPresence(List<BotModule> modules)
     {
         foreach (BotModule module in modules)
         {
@@ -43,6 +43,6 @@ internal class LoadModules: IWorkflow
             Information("Loaded new module: {ModuleName}", moduleName);
         }
 
-        return WorkflowState.Completed;
+        return StartupTaskState.Completed;
     }
 }

@@ -1,4 +1,4 @@
-﻿using Bot.Workflows;
+﻿using Bot.StartupTasks;
 using CachingFramework.Redis.Contracts;
 using Serilog.Events;
 

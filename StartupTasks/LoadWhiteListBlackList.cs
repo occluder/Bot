@@ -2,15 +2,15 @@
 using Bot.Interfaces;
 using Bot.Models;
 
-namespace Bot.Workflows;
+namespace Bot.StartupTasks;
 
-internal class LoadWhiteListBlackList: IWorkflow
+internal class LoadWhiteListBlackList: IStartupTask
 {
     public static HashSet<long> WhiteListedUserIds { get; private set; } = default!;
     public static HashSet<long> BlackListedUserIds { get; private set; } = default!;
     private static readonly ILogger _logger = ForContext<LoadWhiteListBlackList>();
 
-    public async ValueTask<WorkflowState> Run()
+    public async ValueTask<StartupTaskState> Run()
     {
         try
         {
@@ -19,7 +19,7 @@ internal class LoadWhiteListBlackList: IWorkflow
         catch (Exception ex)
         {
             _logger.Information(ex, "[{ClassName}] Loading whitelisted users failed!");
-            return WorkflowState.Failed;
+            return StartupTaskState.Failed;
         }
 
         try
@@ -33,6 +33,6 @@ internal class LoadWhiteListBlackList: IWorkflow
         }
 
         _logger.Information("Loaded {WhiteListCount} whitelisted users, {BlackListCount} blacklisted users", WhiteListedUserIds.Count, BlackListedUserIds.Count);
-        return WorkflowState.Completed;
+        return StartupTaskState.Completed;
     }
 }

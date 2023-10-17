@@ -4,11 +4,11 @@ using Bot.Utils;
 using Microsoft.Extensions.Logging;
 using MiniTwitch.PubSub;
 
-namespace Bot.Workflows;
+namespace Bot.StartupTasks;
 
-internal class PubSubSetup: IWorkflow
+internal class PubSubSetup: IStartupTask
 {
-    public async ValueTask<WorkflowState> Run()
+    public async ValueTask<StartupTaskState> Run()
     {
         TwitchPubSub = new(Config.Secrets["BotToken"],
             new LoggerFactory().AddSerilog(ForContext("IsSubLogger", true)
@@ -18,12 +18,12 @@ internal class PubSubSetup: IWorkflow
         if (!await TwitchPubSub.ConnectAsync())
         {
             ForContext<PubSubSetup>().Fatal("[{ClassName}] Failed to setup PubSub");
-            return WorkflowState.Failed;
+            return StartupTaskState.Failed;
         }
 
         ForContext("Version", typeof(PubSubClient).GetAssemblyVersion()).ForContext("ShowProperties", true)
             .Information("PubSub setup done");
 
-        return WorkflowState.Completed;
+        return StartupTaskState.Completed;
     }
 }

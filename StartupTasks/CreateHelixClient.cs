@@ -4,17 +4,17 @@ using Bot.Services;
 using Microsoft.Extensions.Logging;
 using MiniTwitch.Helix;
 
-namespace Bot.Workflows;
+namespace Bot.StartupTasks;
 
-public class CreateHelixClient: IWorkflow
+public class CreateHelixClient: IStartupTask
 {
-    public ValueTask<WorkflowState> Run()
+    public ValueTask<StartupTaskState> Run()
     {
         Helix.HelixClient = new HelixClient(
             Config.Secrets["BotToken"],
             Config.Secrets["BotClientId"],
             new LoggerFactory().AddSerilog(Logger).CreateLogger<HelixClient>());
 
-        return ValueTask.FromResult(WorkflowState.Completed);
+        return ValueTask.FromResult(StartupTaskState.Completed);
     }
 }

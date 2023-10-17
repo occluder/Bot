@@ -3,13 +3,13 @@ using Bot.Interfaces;
 using Bot.Models;
 using Serilog.Events;
 
-namespace Bot.Workflows;
+namespace Bot.StartupTasks;
 
-internal class LoadInMemorySettings: IWorkflow
+internal class LoadInMemorySettings: IStartupTask
 {
     public static InMemorySettings Settings { get; private set; } = default!;
 
-    public async ValueTask<WorkflowState> Run()
+    public async ValueTask<StartupTaskState> Run()
     {
         try
         {
@@ -21,11 +21,11 @@ internal class LoadInMemorySettings: IWorkflow
         catch (Exception ex)
         {
             ForContext<LoadInMemorySettings>().Fatal(ex, "[{ClassName}] Failed to load app settings");
-            return WorkflowState.Failed;
+            return StartupTaskState.Failed;
         }
 
         ForContext<LoadInMemorySettings>().Information("[{ClassName}] Loaded app settings");
         LoggerSetup.LogSwitch.MinimumLevel = (LogEventLevel)Settings.LogLevel;
-        return WorkflowState.Completed;
+        return StartupTaskState.Completed;
     }
 }

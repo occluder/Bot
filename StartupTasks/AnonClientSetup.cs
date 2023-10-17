@@ -4,13 +4,13 @@ using Microsoft.Extensions.Logging;
 using MiniTwitch.Common.Extensions;
 using MiniTwitch.Irc;
 
-namespace Bot.Workflows;
+namespace Bot.StartupTasks;
 
-internal class AnonClientSetup: IWorkflow
+internal class AnonClientSetup: IStartupTask
 {
     public static IrcClient AnonClient { get; private set; } = default!;
 
-    public async ValueTask<WorkflowState> Run()
+    public async ValueTask<StartupTaskState> Run()
     {
         AnonClient = new(options =>
         {
@@ -30,10 +30,10 @@ internal class AnonClientSetup: IWorkflow
         if (!connected)
         {
             ForContext<AnonClientSetup>().Fatal("[{ClassName}] Failed to setup AnonClient");
-            return WorkflowState.Failed;
+            return StartupTaskState.Failed;
         }
 
         Information("AnonClient setup done");
-        return WorkflowState.Completed;
+        return StartupTaskState.Completed;
     }
 }

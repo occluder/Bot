@@ -1,6 +1,6 @@
 ﻿using Bot.Enums;
+using Bot.StartupTasks;
 using Bot.Utils.Logging;
-using Bot.Workflows;
 using Serilog.Events;
 
 namespace Bot;
@@ -9,7 +9,7 @@ internal class Program
 {
     private static async Task Main()
     {
-        WorkflowRunner runner = new WorkflowRunner()
+        StartupTaskRunner runner = new StartupTaskRunner()
             .Add<LoadConfig>()
             .Add<LoggerSetup>()
             .Add<RedisSetup>()
@@ -25,8 +25,8 @@ internal class Program
             .Add<InitHandlers>()
             .Add<StartMetrics>();
 
-        await foreach (WorkflowState result in runner.RunAll())
-            if (result != WorkflowState.Completed)
+        await foreach (StartupTaskState result in runner.RunAll())
+            if (result != StartupTaskState.Completed)
                 throw new NotSupportedException(result.ToString());
 
         while (true)

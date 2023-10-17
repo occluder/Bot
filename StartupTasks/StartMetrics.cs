@@ -2,14 +2,14 @@
 using Bot.Interfaces;
 using Bot.Utils;
 
-namespace Bot.Workflows;
+namespace Bot.StartupTasks;
 
-public class StartMetrics: IWorkflow
+public class StartMetrics: IStartupTask
 {
     private readonly List<IMetric> _metrics = new();
     private BackgroundTimer _metricCollector = default!;
 
-    public ValueTask<WorkflowState> Run()
+    public ValueTask<StartupTaskState> Run()
     {
         LoadMetrics();
         _metricCollector = new(TimeSpan.FromSeconds(15), async () =>
@@ -18,7 +18,7 @@ public class StartMetrics: IWorkflow
         });
 
         _metricCollector.Start();
-        return ValueTask.FromResult(WorkflowState.Completed);
+        return ValueTask.FromResult(StartupTaskState.Completed);
     }
 
     private void LoadMetrics()

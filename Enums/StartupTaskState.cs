@@ -1,6 +1,6 @@
 ﻿namespace Bot.Enums;
 
-public enum WorkflowState
+public enum StartupTaskState
 {
     None,
     Completed,

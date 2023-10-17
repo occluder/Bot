@@ -4,13 +4,13 @@ using Bot.Utils;
 using Microsoft.Extensions.Logging;
 using MiniTwitch.Irc;
 
-namespace Bot.Workflows;
+namespace Bot.StartupTasks;
 
-internal class MainClientSetup: IWorkflow
+internal class MainClientSetup: IStartupTask
 {
     public static IrcClient MainClient { get; private set; } = default!;
 
-    public async ValueTask<WorkflowState> Run()
+    public async ValueTask<StartupTaskState> Run()
     {
         MainClient = new(options =>
         {
@@ -23,11 +23,11 @@ internal class MainClientSetup: IWorkflow
         if (!connected)
         {
             ForContext<MainClientSetup>().Fatal("[{ClassName}] Failed to setup MainClient");
-            return WorkflowState.Failed;
+            return StartupTaskState.Failed;
         }
 
         ForContext("Version", typeof(IrcClient).GetAssemblyVersion()).ForContext("ShowProperties", true)
             .Information("MainClient setup done");
-        return WorkflowState.Completed;
+        return StartupTaskState.Completed;
     }
 }

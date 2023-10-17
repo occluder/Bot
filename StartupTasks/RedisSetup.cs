@@ -8,15 +8,15 @@ using CachingFramework.Redis.Contracts.Providers;
 using StackExchange.Redis;
 using JsonSerializer = CachingFramework.Redis.Serializers.JsonSerializer;
 
-namespace Bot.Workflows;
+namespace Bot.StartupTasks;
 
-public class RedisSetup: IWorkflow
+public class RedisSetup: IStartupTask
 {
     public static ICacheProviderAsync Cache { get; private set; } = default!;
     public static ICollectionProvider Collections { get; private set; } = default!;
     public static IDatabaseAsync RedisDatabaseAsync { get; private set; } = default!;
 
-    public async ValueTask<WorkflowState> Run()
+    public async ValueTask<StartupTaskState> Run()
     {
         RedisContext context;
         try
@@ -32,7 +32,7 @@ public class RedisSetup: IWorkflow
         catch (Exception)
         {
             ForContext<RedisSetup>().Fatal("[{ClassName}] Failed to setup Redis");
-            return WorkflowState.Failed;
+            return StartupTaskState.Failed;
         }
 
         Cache = context.Cache;
@@ -40,6 +40,6 @@ public class RedisSetup: IWorkflow
         ForContext("Version", typeof(RedisContext).GetAssemblyVersion()).ForContext("ShowProperties", true)
             .Information("Connected to Redis");
 
-        return WorkflowState.Completed;
+        return StartupTaskState.Completed;
     }
 }

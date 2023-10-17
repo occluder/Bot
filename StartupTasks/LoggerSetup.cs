@@ -7,13 +7,13 @@ using Serilog.Events;
 using Serilog.Formatting.Compact;
 using Serilog.Sinks.Grafana.Loki;
 
-namespace Bot.Workflows;
+namespace Bot.StartupTasks;
 
-public class LoggerSetup: IWorkflow
+public class LoggerSetup: IStartupTask
 {
     public static LoggingLevelSwitch LogSwitch { get; private set; } = new((LogEventLevel)Config.DefaultLogLevel);
 
-    public ValueTask<WorkflowState> Run()
+    public ValueTask<StartupTaskState> Run()
     {
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Verbose()
@@ -35,6 +35,6 @@ public class LoggerSetup: IWorkflow
             })
             .CreateLogger();
 
-        return ValueTask.FromResult(WorkflowState.Completed);
+        return ValueTask.FromResult(StartupTaskState.Completed);
     }
 }

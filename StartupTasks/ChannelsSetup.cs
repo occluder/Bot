@@ -3,14 +3,14 @@ using Bot.Interfaces;
 using Bot.Models;
 using Serilog.Events;
 
-namespace Bot.Workflows;
+namespace Bot.StartupTasks;
 
-internal class ChannelsSetup: IWorkflow
+internal class ChannelsSetup: IStartupTask
 {
     public static Dictionary<string, TwitchChannelDto> Channels { get; } = new();
     public static Dictionary<long, TwitchChannelDto> ChannelsById { get; } = new();
 
-    public async ValueTask<WorkflowState> Run()
+    public async ValueTask<StartupTaskState> Run()
     {
         TwitchChannelDto[] channels;
         try
@@ -20,7 +20,7 @@ internal class ChannelsSetup: IWorkflow
         catch (Exception ex)
         {
             ForContext<ChannelsSetup>().Fatal(ex, "{ClassName} Failed to setup channels");
-            return WorkflowState.Failed;
+            return StartupTaskState.Failed;
         }
 
         foreach (TwitchChannelDto channel in channels)
@@ -53,7 +53,7 @@ internal class ChannelsSetup: IWorkflow
             Information("AnonClient finished joining Channels");
 #endif
 
-        return WorkflowState.Completed;
+        return StartupTaskState.Completed;
     }
 
     public static async Task JoinChannel(IvrUser user, int priority, bool isLogged)

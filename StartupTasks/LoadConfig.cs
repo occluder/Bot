@@ -3,13 +3,13 @@ using Bot.Interfaces;
 using Bot.Models;
 using Microsoft.Extensions.Configuration;
 
-namespace Bot.Workflows;
+namespace Bot.StartupTasks;
 
-public class LoadConfig: IWorkflow
+public class LoadConfig: IStartupTask
 {
     public static AppConfig Config { get; private set; } = default!;
 
-    public ValueTask<WorkflowState> Run()
+    public ValueTask<StartupTaskState> Run()
     {
         var builder = new ConfigurationBuilder();
         IConfigurationRoot config = builder.AddJsonFile("Config.json").Build();
@@ -18,6 +18,6 @@ public class LoadConfig: IWorkflow
         config.Bind(profile, section);
         Config = section;
 
-        return ValueTask.FromResult(WorkflowState.Completed);
+        return ValueTask.FromResult(StartupTaskState.Completed);
     }
 }
