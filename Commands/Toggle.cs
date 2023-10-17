@@ -6,7 +6,12 @@ namespace Bot.Commands;
 
 public class Toggle: ChatCommand
 {
-    public override CommandInfo Info => new("toggle", "Toggles modules", TimeSpan.Zero, CommandPermission.Whitelisted);
+    public override CommandInfo Info { get; } = new(
+        "toggle",
+        "Toggles modules",
+        TimeSpan.Zero,
+        CommandPermission.Whitelisted
+    );
 
     public Toggle()
     {

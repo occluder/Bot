@@ -10,26 +10,24 @@ internal class Program
     private static async Task Main()
     {
         WorkflowRunner runner = new WorkflowRunner()
-           .Add<LoadConfig>()
-           .Add<LoggerSetup>()
-           .Add<RedisSetup>()
-           .Add<NpgsqlSetup>()
-           .Add<LoadInMemorySettings>()
-           .Add<MainClientSetup>()
-           .Add<AnonClientSetup>()
-           .Add<ChannelsSetup>()
-           .Add<PubSubSetup>()
-           .Add<LoadWhiteListBlackList>()
-           .Add<CreateHelixClient>()
-           .Add<LoadModules>()
-           .Add<InitHandlers>()
-           .Add<StartMetrics>();
+            .Add<LoadConfig>()
+            .Add<LoggerSetup>()
+            .Add<RedisSetup>()
+            .Add<NpgsqlSetup>()
+            .Add<LoadInMemorySettings>()
+            .Add<MainClientSetup>()
+            .Add<AnonClientSetup>()
+            .Add<ChannelsSetup>()
+            .Add<PubSubSetup>()
+            .Add<LoadWhiteListBlackList>()
+            .Add<CreateHelixClient>()
+            .Add<LoadModules>()
+            .Add<InitHandlers>()
+            .Add<StartMetrics>();
 
         await foreach (WorkflowState result in runner.RunAll())
-        {
             if (result != WorkflowState.Completed)
                 throw new NotSupportedException(result.ToString());
-        }
 
         while (true)
         {
@@ -55,11 +53,11 @@ internal class Program
                 ClassNameFilter.ClassName = args[1];
                 Console.WriteLine($"ClassNameFilter set to {args[1]}");
             }
-            // else if (input == "l!unfilter")
-            // {
-            //     ClassNameFilter.ClassName = null;
-            //     Console.WriteLine("Removed all filters");
-            // }
+            else if (input == "l!unfilter")
+            {
+                ClassNameFilter.ClassName = null;
+                Console.WriteLine("Removed all filters");
+            }
         }
     }
 }

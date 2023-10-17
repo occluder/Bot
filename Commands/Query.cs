@@ -18,8 +18,12 @@ public class Query: ChatCommand
         AddArgument(new("sql", 1, typeof(string)));
     }
 
-    public override CommandInfo Info =>
-        new("query", "Query the database", TimeSpan.Zero, CommandPermission.Whitelisted);
+    public override CommandInfo Info { get; } = new(
+        "query",
+        "Query the database",
+        TimeSpan.Zero,
+        CommandPermission.Whitelisted
+    );
 
     public override async ValueTask Run(Privmsg message)
     {

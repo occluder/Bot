@@ -8,8 +8,12 @@ namespace Bot.Commands;
 
 public class Help: ChatCommand
 {
-    public override CommandInfo Info => new("help", "Displays information about commands", TimeSpan.FromSeconds(5),
-        CommandPermission.Everyone);
+    public override CommandInfo Info { get; } = new(
+        "help",
+        "Displays information about commands",
+        TimeSpan.FromSeconds(5),
+        CommandPermission.Everyone
+    );
 
     public Help()
     {

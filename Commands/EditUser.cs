@@ -7,8 +7,12 @@ namespace Bot.Commands;
 
 public class EditUser: ChatCommand
 {
-    public override CommandInfo Info =>
-        new("edituser", "Edit a user's permissions", TimeSpan.Zero, CommandPermission.Whitelisted);
+    public override CommandInfo Info { get; } = new(
+        "edituser",
+        "Edit a user's permissions",
+        TimeSpan.Zero,
+        CommandPermission.Whitelisted
+    );
 
     public EditUser()
     {

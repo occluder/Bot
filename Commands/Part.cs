@@ -5,7 +5,12 @@ using MiniTwitch.Irc.Models;
 namespace Bot.Commands;
 internal class Part: ChatCommand
 {
-    public override CommandInfo Info => new("part", "Leave a channel", TimeSpan.Zero, CommandPermission.Whitelisted);
+    public override CommandInfo Info { get; } = new(
+        "part",
+        "Leave a channel",
+        TimeSpan.Zero,
+        CommandPermission.Whitelisted
+    );
 
     public Part()
     {
