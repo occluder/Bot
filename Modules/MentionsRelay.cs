@@ -20,15 +20,21 @@ internal class MentionsRelay: BotModule
         {
             DiscordMessageBuilder builder = new DiscordMessageBuilder().AddEmbed(embed =>
             {
-                embed.title = $"@{message.Author.Name} in #{message.Channel.Name}";
-                embed.description = message.Content;
-                embed.timestamp = DateTime.Now;
-                if (message.Reply.HasContent)
+                if (!message.Reply.HasContent)
                 {
-                    _ = embed.AddField(field =>
+                    embed.title = $"@`{message.Author.Name}` in #`{message.Channel.Name}`";
+                    embed.description = message.Content;
+                    embed.timestamp = DateTime.Now;
+                }
+                else
+                {
+                    embed.title = $"@`{message.Author.Name}` in #`{message.Channel.Name}`";
+                    embed.description = message.Reply.ParentMessage;
+                    embed.timestamp = DateTime.Now;
+                    embed.AddField(f =>
                     {
-                        field.name = $"Replying to @{message.Reply.ParentUsername}";
-                        field.value = message.Reply.ParentMessage;
+                        f.name = $"@`{message.Author.Name}` replied:";
+                        f.value = message.Content;
                     });
                 }
 
