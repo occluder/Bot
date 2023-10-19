@@ -9,7 +9,7 @@
 
     <ItemGroup>
         <PackageReference Include="CachingFramework.Redis" Version="15.0.2" />
-        <PackageReference Include="Dapper" Version="2.1.11" />
+        <PackageReference Include="Dapper" Version="2.1.15" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
         <PackageReference Include="MiniTwitch.Irc" Version="1.2.7"/>
