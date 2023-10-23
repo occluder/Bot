@@ -21,13 +21,7 @@ internal class StreamMonitor: BotModule
         }
     }
 
-    public static bool IsLive(long channelId)
-    {
-        if (_streams.TryGetValue(channelId, out bool live) && live)
-            return true;
-
-        return false;
-    }
+    public static bool IsLive(long channelId) => _streams.TryGetValue(channelId, out bool live) && live;
 
     private static async ValueTask OnStreamUp(ChannelId channelId, IStreamUp _)
     {

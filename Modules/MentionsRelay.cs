@@ -28,7 +28,7 @@ internal class MentionsRelay: BotModule
                 }
                 else
                 {
-                    embed.title = $"@`{message.Author.Name}` in #`{message.Channel.Name}`";
+                    embed.title = $"@`{message.Reply.ParentUsername}` said in #`{message.Channel.Name}`";
                     embed.description = message.Reply.ParentMessage;
                     embed.timestamp = DateTime.Now;
                     embed.AddField(f =>
