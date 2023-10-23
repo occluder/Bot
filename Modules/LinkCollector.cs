@@ -8,13 +8,17 @@ namespace Bot.Modules;
 
 internal class LinkCollector: BotModule
 {
-    private const int MAX_LINKS = 250;
+    private const int MAX_LINKS = 500;
 
-    private static readonly Regex _regex = new(@"https?:[\\/][\\/](www\.|[-a-zA-Z0-9]+\.)?[-a-zA-Z0-9@:%._\+~#=]{3,}(\.[a-zA-Z]{2,10})+(/([-a-zA-Z0-9@:%._\+~#=/?&]+)?)?\b", RegexOptions.Compiled, TimeSpan.FromMilliseconds(50));
+    private static readonly Regex _regex =
+        new(
+            @"https:[\\/][\\/](www\.|[-a-zA-Z0-9]+\.)?[-a-zA-Z0-9@:%._\+~#=]{3,}(\.[a-zA-Z]{2,10})+(/([-a-zA-Z0-9@:%._\+~#=/?&]+)?)?\b",
+            RegexOptions.Compiled, TimeSpan.FromMilliseconds(50));
+
+    private static readonly IRedisSet<long> _redisBotList = Collections.GetRedisSet<long>("bot:chat:bot_list");
     private static readonly ILogger _logger = ForContext<LinkCollector>();
     private static readonly List<LinkData> _links = new(MAX_LINKS);
     private static readonly SemaphoreSlim _ss = new(1);
-    private static readonly IRedisSet<long> _redisBotList = Collections.GetRedisSet<long>("bot:chat:bot_list");
     private readonly HashSet<long> _bots;
     private readonly BackgroundTimer _timer;
 
@@ -40,7 +44,15 @@ internal class LinkCollector: BotModule
                     await Commit();
 
                 await _ss.WaitAsync();
-                LinkData link = new(arg.Author.Name, arg.Channel.Name, match.Value, DateTime.Now);
+                LinkData link = new(
+                    arg.Author.Name,
+                    arg.Author.Id,
+                    arg.Channel.Name,
+                    arg.Channel.Id,
+                    match.Value[8..],
+                    DateTimeOffset.Now.ToUnixTimeSeconds()
+                );
+                
                 _links.Add(link);
                 _ = _ss.Release();
                 _logger.Verbose("Link added: {@LinkInfo} ({Total})", link, _links.Count);
@@ -60,7 +72,12 @@ internal class LinkCollector: BotModule
         await _ss.WaitAsync();
         try
         {
-            int inserted = await Postgres.ExecuteAsync("insert into collected_links values (@Username, @Channel, @LinkText, @TimePosted)", _links);
+            int inserted = await Postgres.ExecuteAsync(
+                "insert into chat_links values " +
+                "(@Username, @UserId, @Channel, @ChannelId, @LinkText, @TimePosted)",
+                _links
+            );
+            
             _links.Clear();
             _logger.Debug("Inserted {LinkCount} links", inserted);
         }
@@ -100,9 +117,12 @@ internal class LinkCollector: BotModule
         await _timer.StopAsync();
     }
 
-    private record struct LinkData(string Username, string Channel, string LinkText, DateTime TimePosted)
-    {
-        public static implicit operator LinkData((string, string, string, DateTime) tuple) =>
-            new(tuple.Item1, tuple.Item2, tuple.Item3, tuple.Item4);
-    };
+    private record LinkData(
+        string Username,
+        long UserId,
+        string Channel,
+        long ChannelId,
+        string LinkText,
+        long TimePosted
+    );
 }
