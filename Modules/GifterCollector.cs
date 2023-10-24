@@ -17,22 +17,25 @@ internal class GifterCollector: BotModule
         await PostgresQueryLock.WaitAsync();
         try
         {
-            _ = await Postgres.ExecuteAsync("insert into collected_gifts values (@SentBy, @SentById, @SentTo, @SentToId, @GiftAmount, @Tier, @TimeSent)", new
-            {
-                SentBy = notice.Author.Name,
-                SentById = notice.Author.Id,
-                SentTo = notice.Channel.Name,
-                SentToId = notice.Channel.Id,
-                GiftAmount = notice.GiftCount,
-                Tier = notice.SubPlan switch
+            _ = await Postgres.ExecuteAsync(
+                "insert into sub_gifters values (@Username, @UserId, @Channel, @ChannelId, @GiftAmount, @Tier, @TimeSent)",
+                new
                 {
-                    SubPlan.Tier1 => 1,
-                    SubPlan.Tier2 => 2,
-                    SubPlan.Tier3 => 3,
-                    _ => 0
-                },
-                TimeSent = notice.SentTimestamp
-            }, commandTimeout: 10);
+                    SentBy = notice.Author.Name,
+                    SentById = notice.Author.Id,
+                    SentTo = notice.Channel.Name,
+                    SentToId = notice.Channel.Id,
+                    GiftAmount = notice.GiftCount,
+                    Tier = notice.SubPlan switch
+                    {
+                        SubPlan.Tier1 => 1,
+                        SubPlan.Tier2 => 2,
+                        SubPlan.Tier3 => 3,
+                        _ => 0
+                    },
+                    TimeSent = notice.SentTimestamp.ToUnixTimeSeconds()
+                }, commandTimeout: 10
+            );
         }
         finally
         {

@@ -26,7 +26,7 @@ public class FollowersCollector: BotModule
         try
         {
             int inserted = await Postgres.ExecuteAsync(
-                "insert into collected_users values (@Username, @UserId, @ChannelName, @TimeFollowed) " +
+                "insert into users values (@Username, @UserId, @TimeFollowed) " +
                 "on conflict on constraint pk_users do nothing", redisFollowers);
 
             _logger.Debug("Inserted {UserCount} followers into {TableName}", inserted, "collected_users");
@@ -56,9 +56,9 @@ public class FollowersCollector: BotModule
             await TwitchPubSub.UnlistenTo(Topics.Following(channel.Id));
     }
 
-    private readonly record struct FollowData(string Username, long UserId, string ChannelName, DateTime TimeFollowed)
+    private record FollowData(string Username, long UserId, string ChannelName, long TimeFollowed)
     {
         public static implicit operator FollowData((ChannelId c, Follower f) t) =>
-            new(t.f.Name, t.f.Id, ChannelsById[t.c].Username, DateTime.Now);
+            new(t.f.Name, t.f.Id, ChannelsById[t.c].Username, DateTimeOffset.Now.ToUnixTimeSeconds());
     }
 }

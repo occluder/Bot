@@ -1,6 +1,7 @@
 ﻿using Bot.Models;
 using Bot.Utils;
 using CachingFramework.Redis.Contracts.RedisObjects;
+using MiniTwitch.Irc.Enums;
 using MiniTwitch.Irc.Interfaces;
 
 namespace Bot.Modules;
@@ -28,8 +29,15 @@ public class SubCollector: BotModule
             notice.Channel.Name,
             notice.Channel.Id,
             notice.CumulativeMonths,
-            notice.SubPlan.ToString(),
-            notice.SentTimestamp.DateTime
+            notice.SubPlan switch
+            {
+                SubPlan.Tier1 => 1,
+                SubPlan.Tier2 => 2,
+                SubPlan.Tier3 => 3,
+                SubPlan.Prime => 4,
+                _ => 0
+            },
+            notice.SentTimestamp.ToUnixTimeSeconds()
         );
 
         await Subs.AddAsync(sub);
@@ -48,8 +56,10 @@ public class SubCollector: BotModule
         try
         {
             int inserted = await Postgres.ExecuteAsync(
-                "insert into collected_subs values (@FromUser, @FromUserId, @ToChannel, @ToChannelId, @CumulativeMonths, @Tier, @TimeSent)",
-                subs);
+                "insert into subscriptions values " +
+                "(@Username, @UserId, @Channel, @ChannelId, @CumulativeMonths, @Tier, @TimeSent)",
+                subs
+            );
 
             _logger.Debug("{InsertedCount} subs inserted", inserted);
             await Subs.ClearAsync();
@@ -75,13 +85,13 @@ public class SubCollector: BotModule
         await _timer.StopAsync();
     }
 
-    private readonly record struct Sub(
-        string FromUser,
-        long FromUserId,
-        string ToChannel,
-        long ToChannelId,
+    private record Sub(
+        string Username,
+        long UserId,
+        string Channel,
+        long ChannelId,
         int CumulativeMonths,
-        string Tier,
-        DateTime TimeSent
+        int Tier,
+        long TimeSent
     );
 }

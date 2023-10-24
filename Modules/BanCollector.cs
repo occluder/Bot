@@ -32,7 +32,7 @@ internal class BanCollector: BotModule
                       timeout.Channel.Name,
                       timeout.Channel.Id,
                       (int)timeout.Duration.TotalSeconds,
-                      DateTime.Now));
+                      DateTimeOffset.Now.ToUnixTimeSeconds()));
 
         _ = _ss.Release();
         return;
@@ -52,7 +52,7 @@ internal class BanCollector: BotModule
                       ban.Channel.Name,
                       ban.Channel.Id,
                       -1,
-                      DateTime.Now));
+                      DateTimeOffset.Now.ToUnixTimeSeconds()));
 
         _ = _ss.Release();
         return;
@@ -67,7 +67,11 @@ internal class BanCollector: BotModule
         await _ss.WaitAsync();
         try
         {
-            int inserted = await Postgres.ExecuteAsync("insert into ban_data values (@Username, @UserId, @Channel, @ChannelId, @Duration, @BanTime)", _bans);
+            int inserted = await Postgres.ExecuteAsync(
+                "insert into chat_bans values (@Username, @UserId, @Channel, @ChannelId, @Duration, @TimeSent)",
+                _bans
+            );
+
             _bans.Clear();
             _logger.Debug("Inserted {BanCount} ban logs", inserted);
         }
@@ -99,5 +103,12 @@ internal class BanCollector: BotModule
         await _timer.StopAsync();
     }
 
-    private readonly record struct BanData(string Username, long UserId, string Channel, long ChannelId, int Duration, DateTime BanTime);
+    private record BanData(
+        string Username,
+        long UserId,
+        string Channel,
+        long ChannelId,
+        int Duration,
+        long TimeSent
+    );
 }

@@ -15,15 +15,18 @@ internal class BitCollection: BotModule
         await PostgresQueryLock.WaitAsync();
         try
         {
-            _ = await Postgres.ExecuteAsync("insert into collected_bits values (@SentBy, @SentById, @SentTo, @SentToId, @BitAmount, @TimeSent)", new
-            {
-                SentBy = message.Author.Name,
-                SentById = message.Author.Id,
-                SentTo = message.Channel.Name,
-                SentToId = message.Channel.Id,
-                BitAmount = message.Bits,
-                TimeSent = message.SentTimestamp
-            }, commandTimeout: 10);
+            _ = await Postgres.ExecuteAsync(
+                "insert into bits_users values (@Username, @UserId, @Channel, @ChannelId, @BitAmount, @TimeSent)",
+                new
+                {
+                    Username = message.Author.Name,
+                    UserId = message.Author.Id,
+                    Channel = message.Channel.Name,
+                    ChannelId = message.Channel.Id,
+                    BitAmount = message.Bits,
+                    TimeSent = message.SentTimestamp
+                }, commandTimeout: 10
+            );
         }
         finally
         {

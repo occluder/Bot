@@ -16,15 +16,19 @@ internal class HypeChatCollector: BotModule
         await PostgresQueryLock.WaitAsync();
         try
         {
-            _ = await Postgres.ExecuteAsync("insert into collected_hype_chat values (@SentBy, @SentById, @SentTo, @SentToId, @Amount, @Currency)", new
-            {
-                SentBy = message.Author.Name,
-                SentById = message.Author.Id,
-                SentTo = message.Channel.Name,
-                SentToId = message.Channel.Id,
-                Amount = GetActualAmount(message.HypeChat),
-                Currency = message.HypeChat.PaymentCurrency
-            }, commandTimeout: 10);
+            _ = await Postgres.ExecuteAsync(
+                "insert into hype_chat values (@Username, @UserId, @Channel, @ChannelId, @Amount, @Currency, @TimeSent)",
+                new
+                {
+                    Username = message.Author.Name,
+                    UserId = message.Author.Id,
+                    Channel = message.Channel.Name,
+                    ChannelId = message.Channel.Id,
+                    Amount = GetActualAmount(message.HypeChat),
+                    Currency = message.HypeChat.PaymentCurrency,
+                    TimeSent = message.SentTimestamp.ToUnixTimeSeconds()
+                }, commandTimeout: 10
+            );
         }
         finally
         {

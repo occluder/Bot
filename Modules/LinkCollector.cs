@@ -74,7 +74,7 @@ internal class LinkCollector: BotModule
         {
             int inserted = await Postgres.ExecuteAsync(
                 "insert into chat_links values " +
-                "(@Username, @UserId, @Channel, @ChannelId, @LinkText, @TimePosted)",
+                "(@Username, @UserId, @Channel, @ChannelId, @LinkText, @TimeSent)",
                 _links
             );
             
@@ -123,6 +123,6 @@ internal class LinkCollector: BotModule
         string Channel,
         long ChannelId,
         string LinkText,
-        long TimePosted
+        long TimeSent
     );
 }
