@@ -45,7 +45,8 @@ internal class ChannelsSetup: IStartupTask
 #if !DEBUG
         Information("Joining AnonClient channels");
         LoggerSetup.LogSwitch.MinimumLevel = LogEventLevel.Warning;
-        bool success2 = await AnonClient.JoinChannels(channels.Where(x => x.Priority is < 50 and > -10).Select(x => x.Username));
+        bool success2 =
+            await AnonClient.JoinChannels(channels.Where(x => x.Priority is < 50 and > -10).Select(x => x.ChannelName));
         LoggerSetup.LogSwitch.MinimumLevel = ll;
         if (!success2)
             Warning("AnonClient failed to join some channels");
