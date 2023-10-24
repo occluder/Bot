@@ -101,7 +101,7 @@ internal class StreamMonitor: BotModule
     }
 
     private static IEnumerable<long> GetMonitoredChannelIds() =>
-        Channels.Values.Where(x => x.Priority >= 0).Select(x => x.Id);
+        Channels.Values.Where(x => x.Priority >= 0).Select(x => x.ChannelId);
 
     protected override async ValueTask OnModuleEnabled()
     {

@@ -32,7 +32,7 @@ internal class PredictionNotifications: BotModule
             {
                 author.name = ChannelsById[channelId].DisplayName;
                 author.icon_url = ChannelsById[channelId].AvatarUrl;
-                author.url = $"https://www.twitch.tv/popout/{ChannelsById[channelId].Username}/chat?popout=";
+                author.url = $"https://www.twitch.tv/popout/{ChannelsById[channelId].ChannelName}/chat?popout=";
             });
 
             _ = embed.SetFooter(footer =>
@@ -223,7 +223,7 @@ internal class PredictionNotifications: BotModule
     protected override async ValueTask OnModuleEnabled()
     {
         foreach (TwitchChannelDto? channel in Channels.Values.Where(c => c.PredictionsEnabled))
-            _ = await TwitchPubSub.ListenTo(Topics.ChannelPredictions(channel.Id));
+            _ = await TwitchPubSub.ListenTo(Topics.ChannelPredictions(channel.ChannelId));
 
         TwitchPubSub.OnPredictionStarted += OnPredictionStarted;
         TwitchPubSub.OnPredictionLocked += OnPredictionLocked;
@@ -234,7 +234,7 @@ internal class PredictionNotifications: BotModule
     protected override async ValueTask OnModuleDisabled()
     {
         foreach (TwitchChannelDto? channel in Channels.Values.Where(c => c.PredictionsEnabled))
-            _ = await TwitchPubSub.UnlistenTo(Topics.ChannelPredictions(channel.Id));
+            _ = await TwitchPubSub.UnlistenTo(Topics.ChannelPredictions(channel.ChannelId));
 
         TwitchPubSub.OnPredictionStarted -= OnPredictionStarted;
         TwitchPubSub.OnPredictionLocked -= OnPredictionLocked;

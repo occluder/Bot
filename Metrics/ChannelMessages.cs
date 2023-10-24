@@ -29,7 +29,7 @@ public class ChannelMessages: IMetric
         await PostgresQueryLock.WaitAsync();
         try
         {
-            Point[] values = _messageCount.Select(kvp => new Point(ChannelsById[kvp.Key].Username, kvp.Value))
+            Point[] values = _messageCount.Select(kvp => new Point(ChannelsById[kvp.Key].ChannelName, kvp.Value))
                 .ToArray();
             await Postgres.ExecuteAsync("insert into metrics_channel_messages values (@Channel, @MessageCount)",
                 values);

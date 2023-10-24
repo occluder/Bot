@@ -97,7 +97,7 @@ internal class TimeoutRelay: BotModule
     private static object ChannelNameOrId(long channelId)
     {
         if (ChannelsById.TryGetValue(channelId, out TwitchChannelDto? channel))
-            return channel.Username;
+            return channel.ChannelName;
 
         return channelId;
     }

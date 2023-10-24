@@ -46,19 +46,19 @@ public class FollowersCollector: BotModule
     {
         TwitchPubSub.OnFollow += OnFollow;
         foreach (TwitchChannelDto channel in Channels.Values.Where(c => c.WatchFollows))
-            await TwitchPubSub.ListenTo(Topics.Following(channel.Id));
+            await TwitchPubSub.ListenTo(Topics.Following(channel.ChannelId));
     }
 
     protected override async ValueTask OnModuleDisabled()
     {
         TwitchPubSub.OnFollow -= OnFollow;
         foreach (TwitchChannelDto channel in Channels.Values.Where(c => c.WatchFollows))
-            await TwitchPubSub.UnlistenTo(Topics.Following(channel.Id));
+            await TwitchPubSub.UnlistenTo(Topics.Following(channel.ChannelId));
     }
 
     private record FollowData(string Username, long UserId, string ChannelName, long TimeFollowed)
     {
         public static implicit operator FollowData((ChannelId c, Follower f) t) =>
-            new(t.f.Name, t.f.Id, ChannelsById[t.c].Username, DateTimeOffset.Now.ToUnixTimeSeconds());
+            new(t.f.Name, t.f.Id, ChannelsById[t.c].ChannelName, DateTimeOffset.Now.ToUnixTimeSeconds());
     }
 }

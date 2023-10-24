@@ -25,8 +25,8 @@ internal class ChannelsSetup: IStartupTask
 
         foreach (TwitchChannelDto channel in channels)
         {
-            Channels.Add(channel.Username, channel);
-            ChannelsById.Add(channel.Id, channel);
+            Channels.Add(channel.ChannelName, channel);
+            ChannelsById.Add(channel.ChannelId, channel);
         }
 
         Information("{ChannelCount} channels loaded. {JoinableCount} joinable. {PrioritizedCount} prioritized",
@@ -35,7 +35,7 @@ internal class ChannelsSetup: IStartupTask
         Information("Joining MainClient channels");
         LogEventLevel ll = LoggerSetup.LogSwitch.MinimumLevel;
         LoggerSetup.LogSwitch.MinimumLevel = LogEventLevel.Warning;
-        bool success = await MainClient.JoinChannels(channels.Where(x => x.Priority >= 50).Select(x => x.Username));
+        bool success = await MainClient.JoinChannels(channels.Where(x => x.Priority >= 50).Select(x => x.ChannelName));
         LoggerSetup.LogSwitch.MinimumLevel = ll;
         if (!success)
             Warning("MainClient failed to join some channels");
@@ -64,20 +64,23 @@ internal class ChannelsSetup: IStartupTask
             TwitchChannelDto channelDto = new()
             {
                 DisplayName = user.DisplayName,
-                Username = user.Login,
-                Id = long.Parse(user.Id),
+                ChannelName = user.Login,
+                ChannelId = long.Parse(user.Id),
                 AvatarUrl = user.Logo,
                 Priority = priority,
-                IsLogged = isLogged,
-                DateJoined = DateTime.Now,
-                Tags = null
+                DateAdded = DateTimeOffset.Now.ToUnixTimeSeconds(),
+                Tags = isLogged ? null : "nologs"
             };
 
-            _ = await Postgres.ExecuteAsync("insert into channels values (@DisplayName, @Username, @Id, @AvatarUrl, @Priority, @IsLogged, @DateJoined)", channelDto);
+            _ = await Postgres.ExecuteAsync(
+                "insert into channels values (@DisplayName, @Channel, @ChannelId, @AvatarUrl, @Priority, @Tags, @DateJoined)",
+                channelDto
+            );
+            
             _ = priority >= 50 ? await MainClient.JoinChannel(user.Login) : await AnonClient.JoinChannel(user.Login);
 
-            Channels[channelDto.Username] = channelDto;
-            ChannelsById[channelDto.Id] = channelDto;
+            Channels[channelDto.ChannelName] = channelDto;
+            ChannelsById[channelDto.ChannelId] = channelDto;
         }
         finally
         {
@@ -90,15 +93,18 @@ internal class ChannelsSetup: IStartupTask
         await PostgresQueryLock.WaitAsync();
         try
         {
-            _ = await Postgres.ExecuteAsync("delete from channels where id = @ChannelId", new { ChannelId = channelId });
+            _ = await Postgres.ExecuteAsync("delete from channels where channel_id = @ChannelId",
+                new { ChannelId = channelId }
+            );
+            
             TwitchChannelDto channelDto = ChannelsById[channelId];
             if (channelDto.Priority >= 50)
-                await MainClient.PartChannel(channelDto.Username);
+                await MainClient.PartChannel(channelDto.ChannelName);
             else
-                await AnonClient.PartChannel(channelDto.Username);
+                await AnonClient.PartChannel(channelDto.ChannelName);
 
-            _ = Channels.Remove(channelDto.Username);
-            _ = ChannelsById.Remove(channelDto.Id);
+            _ = Channels.Remove(channelDto.ChannelName);
+            _ = ChannelsById.Remove(channelDto.ChannelId);
         }
         finally
         {
