@@ -21,10 +21,10 @@ internal class GifterCollector: BotModule
                 "insert into sub_gifters values (@Username, @UserId, @Channel, @ChannelId, @GiftAmount, @Tier, @TimeSent)",
                 new
                 {
-                    SentBy = notice.Author.Name,
-                    SentById = notice.Author.Id,
-                    SentTo = notice.Channel.Name,
-                    SentToId = notice.Channel.Id,
+                    Username = notice.Author.Name,
+                    UserId = notice.Author.Id,
+                    Channel = notice.Channel.Name,
+                    ChannelId = notice.Channel.Id,
                     GiftAmount = notice.GiftCount,
                     Tier = notice.SubPlan switch
                     {
