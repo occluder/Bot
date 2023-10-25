@@ -9,7 +9,7 @@ public class TwitchChannelDto
     public required int Priority { get; set; }
     public required string? Tags { get; set; }
     public required long DateAdded { get; init; }
-    public bool IsLogged => _logged ??= this.Tags is not null && !this.Tags.Contains("nologs");
+    public bool IsLogged => _logged ??= this.Tags is null || !this.Tags.Contains("nologs");
     public bool PredictionsEnabled => _predictions ??= this.Tags is not null && this.Tags.Contains("predictions");
     public bool WatchFollows => _follows ??= this.Tags is not null && this.Tags.Contains("follows");
 
