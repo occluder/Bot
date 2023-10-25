@@ -1,5 +1,7 @@
 ﻿using Bot.Enums;
 using Bot.Interfaces;
+using Bot.Models;
+using MiniTwitch.Irc.Interfaces;
 using MiniTwitch.Irc.Models;
 
 namespace Bot.Utils;
@@ -8,20 +10,30 @@ internal static class PermissionChecker
 {
     public static bool Permits(this Privmsg message, IChatCommand command)
     {
-        CommandPermission level = WhiteListedUserIds.Contains(message.Author.Id)
-            ? CommandPermission.Whitelisted
-            : message.Author.IsMod
-            ? CommandPermission.Moderators
-            : message.Author.IsVip
-            ? CommandPermission.VIPs
-            : message.Author.IsSubscriber
-            ? CommandPermission.Subscribers
-            : BlackListedUserIds.Contains(message.Author.Id) ? CommandPermission.None : CommandPermission.Everyone;
+        var level = CommandPermission.Everyone;
+        if (UserPermissions.TryGetValue(message.Author.Id, out UserPermissionDto? perms))
+        {
+            if (perms.IsWhitelisted)
+                level = CommandPermission.Whitelisted;
+            else if (perms.IsBlacklisted)
+                level = CommandPermission.None;
+        }
+        else
+        {
+            if (message.Author.IsMod)
+                level = CommandPermission.Moderators;
+            else if (message.Author.IsVip)
+                level = CommandPermission.VIPs;
+            else if (message.Author.IsSubscriber)
+                level = CommandPermission.Subscribers;
+        }
 
-        bool hasPerms = level >= command.Info.Permission;
-        ForContext("Permission", level).Verbose("{User} {HasPerms} run command: {Command}", message.Author.Name, hasPerms ? "can" : "can't",
-            command.Info.Name);
-
-        return hasPerms;
+        return level >= command.Info.Permission;
     }
+
+    public static bool IsBlacklisted(this MessageAuthor author)
+        => UserPermissions.TryGetValue(author.Id, out UserPermissionDto? perms) && perms.IsBlacklisted;
+
+    public static bool IsBlacklisted(this IWhisperAuthor author)
+        => UserPermissions.TryGetValue(author.Id, out UserPermissionDto? perms) && perms.IsBlacklisted;
 }

@@ -1,4 +1,4 @@
-﻿global using static Bot.StartupTasks.LoadWhiteListBlackList;
+﻿global using static Bot.StartupTasks.FetchPermissions;
 global using static Bot.StartupTasks.LoadInMemorySettings;
 global using static Bot.StartupTasks.MainClientSetup;
 global using static Bot.StartupTasks.AnonClientSetup;

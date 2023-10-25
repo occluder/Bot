@@ -19,7 +19,7 @@ internal class Program
             .Add<AnonClientSetup>()
             .Add<ChannelsSetup>()
             .Add<PubSubSetup>()
-            .Add<LoadWhiteListBlackList>()
+            .Add<FetchPermissions>()
             .Add<CreateHelixClient>()
             .Add<LoadModules>()
             .Add<InitHandlers>()

@@ -43,13 +43,20 @@ public class EditUser: ChatCommand
             try
             {
                 IvrUser user = users.Single();
-                await Postgres.ExecuteAsync("insert into blacklisted_users values (@Username, @UserId)", new
+                UserPermissionDto permission = new()
                 {
                     Username = user.Login,
-                    UserId = long.Parse(user.Id)
-                });
+                    UserId = long.Parse(user.Id),
+                    Permissions = "blacklisted",
+                    LastModified = msg.SentTimestamp.ToUnixTimeSeconds()
+                };
 
-                BlackListedUserIds.Add(long.Parse(user.Id));
+                await Postgres.ExecuteAsync(
+                    "insert into user_permissions values (@Username, @UserId, @Permissions, @LastModified)",
+                    permission
+                );
+
+                UserPermissions.Add(long.Parse(user.Id), permission);
                 await msg.ReplyWith($"Blacklisted user: {user.Login} id:{user.Id}");
             }
             finally
@@ -69,12 +76,12 @@ public class EditUser: ChatCommand
         await PostgresQueryLock.WaitAsync();
         try
         {
-            int count = await Postgres.ExecuteAsync("delete from blacklisted_users where id = @UserId", new
+            int count = await Postgres.ExecuteAsync("delete from user_permissions where user_id = @UserId", new
             {
                 UserId = uid
             });
 
-            BlackListedUserIds.Remove(uid);
+            UserPermissions.Remove(uid);
             await msg.ReplyWith(count == 1 ? "Successfully unblacklisted" : "Failed to unblacklist");
         }
         finally

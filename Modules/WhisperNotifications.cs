@@ -24,7 +24,7 @@ internal class WhisperNotifications: BotModule
 
     private async ValueTask OnWhisperReceived(Whisper whisper)
     {
-        if (BlackListedUserIds.Contains(whisper.Author.Id))
+        if (whisper.Author.IsBlacklisted())
             return;
 
         DiscordMessageBuilder builder = new DiscordMessageBuilder(Config.Secrets["ParentHandle"]).AddEmbed(embed =>

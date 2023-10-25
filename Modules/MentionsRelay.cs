@@ -13,7 +13,7 @@ internal class MentionsRelay: BotModule
 
     private async ValueTask OnMessage(Privmsg message)
     {
-        if (BlackListedUserIds.Contains(message.Author.Id))
+        if (message.Author.IsBlacklisted())
             return;
 
         if (_regex.Match(message.Content) is { Success: true })

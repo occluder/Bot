@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using Bot.Models;
 using Bot.Services;
+using Bot.Utils;
 using MiniTwitch.Irc.Models;
 
 namespace Bot.Modules;
@@ -32,7 +33,7 @@ internal partial class REPL: BotModule
     {
         bool verbose = false;
         long timeNow = DateTimeOffset.Now.ToUnixTimeSeconds();
-        if (message.Channel.Id is not 11148817 and not 780092850 || BlackListedUserIds.Contains(message.Author.Id))
+        if (message.Channel.Id is not 11148817 and not 780092850 || message.Author.IsBlacklisted())
             return;
 
         if (message.Content.Length < 5 || !PrefixRegex().IsMatch(message.Content))
