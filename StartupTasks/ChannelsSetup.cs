@@ -33,6 +33,7 @@ internal class ChannelsSetup: IStartupTask
         Information("{ChannelCount} channels loaded. {JoinableCount} joinable. {PrioritizedCount} prioritized",
             channels.Length, channels.Count(x => x.Priority > -10), channels.Count(x => x.Priority >= 50));
 
+        Information("{ChannelCount} channels are logged", channels.Count(x => x.IsLogged));
         Information("Joining MainClient channels");
         LogEventLevel ll = LoggerSetup.LogSwitch.MinimumLevel;
         LoggerSetup.LogSwitch.MinimumLevel = LogEventLevel.Warning;
