@@ -15,7 +15,8 @@ internal class ChannelsSetup: IStartupTask
         TwitchChannelDto[] channels;
         try
         {
-            channels = (await Postgres.QueryAsync<TwitchChannelDto>("select * from channels", commandTimeout: 5)).ToArray();
+            channels = (await Postgres.QueryAsync<TwitchChannelDto>("select * from channels", commandTimeout: 5))
+                .ToArray();
         }
         catch (Exception ex)
         {
@@ -74,10 +75,10 @@ internal class ChannelsSetup: IStartupTask
             };
 
             _ = await Postgres.ExecuteAsync(
-                "insert into channels values (@DisplayName, @Channel, @ChannelId, @AvatarUrl, @Priority, @Tags, @DateJoined)",
+                "insert into channels values (@DisplayName, @ChannelName, @ChannelId, @AvatarUrl, @Priority, @Tags, @DateJoined)",
                 channelDto
             );
-            
+
             _ = priority >= 50 ? await MainClient.JoinChannel(user.Login) : await AnonClient.JoinChannel(user.Login);
 
             Channels[channelDto.ChannelName] = channelDto;
@@ -97,7 +98,7 @@ internal class ChannelsSetup: IStartupTask
             _ = await Postgres.ExecuteAsync("delete from channels where channel_id = @ChannelId",
                 new { ChannelId = channelId }
             );
-            
+
             TwitchChannelDto channelDto = ChannelsById[channelId];
             if (channelDto.Priority >= 50)
                 await MainClient.PartChannel(channelDto.ChannelName);
