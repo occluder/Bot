@@ -75,7 +75,7 @@ internal class ChannelsSetup: IStartupTask
             };
 
             _ = await Postgres.ExecuteAsync(
-                "insert into channels values (@DisplayName, @ChannelName, @ChannelId, @AvatarUrl, @Priority, @Tags, @DateJoined)",
+                "insert into channels values (@DisplayName, @ChannelName, @ChannelId, @AvatarUrl, @Priority, @Tags, @DateAdded)",
                 channelDto
             );
 
