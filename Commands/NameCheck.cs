@@ -6,6 +6,11 @@ namespace Bot.Commands;
 
 public class NameCheck: ChatCommand
 {
+    public NameCheck()
+    {
+        AddArgument(new CommandArgument("UserId", 1, typeof(long)));
+    }
+
     public override CommandInfo Info { get; } = new(
         "namecheck",
         "Check names of a user's ID",
@@ -13,17 +18,15 @@ public class NameCheck: ChatCommand
         CommandPermission.Moderators
     );
 
-    public NameCheck()
-    {
-        AddArgument(new("UserId", 1, typeof(long)));
-    }
-
     public override async ValueTask Run(Privmsg message)
     {
-        IEnumerable<UserDto> queryResult = await Postgres.QueryAsync<UserDto>("SELECT username, user_id FROM collected_users WHERE user_id = @UserId", new
-        {
-            UserId = GetArgument<long>("UserId")
-        });
+        IEnumerable<UserDto> queryResult = await Postgres.QueryAsync<UserDto>(
+            "SELECT username, user_id FROM users WHERE user_id = @UserId",
+            new
+            {
+                UserId = GetArgument<long>("UserId")
+            }
+        );
 
         string[] aliases = queryResult.Select(x => x.Username).ToArray();
         if (aliases.Length == 0)
