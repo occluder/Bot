@@ -1,6 +1,5 @@
 ﻿using Bot.Enums;
 using Bot.Interfaces;
-using Bot.Services;
 using Microsoft.Extensions.Logging;
 using MiniTwitch.Helix;
 
@@ -10,10 +9,10 @@ public class CreateHelixClient: IStartupTask
 {
     public ValueTask<StartupTaskState> Run()
     {
-        Helix.HelixClient = new HelixClient(
+        HelixClient = new HelixWrapper(
             Config.Secrets["BotToken"],
             Config.Secrets["BotClientId"],
-            new LoggerFactory().AddSerilog(Logger).CreateLogger<HelixClient>());
+            new LoggerFactory().AddSerilog(Logger).CreateLogger<HelixWrapper>());
 
         return ValueTask.FromResult(StartupTaskState.Completed);
     }

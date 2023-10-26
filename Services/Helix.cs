@@ -4,5 +4,5 @@ namespace Bot.Services;
 
 public static class Helix
 {
-    public static HelixClient HelixClient { get; set; } = default!;
+    public static HelixWrapper HelixClient { get; set; } = default!;
 }
