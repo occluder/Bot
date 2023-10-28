@@ -1,8 +1,6 @@
 ﻿using Bot.Models;
-using Bot.StartupTasks;
 using MiniTwitch.Helix.Enums;
 using MiniTwitch.Helix.Models;
-using MiniTwitch.Helix.Responses;
 using MiniTwitch.PubSub.Interfaces;
 using MiniTwitch.PubSub.Models;
 
@@ -41,8 +39,7 @@ internal class StreamMonitor: BotModule
         string? streamInfo = null;
         if (await HelixClient.GetChannelInformation(channelId) is { Success: true } result)
         {
-            ChannelInformation.Information datum = result.Value.Data[0];
-            streamInfo = $"{datum.Title} [{datum.GameName}]";
+            streamInfo = $"{result.Value.Data.Title} [{result.Value.Data.GameName}]";
         }
 
         HelixResult cResult = await HelixClient.UpdateUserChatColor(Config.Ids["BotId"], ChatColor.Green);
@@ -103,7 +100,7 @@ internal class StreamMonitor: BotModule
     }
 
     private static IEnumerable<long> GetMonitoredChannelIds() =>
-        ChannelsSetup.Channels.Values.Where(x => x.Priority >= 0).Select(x => x.ChannelId);
+        Channels.Values.Where(x => x.Priority >= 0).Select(x => x.ChannelId);
 
     protected override async ValueTask OnModuleEnabled()
     {
