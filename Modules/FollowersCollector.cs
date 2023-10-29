@@ -56,7 +56,7 @@ public class FollowersCollector: BotModule
             await TwitchPubSub.UnlistenTo(Topics.Following(channel.ChannelId));
     }
 
-    private record FollowData(string Username, long UserId, string ChannelName, long TimeFollowed)
+    private readonly record struct FollowData(string Username, long UserId, string ChannelName, long TimeFollowed)
     {
         public static implicit operator FollowData((ChannelId c, Follower f) t) =>
             new(t.f.Name, t.f.Id, ChannelsById[t.c].ChannelName, DateTimeOffset.Now.ToUnixTimeSeconds());

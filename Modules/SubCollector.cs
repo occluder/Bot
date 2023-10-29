@@ -85,7 +85,7 @@ public class SubCollector: BotModule
         await _timer.StopAsync();
     }
 
-    private record Sub(
+    private readonly record struct Sub(
         string Username,
         long UserId,
         string Channel,

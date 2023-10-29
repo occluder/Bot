@@ -10,7 +10,7 @@ namespace Bot.StartupTasks;
 
 public class LoggerSetup: IStartupTask
 {
-    public static LoggingLevelSwitch LogSwitch { get; private set; } = new((LogEventLevel)Config.DefaultLogLevel);
+    public static LoggingLevelSwitch LogSwitch { get; } = new((LogEventLevel)Config.DefaultLogLevel);
 
     public ValueTask<StartupTaskState> Run()
     {

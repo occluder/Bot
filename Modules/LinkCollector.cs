@@ -117,7 +117,7 @@ internal class LinkCollector: BotModule
         await _timer.StopAsync();
     }
 
-    private record LinkData(
+    private readonly record struct LinkData(
         string Username,
         long UserId,
         string Channel,
