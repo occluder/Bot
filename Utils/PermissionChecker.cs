@@ -32,8 +32,8 @@ internal static class PermissionChecker
     }
 
     public static bool IsBlacklisted(this MessageAuthor author)
-        => UserPermissions.TryGetValue(author.Id, out UserPermissionDto? perms) && perms.IsBlacklisted;
+        => UserPermissions.ContainsKey(author.Id) && UserPermissions[author.Id].IsBlacklisted;
 
     public static bool IsBlacklisted(this IWhisperAuthor author)
-        => UserPermissions.TryGetValue(author.Id, out UserPermissionDto? perms) && perms.IsBlacklisted;
+        => UserPermissions.ContainsKey(author.Id) && UserPermissions[author.Id].IsBlacklisted;
 }

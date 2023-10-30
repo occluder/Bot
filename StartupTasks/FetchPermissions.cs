@@ -12,6 +12,7 @@ internal class FetchPermissions: IStartupTask
 
     public async ValueTask<StartupTaskState> Run()
     {
+        await PostgresQueryLock.WaitAsync();
         try
         {
             UserPermissions = (await Postgres.QueryAsync<UserPermissionDto>("select * from user_permissions"))
@@ -19,8 +20,12 @@ internal class FetchPermissions: IStartupTask
         }
         catch (Exception ex)
         {
-            _logger.Information(ex, "[{ClassName}] Loading user permissions failed!");
+            _logger.Error(ex, "[{ClassName}] Loading user permissions failed!");
             return StartupTaskState.Failed;
+        }
+        finally
+        {
+            PostgresQueryLock.Release();
         }
 
         _logger.Information("Loaded {UserCount} users with modified permissions", UserPermissions.Count);

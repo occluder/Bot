@@ -35,7 +35,6 @@ internal class BanCollector: BotModule
                       DateTimeOffset.Now.ToUnixTimeSeconds()));
 
         _ = _ss.Release();
-        return;
     }
 
     private async ValueTask OnUserBan(IUserBan ban)
@@ -55,7 +54,6 @@ internal class BanCollector: BotModule
                       DateTimeOffset.Now.ToUnixTimeSeconds()));
 
         _ = _ss.Release();
-        return;
     }
 
     private async Task Commit()

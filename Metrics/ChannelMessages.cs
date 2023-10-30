@@ -1,8 +1,9 @@
-﻿using MiniTwitch.Irc.Models;
+﻿using Bot.Interfaces;
+using MiniTwitch.Irc.Models;
 
 namespace Bot.Metrics;
 
-public class ChannelMessages //: IMetric
+public class ChannelMessages: IMetric
 {
     private readonly Dictionary<long, int> _messageCount = new();
     private uint _invc;
@@ -42,7 +43,7 @@ public class ChannelMessages //: IMetric
             PostgresQueryLock.Release();
         }
 
-        _messageCount.Clear();
+        foreach ((long channelId, _) in _messageCount) _messageCount[channelId] = 0;
     }
 }
 
