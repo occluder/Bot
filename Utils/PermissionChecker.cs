@@ -1,7 +1,6 @@
 ﻿using Bot.Enums;
 using Bot.Interfaces;
 using Bot.Models;
-using MiniTwitch.Irc.Interfaces;
 using MiniTwitch.Irc.Models;
 
 namespace Bot.Utils;
@@ -30,10 +29,4 @@ internal static class PermissionChecker
 
         return level >= command.Info.Permission;
     }
-
-    public static bool IsBlacklisted(this MessageAuthor author)
-        => UserPermissions.ContainsKey(author.Id) && UserPermissions[author.Id].IsBlacklisted;
-
-    public static bool IsBlacklisted(this IWhisperAuthor author)
-        => UserPermissions.ContainsKey(author.Id) && UserPermissions[author.Id].IsBlacklisted;
 }

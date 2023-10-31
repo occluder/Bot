@@ -6,9 +6,8 @@ namespace Bot.StartupTasks;
 
 internal class FetchPermissions: IStartupTask
 {
-    public static Dictionary<long, UserPermissionDto> UserPermissions { get; private set; } = default!;
-
     private static readonly ILogger _logger = ForContext<FetchPermissions>();
+    public static Dictionary<long, UserPermissionDto> UserPermissions { get; private set; } = default!;
 
     public async ValueTask<StartupTaskState> Run()
     {
@@ -31,4 +30,7 @@ internal class FetchPermissions: IStartupTask
         _logger.Information("Loaded {UserCount} users with modified permissions", UserPermissions.Count);
         return StartupTaskState.Completed;
     }
+
+    public static bool IsBlacklisted(long id)
+        => UserPermissions.ContainsKey(id) && UserPermissions[id].IsBlacklisted;
 }
