@@ -37,7 +37,7 @@ internal class StreamMonitor: BotModule
 
         _logger.Information("{Channel} went live", ChannelsById[channelId].DisplayName);
         string? streamInfo = null;
-        if (await HelixClient.GetChannelInformation(channelId) is { Success: true } result)
+        if (await HelixClient.GetChannelInformation(channelId) is { Success: true, Value.HasContent: true } result)
         {
             streamInfo = $"{result.Value.Data.Title} [{result.Value.Data.GameName}]";
         }
