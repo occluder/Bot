@@ -16,7 +16,7 @@ public class NewUsers: IMetric
         await PostgresQueryLock.WaitAsync();
         try
         {
-            Dictionary<string, int> result = await Postgres.QueryFirstAsync<Dictionary<string, int>>(
+            dynamic result = await Postgres.QueryFirstAsync(
                 "select count(*) from users where added_at > @AddedAt",
                 new
                 {
@@ -24,7 +24,7 @@ public class NewUsers: IMetric
                 }
             );
 
-            count = result["count"];
+            count = (int)result.count;
         }
         catch (Exception ex)
         {
