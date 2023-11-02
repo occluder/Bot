@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using Bot.Enums;
 using Bot.Interfaces;
+using Bot.Metrics;
 using Bot.Utils;
 using Npgsql;
 
@@ -8,8 +9,17 @@ namespace Bot.StartupTasks;
 
 public class NpgsqlSetup: IStartupTask
 {
+    private static readonly SemaphoreSlim _semaphore = new(1);
     public static IDbConnection Postgres { get; private set; } = default!;
-    public static SemaphoreSlim PostgresQueryLock { get; } = new(1);
+
+    public static SemaphoreSlim PostgresQueryLock
+    {
+        get
+        {
+            Queries.Count++;
+            return _semaphore;
+        }
+    }
 
     public async ValueTask<StartupTaskState> Run()
     {

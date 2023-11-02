@@ -43,9 +43,11 @@ internal class StreamMonitor: BotModule
         }
 
         HelixResult cResult = await HelixClient.UpdateUserChatColor(Config.Ids["BotId"], ChatColor.Green);
-        await MainClient.SendMessage(Config.RelayChannel,
+        await MainClient.SendMessage(
+            Config.RelayChannel,
             $"ppBounce @{ChannelsById[channelId].DisplayName} went live! {streamInfo}",
-            cResult.Success);
+            cResult.Success
+        );
     }
 
     private static async ValueTask OnViewerCountUpdate(ChannelId channelId, IViewerCountUpdate _)
