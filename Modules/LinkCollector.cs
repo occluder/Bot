@@ -49,7 +49,7 @@ internal class LinkCollector: BotModule
                     arg.Author.Id,
                     arg.Channel.Name,
                     arg.Channel.Id,
-                    match.Value[8..],
+                    match.Value,
                     DateTimeOffset.Now.ToUnixTimeSeconds()
                 );
                 
