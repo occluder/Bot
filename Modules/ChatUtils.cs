@@ -12,12 +12,12 @@ public class ChatUtils: BotModule
     {
         ReadOnlySpan<char> m = message.Content;
         int space = m.IndexOf(' ');
-        if (space != -1 || m.Length > space || space > 4)
+        if ((space != -1 && m.Length > space + 1) || space > 4)
             return default;
 
         try
         {
-            return m[..space] switch
+            return m[..(space == -1 ? ^0 : space)] switch
             {
                 "aest" => message.ReplyWith(Date(10)),
                 "acst" => message.ReplyWith(Date(9.5)),
