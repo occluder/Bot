@@ -10,13 +10,14 @@ public class ChatUtils: BotModule
 
     private static ValueTask OnMessage(Privmsg message)
     {
-        string[] args = message.Content.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        if (args.Length > 1)
+        ReadOnlySpan<char> m = message.Content;
+        int space = m.IndexOf(' ');
+        if (space != -1 || m.Length > space || space > 4)
             return default;
 
         try
         {
-            return args[0] switch
+            return m[..space] switch
             {
                 "aest" => message.ReplyWith(Date(10)),
                 "acst" => message.ReplyWith(Date(9.5)),
@@ -57,7 +58,7 @@ public class ChatUtils: BotModule
                 ? DateTimeOffset.FromUnixTimeMilliseconds(unix.Value)
                 : DateTimeOffset.FromUnixTimeSeconds(unix.Value);
 
-            return $"{offset:yyyy-M-d h:mm:ss tt} [{offset:O}]";
+            return $"{offset:yyyy-MM-dd hh:mm:ss tt} [{offset:O}]";
         }
 
         var utc = DateTimeOffset.UtcNow;
@@ -68,7 +69,7 @@ public class ChatUtils: BotModule
         }
 
         var date = TimeZoneInfo.ConvertTime(utc, tz);
-        return $"{date:yyyy-M-d h:mm:ss tt (zz)} [{date:O}]";
+        return $"{date:yyyy-MM-dd hh:mm:ss tt (zz)} [{date:O}]";
     }
 
     private static bool WithinReasonableTime(long time, bool ms = false)
