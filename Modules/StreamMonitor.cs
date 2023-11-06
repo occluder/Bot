@@ -37,12 +37,12 @@ internal class StreamMonitor: BotModule
 
         _logger.Information("{Channel} went live", ChannelsById[channelId].DisplayName);
         string? streamInfo = null;
-        if (await HelixClient.GetChannelInformation(channelId) is { Success: true, Value.HasContent: true } result)
+        if (await HelixClient.GetChannelInformation(channelId) is { Success: true } result)
         {
-            streamInfo = $"{result.Value.Data.Title} [{result.Value.Data.GameName}]";
+            streamInfo = $"{result.Value.Data[0].Title} [{result.Value.Data[0].GameName}]";
         }
 
-        HelixResult cResult = await HelixClient.UpdateUserChatColor(Config.Ids["BotId"], ChatColor.Green);
+        HelixResult cResult = await HelixClient.UpdateUserChatColor(ChatColor.Green);
         await MainClient.SendMessage(
             Config.RelayChannel,
             $"ppBounce @{ChannelsById[channelId].DisplayName} went live! {streamInfo}",
@@ -79,7 +79,7 @@ internal class StreamMonitor: BotModule
             _logger.Warning("Failed to unlisten to {TopicKey}: {Error}", r.TopicKey, r.Error);
 
         _logger.Information("{Channel} went offline!", ChannelsById[channelId].DisplayName);
-        HelixResult result = await HelixClient.UpdateUserChatColor(Config.Ids["BotId"], ChatColor.OrangeRed);
+        HelixResult result = await HelixClient.UpdateUserChatColor(ChatColor.OrangeRed);
         await MainClient.SendMessage(Config.RelayChannel,
             $"Sleepo @{ChannelsById[channelId].DisplayName} is now offline!",
             result.Success);
@@ -87,7 +87,7 @@ internal class StreamMonitor: BotModule
 
     private static async ValueTask OnGameChange(ChannelId channelId, IGameChange update)
     {
-        HelixResult result = await HelixClient.UpdateUserChatColor(Config.Ids["BotId"], ChatColor.DodgerBlue);
+        HelixResult result = await HelixClient.UpdateUserChatColor(ChatColor.DodgerBlue);
         await MainClient.SendMessage(Config.RelayChannel,
             $"ApuSkate @{ChannelsById[channelId].DisplayName} changed game: {update.OldGame} ➡ {update.NewGame}",
             result.Success);
@@ -95,7 +95,7 @@ internal class StreamMonitor: BotModule
 
     private static async ValueTask OnTitleChange(ChannelId channelId, ITitleChange update)
     {
-        HelixResult result = await HelixClient.UpdateUserChatColor(Config.Ids["BotId"], ChatColor.DodgerBlue);
+        HelixResult result = await HelixClient.UpdateUserChatColor(ChatColor.DodgerBlue);
         await MainClient.SendMessage(Config.RelayChannel,
             $"ApuSkate @{ChannelsById[channelId].DisplayName} changed title: {update.OldTitle} ➡ {update.NewTitle}",
             result.Success);

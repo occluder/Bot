@@ -11,7 +11,7 @@ public class CreateHelixClient: IStartupTask
     {
         HelixClient = new HelixWrapper(
             Config.Secrets["BotToken"],
-            Config.Secrets["BotClientId"],
+            Config.Ids["BotId"],
             new LoggerFactory().AddSerilog(Logger).CreateLogger<HelixWrapper>());
 
         return ValueTask.FromResult(StartupTaskState.Completed);
