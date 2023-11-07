@@ -1,5 +1,8 @@
 ﻿using Bot.Models;
+using Bot.StartupTasks;
 using CachingFramework.Redis.Contracts.RedisObjects;
+using MiniTwitch.Helix.Models;
+using MiniTwitch.Helix.Responses;
 using MiniTwitch.Irc.Interfaces;
 using MiniTwitch.PubSub.Models;
 using MiniTwitch.PubSub.Payloads;
@@ -18,7 +21,8 @@ public class SuspiciousUserDetection: BotModule
     private static async ValueTask OnFollow(ChannelId channelId, Follower follower)
     {
         if (follower.Id < _highestNonSuspiciousId) return;
-        if (await HelixClient.GetUsers(follower.Id) is { Success: true } result)
+        HelixResult<Users> result = await HelixClient.GetUsers(follower.Id);
+        if (result is { Success: true })
         {
             if (result.Value.Data[0].CreatedAt.ToUniversalTime() > DateTime.UtcNow.AddDays(-1))
             {
@@ -90,7 +94,7 @@ public class SuspiciousUserDetection: BotModule
         TwitchPubSub.OnFollow += OnFollow;
         AnonClient.OnUserBan += OnBan;
         MainClient.OnUserBan += OnBan;
-        foreach (TwitchChannelDto channel in Channels.Values.Where(c => c.SusCheck))
+        foreach (TwitchChannelDto channel in ChannelsSetup.Channels.Values.Where(c => c.SusCheck))
             await TwitchPubSub.ListenTo(Topics.Following(channel.ChannelId));
     }
 
@@ -99,7 +103,7 @@ public class SuspiciousUserDetection: BotModule
         TwitchPubSub.OnFollow -= OnFollow;
         AnonClient.OnUserBan -= OnBan;
         MainClient.OnUserBan -= OnBan;
-        foreach (TwitchChannelDto channel in Channels.Values.Where(c => c.SusCheck))
+        foreach (TwitchChannelDto channel in ChannelsSetup.Channels.Values.Where(c => c.SusCheck))
             await TwitchPubSub.UnlistenTo(Topics.Following(channel.ChannelId));
     }
 
