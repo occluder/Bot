@@ -24,12 +24,13 @@ public class SuspiciousUserDetection: BotModule
         HelixResult<Users> result = await HelixClient.GetUsers(follower.Id);
         if (result is { Success: true })
         {
-            if (result.Value.Data[0].CreatedAt.ToUniversalTime() > DateTime.UtcNow.AddDays(-1))
+            if (result.Value.Data[0].CreatedAt.ToUniversalTime() > DateTime.UtcNow.AddDays(-14))
             {
                 await AddSuspiciousUser(follower.Id, channelId);
                 await MainClient.SendMessage(
                     Config.RelayChannel,
-                    $"\u26a0\ufe0f Suspicious user detected: {follower.Name} in #{ChannelNameOrId(channelId)}"
+                    $"\u26a0\ufe0f Suspicious user detected: {follower.Name} in #{ChannelNameOrId(channelId)} " +
+                    $"{GetString(result.Value.Data[0].CreatedAt)}"
                 );
 
                 _logger.Information("Suspicious user detected: {UserId}, #{ChannelId}", follower.Id, channelId);
@@ -88,6 +89,13 @@ public class SuspiciousUserDetection: BotModule
 
         return channelId;
     }
+
+    private static string GetString(DateTime time) => "(created " + (DateTime.UtcNow - time.ToUniversalTime()) switch
+    {
+        { Days: > 0 } ts => $"{ts.Days}d, {ts.Hours}h ago)",
+        { Hours: > 0 } ts => $"{ts.Hours}h, {ts.Minutes}m ago)",
+        _ => $"{(DateTime.UtcNow - time.ToUniversalTime()).Minutes}m ago)"
+    };
 
     protected override async ValueTask OnModuleEnabled()
     {
