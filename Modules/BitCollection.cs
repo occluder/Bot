@@ -5,13 +5,13 @@ namespace Bot.Modules;
 
 internal class BitCollection: BotModule
 {
+    private static readonly ILogger _logger = ForContext<BitCollection>();
+    
     private async ValueTask OnMessage(Privmsg message)
     {
         if (message.Bits == 0 || !ChannelsById[message.Channel.Id].IsLogged)
             return;
-
-        ForContext<BitCollection>().Verbose("@{User} sent {Amount} bits to #{Channel}!", message.Author.Name,
-            message.Bits, message.Channel.Name);
+        
         await PostgresQueryLock.WaitAsync();
         try
         {
@@ -24,8 +24,13 @@ internal class BitCollection: BotModule
                     Channel = message.Channel.Name,
                     ChannelId = message.Channel.Id,
                     BitAmount = message.Bits,
-                    TimeSent = message.SentTimestamp
+                    TimeSent = message.TmiSentTs / 1000
                 }, commandTimeout: 10
+            );
+
+            _logger.Verbose(
+                "@{User} sent {Amount} bits to #{Channel}!",
+                message.Author.Name, message.Bits, message.Channel.Name
             );
         }
         finally
