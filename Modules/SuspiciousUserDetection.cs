@@ -29,11 +29,10 @@ public class SuspiciousUserDetection: BotModule
                 await AddSuspiciousUser(follower.Id, channelId);
                 await MainClient.SendMessage(
                     Config.RelayChannel,
-                    $"\u26a0\ufe0f Suspicious user detected: {follower.Name} in #{ChannelNameOrId(channelId)} " +
-                    $"{GetString(result.Value.Data[0].CreatedAt)}"
+                    $"susLada {follower.Name} #{ChannelNameOrId(channelId)} {GetString(result.Value.Data[0].CreatedAt)}"
                 );
 
-                _logger.Information("Suspicious user detected: {UserId}, #{ChannelId}", follower.Id, channelId);
+                _logger.Information("New sus user: {UserId}, #{ChannelId}", follower.Id, ChannelNameOrId(channelId));
                 return;
             }
 
@@ -94,7 +93,8 @@ public class SuspiciousUserDetection: BotModule
     {
         { Days: > 0 } ts => $"{ts.Days}d, {ts.Hours}h ago)",
         { Hours: > 0 } ts => $"{ts.Hours}h, {ts.Minutes}m ago)",
-        _ => $"{(DateTime.UtcNow - time.ToUniversalTime()).Minutes}m ago)"
+        { Minutes: > 0 } ts => $"{ts.Minutes}m, {ts.Seconds}s ago)",
+        _ => $"{(DateTime.UtcNow - time.ToUniversalTime()).Seconds}s ago)"
     };
 
     protected override async ValueTask OnModuleEnabled()
