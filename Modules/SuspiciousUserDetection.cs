@@ -12,6 +12,8 @@ namespace Bot.Modules;
 
 public class SuspiciousUserDetection: BotModule
 {
+    private const int SUS_MAX_AGE_DAYS = 15;
+    
     private static readonly HashSet<SuspiciousUser> _suspiciousUserIds = SuspiciousUsers.ToHashSet();
     private static readonly ILogger _logger = ForContext<SuspiciousUserDetection>();
     private static long _highestNonSuspiciousId;
@@ -25,7 +27,8 @@ public class SuspiciousUserDetection: BotModule
         HelixResult<Users> result = await HelixClient.GetUsers(follower.Id);
         if (result is { Success: true })
         {
-            if (result.Value.Data[0].CreatedAt.ToUniversalTime() > DateTime.UtcNow.AddDays(-14))
+            DateTime createdAt = result.Value.Data[0].CreatedAt.ToUniversalTime();
+            if (createdAt > DateTime.UtcNow.AddDays(-SUS_MAX_AGE_DAYS))
             {
                 await AddSuspiciousUser(follower.Id, channelId);
                 _ = await HelixClient.UpdateUserChatColor(ChatColor.GoldenRod);
