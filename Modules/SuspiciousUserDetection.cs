@@ -1,6 +1,7 @@
 ﻿using Bot.Models;
 using Bot.StartupTasks;
 using CachingFramework.Redis.Contracts.RedisObjects;
+using MiniTwitch.Helix.Enums;
 using MiniTwitch.Helix.Models;
 using MiniTwitch.Helix.Responses;
 using MiniTwitch.Irc.Interfaces;
@@ -27,9 +28,11 @@ public class SuspiciousUserDetection: BotModule
             if (result.Value.Data[0].CreatedAt.ToUniversalTime() > DateTime.UtcNow.AddDays(-14))
             {
                 await AddSuspiciousUser(follower.Id, channelId);
+                _ = await HelixClient.UpdateUserChatColor(ChatColor.GoldenRod);
                 await MainClient.SendMessage(
                     Config.RelayChannel,
-                    $"susLada {follower.Name} #{ChannelNameOrId(channelId)} {GetString(result.Value.Data[0].CreatedAt)}"
+                    $"susLada {follower.Name} #{ChannelNameOrId(channelId)} {GetString(result.Value.Data[0].CreatedAt)}",
+                    true
                 );
 
                 _logger.Information("New sus user: {UserId}, #{ChannelId}", follower.Id, ChannelNameOrId(channelId));
@@ -45,10 +48,10 @@ public class SuspiciousUserDetection: BotModule
         _logger.Error("Failed to get user with id {Id}: {@HelixResult}", follower.Id, result);
     }
 
-    private static ValueTask OnBan(IUserBan arg)
+    private static async ValueTask OnBan(IUserBan arg)
     {
         var user = new SuspiciousUser(arg.Target.Id, arg.Channel.Id);
-        if (!_suspiciousUserIds.Contains(user)) return default;
+        if (!_suspiciousUserIds.Contains(user)) return;
         _suspiciousUserIds.Remove(user);
         SuspiciousUsers.Remove(user);
         _logger.Information(
@@ -56,10 +59,12 @@ public class SuspiciousUserDetection: BotModule
             arg.Target.Name,
             arg.Channel.Name
         );
-        
-        return MainClient.SendMessage(
+
+        _ = await HelixClient.UpdateUserChatColor(ChatColor.HotPink);
+        await MainClient.SendMessage(
             Config.RelayChannel,
-            $"ℹ\ufe0f Suspicious user {arg.Target.Name} has been banned from #{arg.Channel.Name}"
+            $"ℹ\ufe0f Suspicious user {arg.Target.Name} has been banned from #{arg.Channel.Name}",
+            true
         );
     }
 
