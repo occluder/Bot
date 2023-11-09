@@ -12,7 +12,8 @@ namespace Bot.Modules;
 
 public class SuspiciousUserDetection: BotModule
 {
-    private const int SUS_MAX_AGE_DAYS = 15;
+    private const int SUS_MAX_AGE_DAYS = 1;
+    private const int MAX_MONITOR_DAYS = 90;
     
     private static readonly HashSet<SuspiciousUser> _suspiciousUserIds = SuspiciousUsers.ToHashSet();
     private static readonly ILogger _logger = ForContext<SuspiciousUserDetection>();
@@ -20,35 +21,37 @@ public class SuspiciousUserDetection: BotModule
 
     private static IRedisSet<SuspiciousUser> SuspiciousUsers =>
         Collections.GetRedisSet<SuspiciousUser>("bot:chat:suspicious_users");
-
+    
+    
     private static async ValueTask OnFollow(ChannelId channelId, Follower follower)
     {
         if (follower.Id < _highestNonSuspiciousId) return;
         HelixResult<Users> result = await HelixClient.GetUsers(follower.Id);
-        if (result is { Success: true })
+        if (result is { Success: false })
         {
-            DateTime createdAt = result.Value.Data[0].CreatedAt.ToUniversalTime();
-            if (createdAt > DateTime.UtcNow.AddDays(-SUS_MAX_AGE_DAYS))
-            {
-                await AddSuspiciousUser(follower.Id, channelId);
-                _ = await HelixClient.UpdateUserChatColor(ChatColor.GoldenRod);
-                await MainClient.SendMessage(
-                    Config.RelayChannel,
-                    $"susLada {follower.Name} #{ChannelNameOrId(channelId)} {GetString(result.Value.Data[0].CreatedAt)}",
-                    true
-                );
-
-                _logger.Information("New sus user: {UserId}, #{ChannelId}", follower.Id, ChannelNameOrId(channelId));
-                return;
-            }
-
-            if (_highestNonSuspiciousId < follower.Id) _highestNonSuspiciousId = follower.Id;
-            _logger.Information("Updated highest non-suspicious id to {NewId}", follower.Id);
-            await Cleanup();
+            _logger.Error("Failed to get user with id {Id}: {@HelixResult}", follower.Id, result);
             return;
         }
 
-        _logger.Error("Failed to get user with id {Id}: {@HelixResult}", follower.Id, result);
+        DateTime createdAt = result.Value.Data[0].CreatedAt.ToUniversalTime();
+        // User is added
+        if (createdAt > DateTime.UtcNow.AddDays(-SUS_MAX_AGE_DAYS))
+        {
+            await AddSuspiciousUser(follower.Id, channelId);
+            _ = await HelixClient.UpdateUserChatColor(ChatColor.GoldenRod);
+            await MainClient.SendMessage(
+                Config.RelayChannel,
+                $"susLada {follower.Name} #{ChannelNameOrId(channelId)} {GetString(result.Value.Data[0].CreatedAt)}",
+                true
+            );
+
+            _logger.Information("New sus user: {UserId}, #{ChannelId}", follower.Id, ChannelNameOrId(channelId));
+            return;
+        }
+
+        if (_highestNonSuspiciousId < follower.Id) _highestNonSuspiciousId = follower.Id;
+        _logger.Information("Updated highest non-suspicious id to {NewId}", follower.Id);
+        await Cleanup();
     }
 
     private static async ValueTask OnBan(IUserBan arg)
@@ -56,7 +59,7 @@ public class SuspiciousUserDetection: BotModule
         var user = new SuspiciousUser(arg.Target.Id, arg.Channel.Id);
         if (!_suspiciousUserIds.Contains(user)) return;
         _suspiciousUserIds.Remove(user);
-        SuspiciousUsers.Remove(user);
+        await SuspiciousUsers.RemoveAsync(user);
         _logger.Information(
             "Suspicious user {SuspiciousUser} banned from #{Channel}",
             arg.Target.Name,
@@ -81,8 +84,21 @@ public class SuspiciousUserDetection: BotModule
 
     private static async Task Cleanup()
     {
-        foreach (SuspiciousUser suspiciousUser in _suspiciousUserIds.Where(x => x.UserId < _highestNonSuspiciousId))
+        // Get lowest 100 user IDs
+        HelixResult<Users> usersResult = await HelixClient.GetUsers(
+            _suspiciousUserIds.Select(x => x.UserId).Order().Take(100)
+        );
+
+        if (!usersResult.Success) return;
+        // Go over users by order of IDs to stop early
+        foreach (SuspiciousUser suspiciousUser in _suspiciousUserIds.OrderBy(x => x.UserId))
         {
+            Users.User? helixUser = usersResult.Value.Data.FirstOrDefault(u => u.Id == suspiciousUser.ChannelId);
+            if (helixUser is null) continue;
+
+            // If the current user is within monitored threshold, then we can stop early because of order
+            if (helixUser.CreatedAt >= DateTime.UtcNow.AddDays(-MAX_MONITOR_DAYS)) break;
+            // Remove user otherwise
             _suspiciousUserIds.Remove(suspiciousUser);
             await SuspiciousUsers.RemoveAsync(suspiciousUser);
             _logger.Information("User marked as not suspicious anymore: {@User}", suspiciousUser);
