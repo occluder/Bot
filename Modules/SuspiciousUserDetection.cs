@@ -41,11 +41,11 @@ public class SuspiciousUserDetection: BotModule
             _ = await HelixClient.UpdateUserChatColor(ChatColor.GoldenRod);
             await MainClient.SendMessage(
                 Config.RelayChannel,
-                $"susLada {follower.Name} #{ChannelNameOrId(channelId)} {GetString(result.Value.Data[0].CreatedAt)}",
+                $"susLada @{follower.Name} #{ChannelNameOrId(channelId)} {createdAt}",
                 true
             );
 
-            _logger.Information("New sus user: {UserId}, #{ChannelId}", follower.Id, ChannelNameOrId(channelId));
+            _logger.Information("New sus user: {Username}, #{ChannelId}", follower.Name, ChannelNameOrId(channelId));
             return;
         }
 
