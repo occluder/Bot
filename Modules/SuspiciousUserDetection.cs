@@ -41,7 +41,7 @@ public class SuspiciousUserDetection: BotModule
             _ = await HelixClient.UpdateUserChatColor(ChatColor.GoldenRod);
             await MainClient.SendMessage(
                 Config.RelayChannel,
-                $"susLada @{follower.Name} #{ChannelNameOrId(channelId)} {createdAt}",
+                $"susLada @{follower.Name} #{ChannelNameOrId(channelId)} {GetString(createdAt)}",
                 true
             );
 
@@ -113,7 +113,7 @@ public class SuspiciousUserDetection: BotModule
         return channelId;
     }
 
-    private static string GetString(DateTime time) => "(created " + (DateTime.UtcNow - time.ToUniversalTime()) switch
+    private static string GetString(DateTime time) => "(created " + (DateTime.UtcNow - time) switch
     {
         { Days: > 0 } ts => $"{ts.Days}d, {ts.Hours}h ago)",
         { Hours: > 0 } ts => $"{ts.Hours}h, {ts.Minutes}m ago)",
