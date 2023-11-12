@@ -26,7 +26,8 @@
 			"EvalAuth": "",
 			"MentionsRegex": "",
 			"ParentHandle": "",
-			"ImageHostsRegex": ""
+			"ImageHostsRegex": "",
+			"ParentUsername": ""
 		},
 		"Ids": {
 			"ParentId": 0,

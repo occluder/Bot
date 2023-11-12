@@ -40,7 +40,7 @@ public class SuspiciousUserDetection: BotModule
             await AddSuspiciousUser(follower.Id, channelId);
             _ = await HelixClient.UpdateUserChatColor(ChatColor.GoldenRod);
             await MainClient.SendMessage(
-                Config.RelayChannel,
+                Config.Secrets["ParentUsername"],
                 $"susLada @{follower.Name} #{ChannelNameOrId(channelId)} {GetString(createdAt)}",
                 true
             );
@@ -68,7 +68,7 @@ public class SuspiciousUserDetection: BotModule
 
         _ = await HelixClient.UpdateUserChatColor(ChatColor.HotPink);
         await MainClient.SendMessage(
-            Config.RelayChannel,
+            Config.Secrets["ParentUsername"],
             $"ℹ\ufe0f Suspicious user {arg.Target.Name} has been banned from #{arg.Channel.Name}",
             true
         );
