@@ -11,7 +11,8 @@ internal class HypeChatCollector: BotModule
             return;
 
         ForContext<HypeChatCollector>().Verbose("@{User} sent {Amount} {Currency} through hype chat in #{Channel}!",
-            message.Author.Name, GetActualAmount(message.HypeChat), message.HypeChat.PaymentCurrency, message.Channel.Name);
+            message.Author.Name, GetActualAmount(message.HypeChat), message.HypeChat.Currency.ToString(),
+            message.Channel.Name);
 
         await PostgresQueryLock.WaitAsync();
         try
@@ -25,7 +26,7 @@ internal class HypeChatCollector: BotModule
                     Channel = message.Channel.Name,
                     ChannelId = message.Channel.Id,
                     Amount = GetActualAmount(message.HypeChat),
-                    Currency = message.HypeChat.PaymentCurrency,
+                    Currency = message.HypeChat.Currency.ToString(),
                     TimeSent = message.SentTimestamp.ToUnixTimeSeconds()
                 }, commandTimeout: 10
             );
