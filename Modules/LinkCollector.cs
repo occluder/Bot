@@ -30,14 +30,14 @@ internal class LinkCollector: BotModule
 
     private async ValueTask OnMessage(Privmsg arg)
     {
+        if (!ChannelsById[arg.Channel.Id].IsLogged
+            || arg.Content.Length < 10
+            || _bots.Contains(arg.Author.Id)
+            || IsBot(arg.Author, arg.Nonce))
+            return;
+
         try
         {
-            if (!ChannelsById[arg.Channel.Id].IsLogged
-                || arg.Content.Length < 10
-                || _bots.Contains(arg.Author.Id)
-                || IsBot(arg.Author, arg.Nonce))
-                return;
-
             if (_regex.Match(arg.Content) is { Success: true, Length: > 10 } match && match.Value[0] == 'h')
             {
                 if (_links.Count >= MAX_LINKS)
@@ -52,7 +52,7 @@ internal class LinkCollector: BotModule
                     match.Value,
                     DateTimeOffset.Now.ToUnixTimeSeconds()
                 );
-                
+
                 _links.Add(link);
                 _ = _ss.Release();
                 _logger.Verbose("Link added: {@LinkInfo} ({Total})", link, _links.Count);
@@ -77,7 +77,7 @@ internal class LinkCollector: BotModule
                 "(@Username, @UserId, @Channel, @ChannelId, @LinkText, @TimeSent)",
                 _links
             );
-            
+
             _links.Clear();
             _logger.Debug("Inserted {LinkCount} links", inserted);
         }
@@ -110,6 +110,7 @@ internal class LinkCollector: BotModule
         _timer.Start();
         return default;
     }
+
     protected override async ValueTask OnModuleDisabled()
     {
         MainClient.OnMessage -= OnMessage;
