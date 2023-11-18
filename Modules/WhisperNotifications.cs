@@ -1,5 +1,5 @@
-﻿using Bot.Models;
-using Bot.Utils;
+﻿using System.Net.Http.Json;
+using Bot.Models;
 using MiniTwitch.Irc;
 using MiniTwitch.Irc.Models;
 
@@ -27,19 +27,25 @@ internal class WhisperNotifications: BotModule
         if (IsBlacklisted(whisper.Author.Id))
             return;
 
-        DiscordMessageBuilder builder = new DiscordMessageBuilder(Config.Secrets["ParentHandle"]).AddEmbed(embed =>
+        var payload = new
         {
-            embed.title = $"@`{whisper.Author.Name}` ({whisper.Author.Id}) sent you a whisper";
-            embed.color = 2393480;
-            embed.description = whisper.Content;
-            embed.timestamp = DateTime.Now;
-        });
+            content = Config.Secrets["ParentHandle"],
+            embeds = new[]
+            {
+                new
+                {
+                    title = $"@`{whisper.Author.Name}` ({whisper.Author.Id}) sent you a whisper",
+                    color = 2393480,
+                    description = whisper.Content,
+                    timestamp = DateTime.Now
+                }
+            }
+        };
 
         _logger.Information("{@WhisperAuthor} sent you a whisper: {WhisperContent}", whisper.Author, whisper.Content);
-        HttpResponseMessage response;
         try
         {
-            response = await _requests.PostAsync(Config.Links["MentionsWebhook"], builder.ToStringContent());
+            HttpResponseMessage response = await _requests.PostAsJsonAsync(Config.Links["MentionsWebhook"], payload);
             if (response.IsSuccessStatusCode)
                 _logger.Debug("[{StatusCode}] POST {Url}", response.StatusCode, Config.Links["MentionsWebhook"]);
             else

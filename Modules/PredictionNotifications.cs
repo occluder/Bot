@@ -1,6 +1,6 @@
-﻿using System.Text;
+﻿using System.Net.Http.Json;
+using System.Text;
 using Bot.Models;
-using Bot.Utils;
 using MiniTwitch.PubSub.Interfaces;
 using MiniTwitch.PubSub.Models;
 using MiniTwitch.PubSub.Payloads;
@@ -22,163 +22,174 @@ internal class PredictionNotifications: BotModule
 
     private async ValueTask OnPredictionStarted(ChannelId channelId, IPredictionStarted prediction)
     {
-        DiscordMessageBuilder builder = new DiscordMessageBuilder().AddEmbed(embed =>
+        var payload = new
         {
-            embed.title = "Prediction Started!";
-            embed.description = $"{prediction.Title}\n" + string.Join('\n', prediction.Outcomes.Select(x => _emotes[x.Badge.Version] + ' ' + x.Title));
-            embed.timestamp = prediction.CreatedAt;
-            embed.color = 5766924;
-            _ = embed.SetAuthor(author =>
+            embeds = new[]
             {
-                author.name = ChannelsById[channelId].DisplayName;
-                author.icon_url = ChannelsById[channelId].AvatarUrl;
-                author.url = $"https://www.twitch.tv/popout/{ChannelsById[channelId].ChannelName}/chat?popout=";
-            });
+                new
+                {
+                    title = "Prediction Started!",
+                    description = $"{prediction.Title}\n" + string.Join('\n',
+                        prediction.Outcomes.Select(x => _emotes[x.Badge.Version] + ' ' + x.Title)),
+                    timestamp = prediction.CreatedAt,
+                    color = 5766924,
+                    author = new
+                    {
+                        name = ChannelsById[channelId].DisplayName,
+                        icon_url = ChannelsById[channelId].AvatarUrl,
+                        url = $"https://www.twitch.tv/popout/{ChannelsById[channelId].ChannelName}/chat?popout="
+                    },
+                    footer = new
+                    {
+                        text = $"Prediction started by {prediction.CreatedBy.DisplayName} " +
+                               $"• Closes in {(prediction.PredictionWindowSeconds > 120
+                                   ? (prediction.PredictionWindowSeconds / 60) + "m"
+                                   : prediction.PredictionWindowSeconds + "s")}"
+                    }
+                }
+            }
+        };
 
-            _ = embed.SetFooter(footer =>
-            {
-                int length = prediction.PredictionWindowSeconds;
-                footer.text = $"Prediction started by {prediction.CreatedBy.DisplayName} " +
-                $"• Closes in {(length > 120 ? (length / 60) + "m" : length + "s")}";
-            });
-        });
-
-        await SendMessage(builder);
+        await SendMessage(payload);
     }
     private async ValueTask OnPredictionLocked(ChannelId channelId, IPredictionLocked prediction)
     {
-        DiscordMessageBuilder builder = new DiscordMessageBuilder().AddEmbed(embed =>
+        var payload = new
         {
-            embed.title = "Prediction Locked!";
-            embed.description = prediction.Title;
-            embed.timestamp = prediction.LockedAt!.Value;
-            embed.color = 6298368;
-            _ = embed.SetAuthor(author =>
+            embeds = new[]
             {
-                author.name = ChannelsById[channelId].DisplayName;
-                author.icon_url = ChannelsById[channelId].AvatarUrl;
-            });
-
-            _ = embed.SetFooter(footer =>
-            {
-                footer.text = $"Prediction locked by {prediction.LockedBy?.DisplayName}";
-            });
-
-            foreach (ChannelPredictions.Outcome outcome in prediction.Outcomes)
-            {
-                _ = embed.AddField(feed =>
+                new
                 {
-                    feed.name = _emotes[outcome.Badge.Version] + ' ' + outcome.Title;
-                    feed.value = GetOutcomeData(outcome, prediction.Outcomes);
-                    feed.inline = prediction.Outcomes.Count > 2;
-                });
+                    title = "Prediction Locked!",
+                    description = prediction.Title,
+                    timestamp = prediction.LockedAt!.Value,
+                    color = 6298368,
+                    author = new
+                    {
+                        name = ChannelsById[channelId].DisplayName,
+                        icon_url = ChannelsById[channelId].AvatarUrl
+                    },
+                    footer = new
+                    {
+                        text = $"Prediction locked by {prediction.LockedBy?.DisplayName}"
+                    },
+                    fields = prediction.Outcomes.Select(x => new
+                    {
+                        name = _emotes[x.Badge.Version] + ' ' + x.Title,
+                        value = GetOutcomeData(x, prediction.Outcomes),
+                        inline = prediction.Outcomes.Count > 2
+                    })
+                }
             }
-        });
+        };
 
-        await SendMessage(builder);
+        await SendMessage(payload);
     }
     private async ValueTask OnPredictionWindowClosed(ChannelId channelId, IPredictionWindowClosed prediction)
     {
-        DiscordMessageBuilder builder = new DiscordMessageBuilder().AddEmbed(embed =>
+        var payload = new
         {
-            embed.title = "Prediction Closed!";
-            embed.description = prediction.Title;
-            embed.timestamp = prediction.CreatedAt!.AddSeconds(prediction.PredictionWindowSeconds);
-            embed.color = 6298368;
-            _ = embed.SetAuthor(author =>
+            embeds = new[]
             {
-                author.name = ChannelsById[channelId].DisplayName;
-                author.icon_url = ChannelsById[channelId].AvatarUrl;
-            });
-
-            _ = embed.SetFooter(footer =>
-            {
-                footer.text = $"Prediction started by {prediction.CreatedBy.DisplayName}";
-            });
-
-            foreach (ChannelPredictions.Outcome outcome in prediction.Outcomes)
-            {
-                _ = embed.AddField(feed =>
+                new
                 {
-                    feed.name = _emotes[outcome.Badge.Version] + ' ' + outcome.Title;
-                    feed.value = GetOutcomeData(outcome, prediction.Outcomes);
-                    feed.inline = prediction.Outcomes.Count > 2;
-                });
+                    title = "Prediction Closed!",
+                    description = prediction.Title,
+                    timestamp = prediction.CreatedAt!.AddSeconds(prediction.PredictionWindowSeconds),
+                    color = 6298368,
+                    author = new
+                    {
+                        name = ChannelsById[channelId].DisplayName,
+                        icon_url = ChannelsById[channelId].AvatarUrl
+                    },
+                    footer = new
+                    {
+                        text = $"Prediction started by {prediction.CreatedBy.DisplayName}"
+                    },
+                    fields = prediction.Outcomes.Select(x => new
+                    {
+                        name = _emotes[x.Badge.Version] + ' ' + x.Title,
+                        value = GetOutcomeData(x, prediction.Outcomes),
+                        inline = prediction.Outcomes.Count > 2
+                    })
+                }
             }
-        });
+        };
 
-        await SendMessage(builder);
+        await SendMessage(payload);
     }
     private async ValueTask OnPredictionCancelled(ChannelId channelId, IPredictionCancelled prediction)
     {
-        DiscordMessageBuilder builder = new DiscordMessageBuilder().AddEmbed(embed =>
+        var payload = new
         {
-            embed.title = "Prediction Cancelled!";
-            embed.description = prediction.Title;
-            embed.timestamp = prediction.EndedAt!.Value;
-            embed.color = 13614414;
-            _ = embed.SetAuthor(author =>
+            embeds = new[]
             {
-                author.name = ChannelsById[channelId].DisplayName;
-                author.icon_url = ChannelsById[channelId].AvatarUrl;
-            });
-
-            _ = embed.SetFooter(footer =>
-            {
-                footer.text = $"Prediction cancelled by {prediction.EndedBy?.DisplayName}";
-            });
-
-            foreach (ChannelPredictions.Outcome outcome in prediction.Outcomes)
-            {
-                _ = embed.AddField(feed =>
+                new
                 {
-                    feed.name = _emotes[outcome.Badge.Version] + ' ' + outcome.Title;
-                    feed.value = GetOutcomeData(outcome, prediction.Outcomes);
-                    feed.inline = prediction.Outcomes.Count > 2;
-                });
+                    title = "Prediction Cancelled!",
+                    description = prediction.Title,
+                    timestamp = prediction.EndedAt!.Value,
+                    color = 13614414,
+                    author = new
+                    {
+                        name = ChannelsById[channelId].DisplayName,
+                        icon_url = ChannelsById[channelId].AvatarUrl
+                    },
+                    footer = new
+                    {
+                        text = $"Prediction cancelled by {prediction.EndedBy?.DisplayName}"
+                    },
+                    fields = prediction.Outcomes.Select(x => new
+                    {
+                        name = _emotes[x.Badge.Version] + ' ' + x.Title,
+                        value = GetOutcomeData(x, prediction.Outcomes),
+                        inline = prediction.Outcomes.Count > 2
+                    })
+                }
             }
-        });
+        };
 
-        await SendMessage(builder);
+        await SendMessage(payload);
     }
     private async ValueTask OnPredictionEnded(ChannelId channelId, IPredictionEnded prediction)
     {
-        DiscordMessageBuilder builder = new DiscordMessageBuilder().AddEmbed(embed =>
+        ChannelPredictions.Outcome win = prediction.Outcomes.FirstOrDefault(x => x.Id == prediction.WinningOutcomeId);
+        var payload = new
         {
-            embed.title = "Prediction Ended!";
-            embed.description = prediction.Title;
-            embed.timestamp = prediction.EndedAt!.Value;
-            embed.color = 7053553;
-            _ = embed.SetAuthor(author =>
+            embeds = new[]
             {
-                author.name = ChannelsById[channelId].DisplayName;
-                author.icon_url = ChannelsById[channelId].AvatarUrl;
-            });
-
-            _ = embed.SetFooter(footer =>
-            {
-                footer.text = $"Prediction ended by {prediction.EndedBy?.DisplayName}";
-            });
-
-            foreach (ChannelPredictions.Outcome outcome in prediction.Outcomes)
-            {
-                _ = embed.AddField(feed =>
+                new
                 {
-                    feed.name = _emotes[outcome.Badge.Version] + ' ' + outcome.Title;
-                    feed.value = GetOutcomeData(outcome, prediction.Outcomes);
-                    feed.inline = prediction.Outcomes.Count > 2;
-                });
+                    title = "Prediction Ended!",
+                    description = prediction.Title,
+                    timestamp = prediction.EndedAt!.Value,
+                    color = 7053553,
+                    author = new
+                    {
+                        name = ChannelsById[channelId].DisplayName,
+                        icon_url = ChannelsById[channelId].AvatarUrl
+                    },
+                    footer = new
+                    {
+                        text = $"Prediction ended by {prediction.EndedBy?.DisplayName}"
+                    },
+                    fields = prediction.Outcomes.Select(x => new
+                    {
+                        name = _emotes[x.Badge.Version] + ' ' + x.Title,
+                        value = GetOutcomeData(x, prediction.Outcomes),
+                        inline = prediction.Outcomes.Count > 2
+                    }).Append(new
+                    {
+                        name = $"🏆 Winning outcome: *{win.Title}*",
+                        value = string.Join('\n',
+                            win.TopPredictors.Select(p => $"**@{p.DisplayName}**\t+{p.Result!.Value.PointsWon}")),
+                        inline = false
+                    })
+                }
             }
+        };
 
-            ChannelPredictions.Outcome winningOutcome = prediction.Outcomes.FirstOrDefault(x => x.Id == prediction.WinningOutcomeId);
-            _ = embed.AddField(feed =>
-            {
-                feed.name = $"🏆 Winning outcome: *{winningOutcome.Title}*";
-                feed.value = string.Join('\n', winningOutcome.TopPredictors.Select(p => $"**@{p.DisplayName}**\t+{p.Result!.Value.PointsWon}"));
-            });
-        });
-
-        await SendMessage(builder);
+        await SendMessage(payload);
     }
 
     private static string GetOutcomeData(ChannelPredictions.Outcome outcome, IReadOnlyList<ChannelPredictions.Outcome> outcomes)
@@ -203,12 +214,11 @@ internal class PredictionNotifications: BotModule
         return sb.ToString();
     }
 
-    private async Task SendMessage(DiscordMessageBuilder builder)
+    private async Task SendMessage(object payload)
     {
-        HttpResponseMessage response;
         try
         {
-            response = await _requests.PostAsync(_link, builder.ToStringContent());
+            HttpResponseMessage response = await _requests.PostAsJsonAsync(_link, payload);
             if (response.IsSuccessStatusCode)
                 ForContext<PredictionNotifications>().Debug("[{StatusCode}] POST {Url}", response.StatusCode, _link);
             else

@@ -1,5 +1,5 @@
-﻿using Bot.Models;
-using Bot.Utils;
+﻿using System.Net.Http.Json;
+using Bot.Models;
 using MiniTwitch.PubSub.Interfaces;
 using MiniTwitch.PubSub.Models;
 
@@ -10,7 +10,7 @@ internal class TimeoutRelay: BotModule
     private static readonly ILogger _logger = ForContext<TimeoutRelay>();
     private static readonly HttpClient _requests = new();
 
-    private async ValueTask OnTimedOut(UserId userId, ITimeOutData data)
+    private static async ValueTask OnTimedOut(UserId userId, ITimeOutData data)
     {
         if (data.ExpiresInMs <= 1000)
         {
@@ -30,59 +30,84 @@ internal class TimeoutRelay: BotModule
             _ => $"{data.ExpiresInMs}ms",
         };
 
-        DiscordMessageBuilder message = new DiscordMessageBuilder().AddEmbed(e =>
+        var payload = new
         {
-            e.title = $"You were timed out for {durationString} in #{ChannelNameOrId(data.ChannelId)}";
-            e.description = data.Reason ?? "NO REASON";
-            e.color = 12767488;
-            e.timestamp = DateTime.Now;
-        });
+            embeds = new[]
+            {
+                new
+                {
+                    title = $"You were timed out for {durationString} in #{ChannelNameOrId(data.ChannelId)}",
+                    description = data.Reason ?? "NO REASON",
+                    color = 12767488,
+                    timestamp = DateTime.Now
+                }
+            }
+        };
 
-        await SendDiscordMessage(message);
+        await SendDiscordMessage(payload);
     }
     private async ValueTask OnBanned(UserId userId, IBanData data)
     {
         _logger.Information("You were banned in #{Channel}: {Reason}", ChannelNameOrId(data.ChannelId), data.Reason);
-        DiscordMessageBuilder message = new DiscordMessageBuilder().AddEmbed(e =>
+        var payload = new
         {
-            e.title = $"You were banned in #{ChannelNameOrId(data.ChannelId)}";
-            e.description = data.Reason ?? "NO REASON";
-            e.color = 16001024;
-            e.timestamp = DateTime.Now;
-        });
+            content = Config.Secrets["ParentHandle"],
+            embeds = new[]
+            {
+                new
+                {
+                    title = $"You were banned in #{ChannelNameOrId(data.ChannelId)}",
+                    description = data.Reason ?? "NO REASON",
+                    color = 16001024,
+                    timestamp = DateTime.Now
+                }
+            }
+        };
 
-        await SendDiscordMessage(message);
+        await SendDiscordMessage(payload);
     }
     private async ValueTask OnUntimedOut(UserId userId, IUntimeOutData data)
     {
         _logger.Information("You were untimed out in #{Channel}", ChannelNameOrId(data.ChannelId));
-        DiscordMessageBuilder message = new DiscordMessageBuilder().AddEmbed(e =>
+        var payload = new
         {
-            e.title = $"You were untimed out in #{ChannelNameOrId(data.ChannelId)}";
-            e.color = 6353920;
-            e.timestamp = DateTime.Now;
-        });
+            embeds = new[]
+            {
+                new
+                {
+                    title = $"You were untimed out in #{ChannelNameOrId(data.ChannelId)}",
+                    color = 6353920,
+                    timestamp = DateTime.Now
+                }
+            }
+        };
 
-        await SendDiscordMessage(message);
+        await SendDiscordMessage(payload);
     }
     private async ValueTask OnUnbanned(UserId userId, IUntimeOutData data)
     {
         _logger.Information("You were unbanned in #{Channel}", ChannelNameOrId(data.ChannelId));
-        DiscordMessageBuilder message = new DiscordMessageBuilder().AddEmbed(e =>
+        var payload = new
         {
-            e.title = $"You were unbanned in #{ChannelNameOrId(data.ChannelId)}";
-            e.color = 6353920;
-            e.timestamp = DateTime.Now;
-        });
+            embeds = new[]
+            {
+                new
+                {
+                    title = $"You were unbanned in #{ChannelNameOrId(data.ChannelId)}",
+                    color = 6353920,
+                    timestamp = DateTime.Now
+                }
+            }
+        };
 
-        await SendDiscordMessage(message);
+        await SendDiscordMessage(payload);
     }
 
-    private static async Task SendDiscordMessage(DiscordMessageBuilder message)
+    private static async Task SendDiscordMessage(object message)
     {
         try
         {
-            HttpResponseMessage response = await _requests.PostAsync(Config.Links["MentionsWebhook"], message.ToStringContent());
+            HttpResponseMessage response = await _requests.PostAsJsonAsync(Config.Links["MentionsWebhook"], message);
             if (response.IsSuccessStatusCode)
                 _logger.Debug("[{StatusCode}] POST {Url}", response.StatusCode, Config.Links["MentionsWebhook"]);
             else

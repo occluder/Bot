@@ -1,6 +1,6 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Net.Http.Json;
+using System.Text.RegularExpressions;
 using Bot.Models;
-using Bot.Utils;
 using MiniTwitch.Irc.Models;
 
 namespace Bot.Modules;
@@ -25,34 +25,45 @@ internal class MentionsRelay: BotModule
         if (_regex.Match(message.Content) is { Success: false })
             return;
 
-        DiscordMessageBuilder builder = new DiscordMessageBuilder().AddEmbed(embed =>
-        {
-            if (!message.Reply.HasContent)
+        object? payload = null;
+        if (message.Reply.HasContent)
+            payload = new
             {
-                embed.title = $"@`{message.Author.Name}` in #`{message.Channel.Name}`";
-                embed.description = message.Content;
-                embed.timestamp = DateTime.Now;
-            }
-            else
-            {
-                embed.title = $"@`{message.Reply.ParentUsername}` said in #`{message.Channel.Name}`";
-                embed.description = message.Reply.ParentMessage;
-                embed.timestamp = DateTime.Now;
-                embed.AddField(f =>
+                embeds = new[]
                 {
-                    f.name = $"@`{message.Author.Name}` replied:";
-                    f.value = message.Content;
-                });
-            }
+                    new
+                    {
+                        title = $"@`{message.Reply.ParentUsername}` said in #`{message.Channel.Name}`",
+                        description = message.Reply.ParentMessage,
+                        timestamp = DateTime.Now,
+                        fields = new[]
+                        {
+                            new
+                            {
+                                name = $"@`{message.Author.Name}` replied:",
+                                value = message.Content
+                            }
+                        },
+                        image = _imageHosts.Match(message.Content) is { Success: true } imageMatch
+                            ? new
+                            {
+                                url = imageMatch.Value
+                            }
+                            : null
+                    }
+                }
+            };
+        else
+            payload = new
+            {
+                title = $"@`{message.Author.Name}` in #`{message.Channel.Name}`",
+                description = message.Content,
+                timestamp = DateTime.Now
+            };
 
-            if (_imageHosts.Match(message.Content) is { Success: true } imageMatch)
-                _ = embed.SetImage(i => i.url = imageMatch.Value);
-        });
-
-        HttpResponseMessage response;
         try
         {
-            response = await _requests.PostAsync(Config.Links["MentionsWebhook"], builder.ToStringContent());
+            HttpResponseMessage response = await _requests.PostAsJsonAsync(Config.Links["MentionsWebhook"], payload);
             if (response.IsSuccessStatusCode)
                 _logger.Debug("[{StatusCode}] POST {Url}", response.StatusCode, Config.Links["MentionsWebhook"]);
             else
