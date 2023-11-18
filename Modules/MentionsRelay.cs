@@ -62,7 +62,13 @@ internal class MentionsRelay: BotModule
                     {
                         title = $"@`{message.Author.Name}` in #`{message.Channel.Name}`",
                         description = message.Content,
-                        timestamp = DateTime.Now
+                        timestamp = DateTime.Now,
+                        image = _imageHosts.Match(message.Content) is { Success: true } imageMatch
+                            ? new
+                            {
+                                url = imageMatch.Value
+                            }
+                            : null
                     }
                 }
             };
