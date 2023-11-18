@@ -10,7 +10,7 @@ public class ChatUtils: BotModule
 
     private static ValueTask OnMessage(Privmsg message)
     {
-        if (IsBlacklisted(message.Author.Id))
+        if (UserBlacklisted(message.Author.Id))
             return default;
 
         ReadOnlySpan<char> m = message.Content;

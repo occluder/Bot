@@ -32,7 +32,7 @@ internal partial class REPL: BotModule
     {
         bool verbose = false;
         long timeNow = Unix();
-        if (message.Channel.Id is not 11148817 and not 780092850 || IsBlacklisted(message.Author.Id))
+        if (message.Channel.Id is not 11148817 and not 780092850 || UserBlacklisted(message.Author.Id))
             return;
 
         if (message.Content.Length < 5 || !PrefixRegex().IsMatch(message.Content))

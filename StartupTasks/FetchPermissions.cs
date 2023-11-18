@@ -31,6 +31,6 @@ internal class FetchPermissions: IStartupTask
         return StartupTaskState.Completed;
     }
 
-    public static bool IsBlacklisted(long id)
+    public static bool UserBlacklisted(long id)
         => UserPermissions.ContainsKey(id) && UserPermissions[id].IsBlacklisted;
 }

@@ -24,7 +24,7 @@ internal class WhisperNotifications: BotModule
 
     private async ValueTask OnWhisperReceived(Whisper whisper)
     {
-        if (IsBlacklisted(whisper.Author.Id))
+        if (UserBlacklisted(whisper.Author.Id))
             return;
 
         var payload = new
