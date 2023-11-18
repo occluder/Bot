@@ -8,7 +8,7 @@ internal static class CooldownsManager
 
     public static bool IsOnCooldown(this Privmsg privmsg, IChatCommand command)
     {
-        long timeNow = DateTimeOffset.Now.ToUnixTimeSeconds();
+        long timeNow = Unix();
         // No one used the command before, so there is no cooldown
         if (!_cooldowns.ContainsKey(command.Info.Name))
             _cooldowns[command.Info.Name] = new();

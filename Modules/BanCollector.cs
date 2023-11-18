@@ -32,7 +32,7 @@ internal class BanCollector: BotModule
                       timeout.Channel.Name,
                       timeout.Channel.Id,
                       (int)timeout.Duration.TotalSeconds,
-                      DateTimeOffset.Now.ToUnixTimeSeconds()));
+                      Unix()));
 
         _ = _ss.Release();
     }
@@ -51,7 +51,7 @@ internal class BanCollector: BotModule
                       ban.Channel.Name,
                       ban.Channel.Id,
                       -1,
-                      DateTimeOffset.Now.ToUnixTimeSeconds()));
+                      Unix()));
 
         _ = _ss.Release();
     }

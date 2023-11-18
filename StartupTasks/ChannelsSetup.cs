@@ -71,7 +71,7 @@ internal class ChannelsSetup: IStartupTask
                 ChannelId = long.Parse(user.Id),
                 AvatarUrl = user.Logo,
                 Priority = priority,
-                DateAdded = DateTimeOffset.Now.ToUnixTimeSeconds(),
+                DateAdded = Unix(),
                 Tags = isLogged ? null : "nologs"
             };
 

@@ -31,7 +31,7 @@ internal partial class REPL: BotModule
     private async ValueTask OnMessage(Privmsg message)
     {
         bool verbose = false;
-        long timeNow = DateTimeOffset.Now.ToUnixTimeSeconds();
+        long timeNow = Unix();
         if (message.Channel.Id is not 11148817 and not 780092850 || IsBlacklisted(message.Author.Id))
             return;
 

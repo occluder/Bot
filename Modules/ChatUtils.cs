@@ -29,7 +29,7 @@ public class ChatUtils: BotModule
                 "et" or "edt" => message.ReplyWith(Date(-4)),
                 "pt" or "pdt" => message.ReplyWith(Date(-7)),
                 "pst" => message.ReplyWith(Date(-8)),
-                "unix" => message.ReplyWith(DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString()),
+                "unix" => message.ReplyWith(UnixMs().ToString()),
                 { Length: 10 } unix when long.TryParse(unix, out long time) && WithinReasonableTime(time) =>
                     message.ReplyWith(Date(unix: time)),
 

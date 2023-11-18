@@ -59,6 +59,6 @@ public class FollowersCollector: BotModule
     private readonly record struct FollowData(string Username, long UserId, string ChannelName, long TimeFollowed)
     {
         public static implicit operator FollowData((ChannelId c, Follower f) t) =>
-            new(t.f.Name, t.f.Id, ChannelsById[t.c].ChannelName, DateTimeOffset.Now.ToUnixTimeSeconds());
+            new(t.f.Name, t.f.Id, ChannelsById[t.c].ChannelName, Unix());
     }
 }

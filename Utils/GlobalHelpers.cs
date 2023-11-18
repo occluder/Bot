@@ -9,7 +9,13 @@ internal static class GlobalHelpers
 {
     private static readonly HttpClient _httpClient = new();
 
-    public static async Task<OneOf<T, HttpStatusCode, Exception>> GetFromRequest<T>(string url, JsonSerializerOptions? options = null, [CallerFilePath] string caller = default!, [CallerLineNumber] int line = default)
+    public static long Unix() => DateTimeOffset.Now.ToUnixTimeSeconds();
+
+    public static long UnixMs() => DateTimeOffset.Now.ToUnixTimeMilliseconds();
+
+    public static async Task<OneOf<T, HttpStatusCode, Exception>> GetFromRequest<T>(string url,
+        JsonSerializerOptions? options = null, [CallerFilePath] string caller = default!,
+        [CallerLineNumber] int line = default)
     {
         ILogger logger = ForContext("CallerFilePath", caller).ForContext("CallerLineNumber", line);
         HttpResponseMessage response;
