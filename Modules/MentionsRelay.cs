@@ -56,9 +56,15 @@ internal class MentionsRelay: BotModule
         else
             payload = new
             {
-                title = $"@`{message.Author.Name}` in #`{message.Channel.Name}`",
-                description = message.Content,
-                timestamp = DateTime.Now
+                embeds = new[]
+                {
+                    new
+                    {
+                        title = $"@`{message.Author.Name}` in #`{message.Channel.Name}`",
+                        description = message.Content,
+                        timestamp = DateTime.Now
+                    }
+                }
             };
 
         try
