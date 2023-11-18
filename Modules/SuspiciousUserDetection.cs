@@ -21,8 +21,8 @@ public class SuspiciousUserDetection: BotModule
 
     private static IRedisSet<SuspiciousUser> SuspiciousUsers =>
         Collections.GetRedisSet<SuspiciousUser>("bot:chat:suspicious_users");
-    
-    
+
+
     private static async ValueTask OnFollow(ChannelId channelId, Follower follower)
     {
         if (follower.Id < _highestNonSuspiciousId) return;
@@ -38,13 +38,6 @@ public class SuspiciousUserDetection: BotModule
         if (createdAt > DateTime.UtcNow.AddDays(-SUS_MAX_AGE_DAYS))
         {
             await AddSuspiciousUser(follower.Id, channelId);
-            _ = await HelixClient.UpdateUserChatColor(ChatColor.GoldenRod);
-            await MainClient.SendMessage(
-                Config.Secrets["ParentUsername"],
-                $"susLada @{follower.Name} #{ChannelNameOrId(channelId)} {GetString(createdAt)}",
-                true
-            );
-
             _logger.Information("New sus user: {Username}, #{ChannelId}", follower.Name, ChannelNameOrId(channelId));
             return;
         }
@@ -112,14 +105,6 @@ public class SuspiciousUserDetection: BotModule
 
         return channelId;
     }
-
-    private static string GetString(DateTime time) => "(created " + (DateTime.UtcNow - time) switch
-    {
-        { Days: > 0 } ts => $"{ts.Days}d, {ts.Hours}h ago)",
-        { Hours: > 0 } ts => $"{ts.Hours}h, {ts.Minutes}m ago)",
-        { Minutes: > 0 } ts => $"{ts.Minutes}m, {ts.Seconds}s ago)",
-        _ => $"{(DateTime.UtcNow - time.ToUniversalTime()).Seconds}s ago)"
-    };
 
     protected override async ValueTask OnModuleEnabled()
     {
