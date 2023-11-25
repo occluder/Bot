@@ -62,7 +62,7 @@ public class SuspiciousUserDetection: BotModule
         _ = await HelixClient.UpdateUserChatColor(ChatColor.HotPink);
         await MainClient.SendMessage(
             Config.Secrets["ParentUsername"],
-            $"ℹ\ufe0f Suspicious user {arg.Target.Name} has been banned from #{arg.Channel.Name}",
+            $"AOLpls @{arg.Target.Name} banned from #{arg.Channel.Name}",
             true
         );
     }
