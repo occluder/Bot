@@ -8,12 +8,12 @@ public class NameCheck: ChatCommand
 {
     public NameCheck()
     {
-        AddArgument(new CommandArgument("UserId", 1, typeof(long)));
+        AddArgument(new CommandArgument("Username", 1, typeof(string)));
     }
 
     public override CommandInfo Info { get; } = new(
         "namecheck",
-        "Check names of a user's ID",
+        "Check aliases of a user",
         TimeSpan.FromSeconds(5),
         CommandPermission.Moderators
     );
@@ -21,10 +21,14 @@ public class NameCheck: ChatCommand
     public override async ValueTask Run(Privmsg message)
     {
         IEnumerable<UserDto> queryResult = await Postgres.QueryAsync<UserDto>(
-            "SELECT username, user_id FROM users WHERE user_id = @UserId",
+            """
+                select username, user_id
+                from users
+                where user_id = (select max(user_id) from users where username = @Username)
+            """,
             new
             {
-                UserId = GetArgument<long>("UserId")
+                Username = GetArgument<string>("Username")
             }
         );
 
@@ -35,6 +39,6 @@ public class NameCheck: ChatCommand
             return;
         }
 
-        await message.ReplyWith($"🔎 {GetArgument<long>("UserId")}: {string.Join(", ", aliases)}");
+        await message.ReplyWith($"{aliases.Length} aliases: {string.Join(", ", aliases)}");
     }
 }
