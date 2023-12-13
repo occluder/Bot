@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Json;
 using Bot.Models;
 using MiniTwitch.Irc;
+using MiniTwitch.Irc.Enums;
 using MiniTwitch.Irc.Models;
 
 namespace Bot.Modules;
@@ -17,6 +18,15 @@ internal class WhisperNotifications: BotModule
             options.Username = "whatever";
             options.OAuth = Config.Secrets["ParentToken"];
             options.ReconnectionDelay = TimeSpan.FromMinutes(5);
+            options.IgnoreCommands = IgnoreCommand.PRIVMSG
+                                     | IgnoreCommand.USERNOTICE
+                                     | IgnoreCommand.CLEARCHAT
+                                     | IgnoreCommand.CLEARMSG
+                                     | IgnoreCommand.USERSTATE
+                                     | IgnoreCommand.JOIN
+                                     | IgnoreCommand.PART
+                                     | IgnoreCommand.NOTICE
+                                     | IgnoreCommand.ROOMSTATE;
         });
 
         _whisperClient.DefaultLogger.Enabled = false;
