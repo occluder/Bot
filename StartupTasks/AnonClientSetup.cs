@@ -21,7 +21,7 @@ internal class AnonClientSetup: IStartupTask
 
         AnonClient.ExceptionHandler = exception =>
         {
-            if (exception.GetType() == typeof(KeyNotFoundException))
+            if (exception.StackTrace?.Contains("b__34_0()") is true)
                 AnonClient.ReconnectAsync().StepOver();
             else
                 ForContext<AnonClientSetup>().Error(exception, "Exception in anonymous client");
