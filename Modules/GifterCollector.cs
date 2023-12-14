@@ -11,7 +11,7 @@ internal class GifterCollector: BotModule
         if (!ChannelsById[notice.Channel.Id].IsLogged)
             return;
 
-        ForContext<HypeChatCollector>().Verbose("@{User} gifted {Amount} {Tier} subs to #{Channel}!",
+        ForContext<GifterCollector>().Verbose("@{User} gifted {Amount} {Tier} subs to #{Channel}!",
             notice.Author.Name, notice.GiftCount, notice.SubPlan, notice.Channel.Name);
 
         await PostgresQueryLock.WaitAsync();
