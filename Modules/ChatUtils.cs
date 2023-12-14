@@ -61,7 +61,7 @@ public class ChatUtils: BotModule
                 ? DateTimeOffset.FromUnixTimeMilliseconds(unix.Value)
                 : DateTimeOffset.FromUnixTimeSeconds(unix.Value);
 
-            return $"{offset:yyyy-MM-dd hh:mm:ss tt} [{offset:O}]";
+            return $"{offset:yyyy-MM-dd, hh:mm:ss tt} {ShortDistance(DateTimeOffset.Now - offset)}";
         }
 
         var utc = DateTimeOffset.UtcNow;
@@ -72,7 +72,7 @@ public class ChatUtils: BotModule
         }
 
         var date = TimeZoneInfo.ConvertTime(utc, tz);
-        return $"{date:yyyy-MM-dd hh:mm:ss tt (zz)} [{date:O}]";
+        return $"{date:yyyy-MM-dd, hh:mm:ss tt, (UTCzz)}";
     }
 
     private static bool WithinReasonableTime(long time, bool ms = false)
@@ -81,6 +81,14 @@ public class ChatUtils: BotModule
         var date = ms ? DateTimeOffset.FromUnixTimeMilliseconds(time) : DateTimeOffset.FromUnixTimeSeconds(time);
         return date.Year <= year + MAX_YEAR_OFFSET && date.Year >= year - MAX_YEAR_OFFSET;
     }
+
+    private static string? ShortDistance(TimeSpan distance) => distance switch
+    {
+        { TotalMinutes: < 1 } => $"[{distance.Seconds}s ago]",
+        { TotalHours: < 1 } => $"[{distance.Minutes}m ago]",
+        { TotalDays: < 1 } => $"[{distance.TotalHours:F1}h ago]",
+        _ => null
+    };
 
     protected override ValueTask OnModuleEnabled()
     {
