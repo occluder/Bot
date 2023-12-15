@@ -22,6 +22,7 @@ public class ChatUtils: BotModule
         {
             return m[..(space == -1 ? ^0 : space)] switch
             {
+                "aedt" => message.ReplyWith(Date(11)),
                 "aest" => message.ReplyWith(Date(10)),
                 "acst" => message.ReplyWith(Date(9.5)),
                 "awst" => message.ReplyWith(Date(8)),
@@ -72,7 +73,7 @@ public class ChatUtils: BotModule
         }
 
         var date = TimeZoneInfo.ConvertTime(utc, tz);
-        return $"{date:yyyy-MM-dd, hh:mm:ss tt, (UTCzz)}";
+        return $"{date:yyyy-MM-dd, hh:mm:ss tt, (UTCzzz)}";
     }
 
     private static bool WithinReasonableTime(long time, bool ms = false)
