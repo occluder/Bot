@@ -22,11 +22,6 @@ public class ChatUtils: BotModule
         {
             return m[..(space == -1 ? ^0 : space)] switch
             {
-                "aedt" => message.ReplyWith(Date(660)),
-                "acdt" => message.ReplyWith(Date(630)),
-                "aest" => message.ReplyWith(Date(600)),
-                "acst" => message.ReplyWith(Date(570)),
-                "awst" => message.ReplyWith(Date(480)),
                 "eest" or "ast" => message.ReplyWith(Date(180)),
                 "cest" or "eet" => message.ReplyWith(Date(120)),
                 "cet" => message.ReplyWith(Date(60)),
