@@ -22,18 +22,20 @@ public class ChatUtils: BotModule
         {
             return m[..(space == -1 ? ^0 : space)] switch
             {
-                "aedt" => message.ReplyWith(Date(11)),
-                "aest" => message.ReplyWith(Date(10)),
-                "acst" => message.ReplyWith(Date(9.5)),
-                "awst" => message.ReplyWith(Date(8)),
-                "eest" or "ast" => message.ReplyWith(Date(3)),
-                "cest" or "eet" => message.ReplyWith(Date(2)),
-                "cet" => message.ReplyWith(Date(1)),
+                "aedt" => message.ReplyWith(Date(660)),
+                "acdt" => message.ReplyWith(Date(630)),
+                "aest" => message.ReplyWith(Date(600)),
+                "acst" => message.ReplyWith(Date(570)),
+                "awst" => message.ReplyWith(Date(480)),
+                "eest" or "ast" => message.ReplyWith(Date(180)),
+                "cest" or "eet" => message.ReplyWith(Date(120)),
+                "cet" => message.ReplyWith(Date(60)),
                 "utc" or "gmt" => message.ReplyWith(Date()),
-                "et" or "edt" => message.ReplyWith(Date(-4)),
-                "pt" or "pdt" => message.ReplyWith(Date(-7)),
-                "pst" => message.ReplyWith(Date(-8)),
+                "et" or "edt" => message.ReplyWith(Date(-240)),
+                "pt" or "pdt" => message.ReplyWith(Date(-420)),
+                "pst" => message.ReplyWith(Date(-480)),
                 "unix" => message.ReplyWith(UnixMs().ToString()),
+
                 { Length: 10 } unix when long.TryParse(unix, out long time) && WithinReasonableTime(time) =>
                     message.ReplyWith(Date(unix: time)),
 
@@ -54,7 +56,7 @@ public class ChatUtils: BotModule
         }
     }
 
-    private static string Date(double hourOffset = 0, long? unix = null, bool ms = false)
+    private static string Date(double minOffset = 0, long? unix = null, bool ms = false)
     {
         if (unix is not null)
         {
@@ -66,10 +68,10 @@ public class ChatUtils: BotModule
         }
 
         var utc = DateTimeOffset.UtcNow;
-        if (!_timeZones.TryGetValue(hourOffset, out TimeZoneInfo? tz))
+        if (!_timeZones.TryGetValue(minOffset, out TimeZoneInfo? tz))
         {
-            tz = TimeZoneInfo.GetSystemTimeZones().First(t => t.BaseUtcOffset.TotalHours == hourOffset);
-            _timeZones.Add(hourOffset, tz);
+            tz = TimeZoneInfo.GetSystemTimeZones().First(t => (int)t.BaseUtcOffset.TotalMinutes == (int)minOffset);
+            _timeZones.Add(minOffset, tz);
         }
 
         var date = TimeZoneInfo.ConvertTime(utc, tz);
