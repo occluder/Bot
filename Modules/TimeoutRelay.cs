@@ -9,6 +9,7 @@ internal class TimeoutRelay: BotModule
 {
     private static readonly ILogger _logger = ForContext<TimeoutRelay>();
     private static readonly HttpClient _requests = new();
+    private static readonly Dictionary<long, string> _channels = new();
 
     private static async ValueTask OnTimedOut(UserId userId, ITimeOutData data)
     {
@@ -40,21 +41,15 @@ internal class TimeoutRelay: BotModule
             _ => $"{data.ExpiresInMs}ms"
         };
 
-        var payload = new
-        {
-            embeds = new[]
-            {
-                new
-                {
-                    title = $"You were timed out for {durationString} in #{await GetChannelName(data.ChannelId)}",
-                    description = data.Reason ?? "NO REASON",
-                    color = 12767488,
-                    timestamp = DateTime.Now
-                }
-            }
-        };
+        object embed = CreateEmbed(
+            $"You were timed out for {durationString} in #`{await GetChannelName(data.ChannelId)}`",
+            12767488,
+            DateTime.Now,
+            null,
+            data.Reason ?? "NO REASON"
+        );
 
-        await SendDiscordMessage(payload);
+        await SendDiscordMessage(embed);
     }
 
     private static async ValueTask OnBanned(UserId userId, IBanData data)
@@ -64,61 +59,40 @@ internal class TimeoutRelay: BotModule
             await GetChannelName(data.ChannelId),
             data.Reason
         );
+        object embed = CreateEmbed(
+            $"You were banned in #`{await GetChannelName(data.ChannelId)}`",
+            16001024,
+            DateTime.Now,
+            Config.Secrets["ParentHandle"],
+            data.Reason ?? "NO REASON"
+        );
 
-        var payload = new
-        {
-            content = Config.Secrets["ParentHandle"],
-            embeds = new[]
-            {
-                new
-                {
-                    title = $"You were banned in #{await GetChannelName(data.ChannelId)}",
-                    description = data.Reason ?? "NO REASON",
-                    color = 16001024,
-                    timestamp = DateTime.Now
-                }
-            }
-        };
-
-        await SendDiscordMessage(payload);
+        await SendDiscordMessage(embed);
     }
 
     private static async ValueTask OnUntimedOut(UserId userId, IUntimeOutData data)
     {
         _logger.Information("You were untimed out in #{Channel}", await GetChannelName(data.ChannelId));
-        var payload = new
-        {
-            embeds = new[]
-            {
-                new
-                {
-                    title = $"You were untimed out in #{await GetChannelName(data.ChannelId)}",
-                    color = 6353920,
-                    timestamp = DateTime.Now
-                }
-            }
-        };
+        object embed = CreateEmbed(
+            $"You were untimed out in #`{await GetChannelName(data.ChannelId)}`",
+            6353920,
+            DateTime.Now
+        );
 
-        await SendDiscordMessage(payload);
+        await SendDiscordMessage(embed);
     }
 
     private static async ValueTask OnUnbanned(UserId userId, IUntimeOutData data)
     {
         _logger.Information("You were unbanned in #{Channel}", await GetChannelName(data.ChannelId));
-        var payload = new
-        {
-            embeds = new[]
-            {
-                new
-                {
-                    title = $"You were unbanned in #{await GetChannelName(data.ChannelId)}",
-                    color = 6353920,
-                    timestamp = DateTime.Now
-                }
-            }
-        };
 
-        await SendDiscordMessage(payload);
+        object embed = CreateEmbed(
+            $"You were unbanned in #`{await GetChannelName(data.ChannelId)}`",
+            6353920,
+            DateTime.Now
+        );
+
+        await SendDiscordMessage(embed);
     }
 
     private static async Task SendDiscordMessage(object message)
@@ -137,12 +111,31 @@ internal class TimeoutRelay: BotModule
         }
     }
 
-    private static async Task<string> GetChannelName(long channelId)
+    private static async ValueTask<string> GetChannelName(long channelId)
     {
-        if (await HelixClient.GetUsers(channelId) is { Success: true } result) return result.Value.Data[0].Name;
+        if (_channels.TryGetValue(channelId, out string? name) && name is not null) return name;
 
-        return channelId.ToString();
+        if (await HelixClient.GetUsers(channelId) is not { Success: true } result) return channelId.ToString();
+
+        _channels[channelId] = result.Value.Data[0].Name;
+        return result.Value.Data[0].Name;
     }
+
+    private static object CreateEmbed(string title, int color, DateTime timestamp, string? content = null,
+        string? description = null) => new
+    {
+        content,
+        embeds = new[]
+        {
+            new
+            {
+                title,
+                description,
+                color,
+                timestamp
+            }
+        }
+    };
 
     protected override async ValueTask OnModuleEnabled()
     {
