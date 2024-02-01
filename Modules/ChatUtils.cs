@@ -1,4 +1,5 @@
 ﻿using Bot.Models;
+using CachingFramework.Redis.Contracts.RedisObjects;
 using MiniTwitch.Irc.Models;
 
 namespace Bot.Modules;
@@ -8,7 +9,13 @@ public class ChatUtils: BotModule
     private const int MAX_YEAR_OFFSET = 10;
     private static readonly Dictionary<double, TimeZoneInfo> _timeZones = new();
 
-    private static ValueTask OnMessage(Privmsg message)
+    private static async ValueTask OnMessage(Privmsg message)
+    {
+        await TimeUtils(message);
+        await NoFuckFebruary(message);
+    }
+
+    private static ValueTask TimeUtils(Privmsg message)
     {
         if (UserBlacklisted(message.Author.Id))
             return default;
@@ -87,6 +94,15 @@ public class ChatUtils: BotModule
         { TotalDays: < 1 } => $"[{distance.TotalHours:F1}h ago]",
         _ => null
     };
+
+    private static readonly IRedisList<string> _februaryList = Collections.GetRedisList<string>("bot:chat:february");
+
+    private static async ValueTask NoFuckFebruary(Privmsg message)
+    {
+        if (message.Channel.Id != 11148817 || !message.Content.Contains("fuck")) return;
+
+        await _februaryList.AddAsync(message.Author.Name);
+    }
 
     protected override ValueTask OnModuleEnabled()
     {
