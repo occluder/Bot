@@ -99,9 +99,23 @@ public class ChatUtils: BotModule
 
     private static async ValueTask NoFuckFebruary(Privmsg message)
     {
+        if (DateTime.Now.Month != 2) return;
         if (message.Channel.Id != 11148817 || !message.Content.Contains("fuck")) return;
 
-        await _februaryList.AddAsync(message.Author.Name);
+        for (int i = 0; i < CountFucks(message.Content); i++) await _februaryList.AddAsync(message.Author.Name);
+    }
+
+    private static int CountFucks(string message)
+    {
+        ReadOnlySpan<char> span = message;
+        Span<Range> ranges = stackalloc Range[64];
+        int splits = span.Split(ranges, ' ');
+        int fucks = 0;
+        for (int i = 0; i < splits; i++)
+            if (span[ranges[i]].IndexOf("fuck") != -1)
+                fucks++;
+
+        return fucks;
     }
 
     protected override ValueTask OnModuleEnabled()
