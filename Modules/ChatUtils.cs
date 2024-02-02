@@ -112,7 +112,7 @@ public class ChatUtils: BotModule
         int splits = span.Split(ranges, ' ');
         int fucks = 0;
         for (int i = 0; i < splits; i++)
-            if (span[ranges[i]].IndexOf("fuck") != -1)
+            if (span[ranges[i]].Contains("fuck", StringComparison.OrdinalIgnoreCase))
                 fucks++;
 
         return fucks;
