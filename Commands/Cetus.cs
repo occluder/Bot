@@ -23,7 +23,9 @@ public class Cetus: ChatCommand
         {
             Verbose("Cetus cycle is still active. Day: {IsDay}", _isDay);
             var diff = TimeSpan.FromSeconds(_checkAfter - Unix());
-            await message.ReplyWith($"{(_isDay ? "\u2600\ufe0f" : "\ud83c\udf19")} {PrettyTimeString(diff)}");
+            string cycleString = $"{(_isDay ? "\u2600\ufe0f" : "\ud83c\udf19")} {PrettyTimeString(diff)}"
+            Verbose("Sending Cetus cycle string: {String}", cycleString);
+            await message.ReplyWith(cycleString);
             return;
         }
 
