@@ -23,9 +23,9 @@ public class Cetus: ChatCommand
         {
             Verbose("Cetus cycle is still active. Day: {IsDay}", _isDay);
             var diff = TimeSpan.FromSeconds(_checkAfter - Unix());
-            string cycleString = $"{(_isDay ? "a" : "b")} {PrettyTimeString(diff)}";
             Verbose("It is currently {Cycle}", _isDay ? "day" : "night");
             Verbose("Time until new cycle: {Expiry}", PrettyTimeString(diff));
+            string cycleString = $"{(_isDay ? "a" : "b")} {PrettyTimeString(diff)}";
             await message.ReplyWith(cycleString);
             return;
         }
