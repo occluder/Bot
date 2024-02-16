@@ -21,14 +21,17 @@ public class Cetus: ChatCommand
     {
         if (Unix() < _checkAfter)
         {
+            Verbose("Cetus cycle is still active. Day: {IsDay}", _isDay);
             var diff = TimeSpan.FromSeconds(_checkAfter - Unix());
             await message.ReplyWith($"{(_isDay ? "\u2600\ufe0f" : "\ud83c\udf19")} {PrettyTimeString(diff)}");
             return;
         }
 
+        Verbose("Cetus cycle expired. Fetching new cycle...");
         OneOf<CetusCycle, HttpStatusCode, Exception> response =
             await GetFromRequest<CetusCycle>("https://api.warframestat.us/pc/cetusCycle");
 
+        Verbose("Fetched new cetus cycle");
         await response.Match(cycle =>
             {
                 _isDay = cycle.isDay;

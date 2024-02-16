@@ -27,7 +27,7 @@ internal static class PermissionChecker
                 level = CommandPermission.Subscribers;
         }
 
-        Verbose("{User} ({Permission}) trying {Command} ({Required}) = {Result}",
+        Verbose("{User} ({Permission}) trying to use command: {Command} ({Required}) = {Result}",
             message.Author.Name, level, command.Info.Name, command.Info.Permission, level >= command.Info.Permission);
 
         return level >= command.Info.Permission;

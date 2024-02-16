@@ -66,6 +66,7 @@ public static class ChatHandler
             if (content[Config.Prefix.Length..].StartsWith(key) && message.Permits(kvp.Value) &&
                 !message.IsOnCooldown(kvp.Value))
             {
+                Verbose("{User} running command: {Command}", message.Author.Name, kvp.Value.Info.Name);
                 return kvp.Value is ChatCommand chatCommand ? chatCommand.ArgExec(message) : kvp.Value.Run(message);
             }
         }
