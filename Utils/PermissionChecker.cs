@@ -9,7 +9,7 @@ internal static class PermissionChecker
 {
     public static bool Permits(this Privmsg message, IChatCommand command)
     {
-        var level = CommandPermission.Everyone;
+        CommandPermission level = CommandPermission.Everyone;
         if (UserPermissions.TryGetValue(message.Author.Id, out UserPermissionDto? perms))
         {
             if (perms.IsWhitelisted)
@@ -26,6 +26,9 @@ internal static class PermissionChecker
             else if (message.Author.IsSubscriber)
                 level = CommandPermission.Subscribers;
         }
+
+        Verbose("{User} ({Permission}) trying {Command} ({Required}) = {Result}",
+            message.Author.Name, level, command.Info.Name, command.Info.Permission, level >= command.Info.Permission);
 
         return level >= command.Info.Permission;
     }
