@@ -40,4 +40,11 @@ internal static class GlobalHelpers
 
         return responseValue;
     }
+
+    public static string PrettyTimeString(TimeSpan time)
+    {
+        if (time.Hours > 0) return $"{time:hh'h' mm'm' ss's'}";
+
+        return time.Minutes > 0 ? $"{time:mm'm' ss's'}" : $"{time:ss's'}";
+    }
 }
