@@ -38,7 +38,7 @@ public class Market: ChatCommand
 
         ItemOrder[] orders = marketInfo.payload.orders;
         ItemOrder[] relevant = orders.Where(
-            o => o.visible && (o.user.status != "offline" || (DateTime.Now - o.user.last_seen).TotalDays < 7)
+            o => o is { visible: true, order_type: "sell" } && (DateTime.Now - o.user.last_seen).TotalDays < 7
         ).OrderBy(o => o.platinum).ToArray();
         Verbose("orders all tidy");
         int startFrom = 0;
