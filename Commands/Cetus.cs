@@ -9,7 +9,7 @@ public class Cetus: ChatCommand
 {
     public override CommandInfo Info { get; } = new(
         "cetus",
-        string.Empty,
+        "Get the current time in Cetus",
         TimeSpan.FromSeconds(5),
         CommandPermission.Everyone
     );
