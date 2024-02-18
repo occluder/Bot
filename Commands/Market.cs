@@ -9,7 +9,6 @@ public class Market: ChatCommand
 {
     public Market()
     {
-        AddArgument(new CommandArgument("ItemName", 1, typeof(string)));
     }
 
     public override CommandInfo Info { get; } = new(
@@ -21,7 +20,7 @@ public class Market: ChatCommand
 
     public override async ValueTask Run(Privmsg message)
     {
-        string item = GetArgument<string>("ItemName").ToLower().Replace(' ', '_');
+        string item = string.Join("_", message.Content.Split(' ')[1..]);
         OneOf<ItemMarket, HttpStatusCode, Exception> response =
             await GetFromRequest<ItemMarket>($"https://api.warframe.market/v1/items/{item}/orders?platform=pc");
 
