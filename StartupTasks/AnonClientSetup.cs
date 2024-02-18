@@ -1,7 +1,6 @@
 ﻿using Bot.Enums;
 using Bot.Interfaces;
 using Microsoft.Extensions.Logging;
-using MiniTwitch.Common.Extensions;
 using MiniTwitch.Irc;
 
 namespace Bot.StartupTasks;
@@ -19,13 +18,6 @@ internal class AnonClientSetup: IStartupTask
             options.Logger = new LoggerFactory().AddSerilog(ForContext("IsSubLogger", true).ForContext("Client", "Anon")).CreateLogger<IrcClient>();
         });
 
-        AnonClient.ExceptionHandler = exception =>
-        {
-            if (exception.StackTrace?.Contains("b__34_0()") is true)
-                AnonClient.ReconnectAsync().StepOver();
-            else
-                ForContext<AnonClientSetup>().Error(exception, "Exception in anonymous client");
-        };
         bool connected = await AnonClient.ConnectAsync();
         if (!connected)
         {
