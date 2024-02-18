@@ -34,6 +34,7 @@ internal static class GlobalHelpers
             return ex;
         }
 
+        logger.Debug("[{StatusCode}] GET {Url}", response.StatusCode, url);
         T? responseValue = await response.Content.ReadFromJsonAsync<T>(options);
         if (responseValue is null)
             return new NullReferenceException("Deserialized value is null");
