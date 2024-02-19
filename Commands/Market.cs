@@ -20,7 +20,7 @@ public class Market: ChatCommand
 
     public override async ValueTask Run(Privmsg message)
     {
-        string item = string.Join("_", message.Content.Split(' ')[1..]);
+        string item = string.Join("_", message.Content.ToLower().Split(' ')[1..]);
         OneOf<ItemMarket, HttpStatusCode, Exception> response =
             await GetFromRequest<ItemMarket>($"https://api.warframe.market/v1/items/{item}/orders?platform=pc");
 
@@ -55,9 +55,11 @@ public class Market: ChatCommand
         }
 
         Verbose("startFrom: {Start}", startFrom);
-        double avg = relevant[startFrom..].Take(10).Average(o => o.platinum);
+        double avg = relevant[startFrom..].Take(15).Average(o => o.platinum);
         Verbose("avg: {Avg}", avg);
-        await message.ReplyWith($"pajaBusiness Active Price Range: {relevant[0].platinum}-{relevant[^1].platinum}P, " +
+        last = (uint)(relevant.Length > 15 ? 15 : relevant.Length - 1);
+        await message.ReplyWith($"pajaBusiness " +
+                                $"Active Price Range: {relevant[0].platinum}-{relevant[last].platinum}P, " +
                                 $"Avg: {avg:0.0}P, " +
                                 $"Lowest: {relevant[0].platinum}P " +
                                 $"https://warframe.market/items/{item}");
