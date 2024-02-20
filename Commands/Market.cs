@@ -38,7 +38,7 @@ public class Market: ChatCommand
 
         ItemOrder[] orders = marketInfo.payload.orders;
         ItemOrder[] relevant = orders.Where(
-            o => o is { visible: true, order_type: "sell" } && (DateTime.Now - o.user.last_seen).TotalDays < 7
+            o => o is { visible: true, order_type: "sell" } && (DateTime.Now - o.user.last_seen).TotalDays < 2
         ).OrderBy(o => o.platinum).ToArray();
         Verbose("orders all tidy");
         int startFrom = 0;
@@ -55,9 +55,9 @@ public class Market: ChatCommand
         }
 
         Verbose("startFrom: {Start}", startFrom);
-        double avg = relevant[startFrom..].Take(15).Average(o => o.platinum);
+        double avg = relevant[startFrom..].Take(25).Average(o => o.platinum);
         Verbose("avg: {Avg}", avg);
-        last = (uint)(relevant.Length > 15 ? 15 : relevant.Length - 1);
+        last = (uint)(relevant.Length > 25 ? 25 : relevant.Length - 1);
         await message.ReplyWith($"pajaBusiness " +
                                 $"Active Price Range: {relevant[0].platinum}-{relevant[last].platinum}P, " +
                                 $"Avg: {avg:0.0}P, " +
