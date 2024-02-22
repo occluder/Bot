@@ -9,7 +9,7 @@ public class TextUploadService
 
     public static async Task<OneOf<string, Exception>> UploadToHaste(string data)
     {
-        string link = Config.Links["Haste"];
+        const string link = "https://paste.ivr.fi/";
         StringContent content = new(data, Encoding.UTF8);
         HttpResponseMessage response = await _requests.PostAsync(link, content);
         ForContext<TextUploadService>().Debug("[{Result}] POST {Link}", response.StatusCode, link);
@@ -31,7 +31,7 @@ public class TextUploadService
             return ex;
         }
 
-        if (result?["key"] is string key) return $"https://haste.occluder.space/{key}";
+        if (result?["key"] is string key) return link + key;
 
         return new NullReferenceException();
     }

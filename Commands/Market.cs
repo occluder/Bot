@@ -7,10 +7,6 @@ namespace Bot.Commands;
 
 public class Market: ChatCommand
 {
-    public Market()
-    {
-    }
-
     public override CommandInfo Info { get; } = new(
         "market",
         "Get an item's platinum price from warframe.market",
