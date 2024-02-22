@@ -51,7 +51,11 @@ public class Drops: ChatCommand
 
             default:
                 ItemDrop? drop = dropInfo.MaxBy(d => d.rarity);
-                string fullString = string.Join("\r\n", dropInfo.OrderByDescending(d => d.rarity));
+                string fullString = string.Join("\r\n", dropInfo
+                    .OrderByDescending(d => d.rarity)
+                    .Select(d => $"{d.place} ({d.chance:00.00}%)")
+                );
+                
                 OneOf<string, Exception> hasteResponse = await TextUploadService.UploadToHaste(fullString);
                 hasteResponse.TryPickT0(out string? link, out _);
                 await message.ReplyWith($"{drop!.place} ({drop.chance:00.00}%) " +
