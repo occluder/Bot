@@ -50,9 +50,9 @@ public class Drops: ChatCommand
                 break;
 
             default:
-                ItemDrop? drop = dropInfo.MaxBy(d => d.rarity);
+                ItemDrop? drop = dropInfo.MaxBy(d => d.chance);
                 string fullString = string.Join("\r\n", dropInfo
-                    .OrderByDescending(d => d.rarity)
+                    .OrderByDescending(d => d.chance)
                     .Select(d => $"{d.place} ({d.chance:00.00}%)")
                 );
                 

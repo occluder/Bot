@@ -31,7 +31,7 @@ public class TextUploadService
             return ex;
         }
 
-        if (result?["key"] is string key) return $"https://paste.ivr.fi/{key}";
+        if (result?["key"] is string key) return $"https://paste.ivr.fi/raw/{key}";
 
         return new NullReferenceException();
     }
