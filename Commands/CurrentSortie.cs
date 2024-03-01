@@ -49,7 +49,7 @@ public class CurrentSortie: ChatCommand
     private async ValueTask SetSortieAndRerun(Privmsg message, Sortie sortie)
     {
         Debug("Caching sortie");
-        await Cache.SetObjectAsync("warframe:data:sortie", sortie, sortie.Expiry - DateTime.Now);
+        await Cache.SetObjectAsync("warframe:data:sortie", sortie, sortie.Expiry.ToLocalTime() - DateTime.Now);
         await Run(message);
     }
 
