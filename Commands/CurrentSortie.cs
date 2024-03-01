@@ -36,9 +36,10 @@ public class CurrentSortie: ChatCommand
         string sortieString = $"[{sortie.Faction}] " +
                               $"\ud83d\udd34 {VariantString(sortie.Variants[0], sortie)} " +
                               $"\ud83d\udfe2 {VariantString(sortie.Variants[1], sortie)} " +
-                              $"\ud83d\udd35 {VariantString(sortie.Variants[2], sortie)}";
+                              $"\ud83d\udd35 {VariantString(sortie.Variants[2], sortie)} " +
+                              $"-- Ends in {PrettyTimeString(sortie.Expiry.ToLocalTime() - DateTime.Now)}";
 
-        await message.ReplyWith($"{sortieString} -- Ends in {PrettyTimeString(sortie.Expiry - DateTime.Now)}");
+        await message.ReplyWith(sortieString);
     }
 
     private string VariantString(Variant variant, Sortie sortie) =>
