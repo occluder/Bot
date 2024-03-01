@@ -19,8 +19,10 @@ public class CurrentSortie: ChatCommand
         (bool exists, Sortie sortie) = await Cache.TryGetObjectAsync<Sortie>("warframe:data:sortie");
         if (!exists)
         {
+            Debug("Sortie was not cached");
             OneOf<Sortie, HttpStatusCode, Exception> request =
                 await GetFromRequest<Sortie>("https://api.warframestat.us/pc/sortie?language=en");
+
             await request.Match(
                 s => SetSortieAndRerun(message, s),
                 statusCode => message.ReplyWith($"Received bad status code {statusCode} :("),
@@ -30,6 +32,7 @@ public class CurrentSortie: ChatCommand
             return;
         }
 
+        Debug("Sortie is cached");
         string sortieString = $"[{sortie.Faction}] " +
                               $"\ud83d\udd34 {VariantString(sortie.Variants[0], sortie)} " +
                               $"\ud83d\udfe2 {VariantString(sortie.Variants[1], sortie)} " +
@@ -45,6 +48,7 @@ public class CurrentSortie: ChatCommand
 
     private async ValueTask SetSortieAndRerun(Privmsg message, Sortie sortie)
     {
+        Debug("Caching sortie");
         await Cache.SetObjectAsync("warframe:data:sortie", sortie, sortie.Expiry - DateTime.Now);
         await Run(message);
     }
