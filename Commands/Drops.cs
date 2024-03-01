@@ -45,13 +45,18 @@ public class Drops: ChatCommand
                 break;
 
             case < 4:
-                string m = string.Join(", ", dropInfo.Select(d => $"{d.place} ({d.chance:00.00}%)"));
+                string m = string.Join(", ", dropInfo
+                    .OrderByDescending(d => d.chance)
+                    .Select(d => $"{d.place} ({d.chance:00.00}%)")
+                );
+
                 await message.ReplyWith(m);
                 break;
 
             default:
                 ItemDrop? drop = dropInfo.MaxBy(d => d.chance);
                 string fullString = string.Join("\r\n", dropInfo
+                    .Skip(1)
                     .OrderByDescending(d => d.chance)
                     .Select(d => $"{d.place} ({d.chance:00.00}%)")
                 );
