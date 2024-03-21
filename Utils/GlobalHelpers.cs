@@ -13,8 +13,10 @@ internal static class GlobalHelpers
 
     public static long UnixMs() => DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
-    public static async Task<OneOf<T, HttpStatusCode, Exception>> GetFromRequest<T>(string url,
-        JsonSerializerOptions? options = null, [CallerFilePath] string caller = default!,
+    public static async Task<OneOf<T, HttpStatusCode, Exception>> GetFromRequest<T>(
+        string url,
+        JsonSerializerOptions? options = null,
+        [CallerFilePath] string caller = default!,
         [CallerLineNumber] int line = default)
     {
         ILogger logger = ForContext("CallerFilePath", caller).ForContext("CallerLineNumber", line);
