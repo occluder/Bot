@@ -7,7 +7,7 @@ namespace Bot.Modules;
 
 public class WarframeAlerts: BotModule
 {
-    private static IRedisSet<string> Ids => Collections.GetRedisSet<string>("bot:chat:follow_list");
+    private static IRedisSet<string> Ids => Collections.GetRedisSet<string>("warframe:data:worldstate_ids");
     private static readonly JsonSerializerOptions _options = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
