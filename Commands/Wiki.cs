@@ -21,6 +21,6 @@ public class Wiki: ChatCommand
     public override ValueTask Run(Privmsg message)
     {
         string[] s = message.Content.Split(' ');
-        return message.ReplyWith($"https://antifandom.com/warframe/search?q={string.Join('+', s[1..])}");
+        return message.ReplyWith($"https://breezewiki.noury.li/warframe/search?q={string.Join('+', s[1..])}");
     }
 }
