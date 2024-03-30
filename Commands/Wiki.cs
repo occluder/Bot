@@ -18,9 +18,28 @@ public class Wiki: ChatCommand
         AddArgument(new("SearchTerm", 1, typeof(string)));
     }
 
-    public override ValueTask Run(Privmsg message)
+    private const string WIKI_URL = "https://antifandom.com/warframe/";
+    private readonly HttpClient _httpClient = new() { Timeout = TimeSpan.FromSeconds(10) };
+
+    public override async ValueTask Run(Privmsg message)
     {
-        string[] s = message.Content.Split(' ');
-        return message.ReplyWith($"https://breezewiki.noury.li/warframe/search?q={string.Join('+', s[1..])}");
+        string[] split = message.Content.Split(' ');
+        for (int i = 1; i < split.Length; i++)
+        {
+            if (split[i].Length < 2)
+            {
+                continue;
+            }
+
+            split[i] = char.ToUpper(split[i][0]) + split[i][1..];
+        }
+
+        string directLink = $"{WIKI_URL}wiki/{string.Join('_', split[1..])}";
+        if ((await _httpClient.GetAsync(directLink)).IsSuccessStatusCode) {
+            await message.ReplyWith(directLink);
+            return;
+        }
+
+        await message.ReplyWith($"{WIKI_URL}search?q={string.Join('+', split[1..])}");
     }
 }
