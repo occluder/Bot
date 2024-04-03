@@ -45,7 +45,7 @@ public class WarframeAlerts: BotModule
                 || lower.Contains("orokin catalyst")
                 || lower.Contains("orokin reactor"))
             {
-                await MainClient.SendMessage("pajlada", $"pajaDink 🚨 {rewardStr} alert on {missionName} ({minLevel}-{maxLevel})");
+                await MainClient.SendMessage("pajlada", $"@warframers pajaDink 🚨 {rewardStr} alert on {missionName} ({minLevel}-{maxLevel})");
             }
         }
 
@@ -64,7 +64,7 @@ public class WarframeAlerts: BotModule
                 || lower.Contains("orokin catalyst")
                 || lower.Contains("orokin reactor"))
             {
-                await MainClient.SendMessage("pajlada", $"pajaDink 🚨 {rewardStr} invasion on {invasion.NodeKey}");
+                await MainClient.SendMessage("pajlada", $"@warframers pajaDink 🚨 {rewardStr} invasion on {invasion.NodeKey}");
             }
         }
     }
