@@ -17,7 +17,7 @@ public class WarframeAlerts: BotModule
 
     public WarframeAlerts()
     {
-        _timer = new(TimeSpan.FromMinutes(5), CheckWorldstate, PostgresQueryLock);
+        _timer = new(TimeSpan.FromMinutes(5), CheckWorldstate);
     }
 
     private async Task CheckWorldstate()
