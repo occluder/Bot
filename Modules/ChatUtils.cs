@@ -89,6 +89,7 @@ public class ChatUtils: BotModule
 
     private static string? ShortDistance(TimeSpan distance) => distance switch
     {
+        { TotalSeconds: < 0 } => null,
         { TotalMinutes: < 1 } => $"[{distance.Seconds}s ago]",
         { TotalHours: < 1 } => $"[{distance.Minutes}m ago]",
         { TotalDays: < 1 } => $"[{distance.TotalHours:F1}h ago]",
