@@ -72,9 +72,10 @@ public class Market: ChatCommand
         int volumes = stats.Payload.StatisticsClosed._48hours.Sum(x => x.Volume);
         Verbose("sold last 48h: {Volume}", volumes);
         last = (uint)(relevant.Length > RELEVANT ? RELEVANT : relevant.Length - 1);
+        double avg = relevant[startFrom..].Take(RELEVANT * 2).Average(o => o.platinum);
         await message.ReplyWith($"pajaBusiness " +
-                                $"Price Range: {relevant[0].platinum}-{relevant[last].platinum}P, " +
-                                $"Sold last 48h: {volumes}, " +
+                                $"Avg: {avg:0.0}P, " +
+                                $"Sold recently: {volumes}, " +
                                 $"Lowest: {relevant[0].platinum}P " +
                                 $"https://warframe.market/items/{item}");
     }
