@@ -7,6 +7,8 @@ namespace Bot.Commands;
 
 public class Market: ChatCommand
 {
+    private const int RELEVANT = 5;
+
     public override CommandInfo Info { get; } = new(
         "market",
         "Get an item's platinum price from warframe.market",
@@ -32,10 +34,25 @@ public class Market: ChatCommand
             return;
         }
 
+        OneOf<StatsData, HttpStatusCode, Exception> statsResponse =
+            await GetFromRequest<StatsData>($"https://api.warframe.market/v1/items/{item}/statistics");
+
+        Verbose("Got response for {Item}", item);
+        if (!statsResponse.TryPickT0(out StatsData? stats, out OneOf<HttpStatusCode, Exception> error2))
+        {
+            Warning("Error from https://api.warframe.market/v1/items/{item}/statistics", item);
+            await error2.Match(
+                statusCode => message.ReplyWith($"Received bad status code from warframe.market {statusCode} :("),
+                exception => message.ReplyWith($"Error handling code: ({exception.GetType().Name}) {exception.Message}")
+            );
+
+            return;
+        }
+
         ItemOrder[] orders = marketInfo.payload.orders;
-        ItemOrder[] relevant = orders.Where(
+        ItemOrder[] relevant = [.. orders.Where(
             o => o is { visible: true, order_type: "sell", user.status: "ingame" }
-        ).OrderBy(o => o.platinum).ToArray();
+        ).OrderBy(o => o.platinum)];
         Verbose("orders all tidy");
         int startFrom = 0;
         uint last = 0;
@@ -51,12 +68,12 @@ public class Market: ChatCommand
         }
 
         Verbose("startFrom: {Start}", startFrom);
-        double avg = relevant[startFrom..].Take(25).Average(o => o.platinum);
-        Verbose("avg: {Avg}", avg);
-        last = (uint)(relevant.Length > 25 ? 25 : relevant.Length - 1);
+        int volumes = stats.Payload.StatisticsClosed._48hours.Sum(x => x.Volume);
+        Verbose("sold last 48h: {Volume}", volumes);
+        last = (uint)(relevant.Length > RELEVANT ? RELEVANT : relevant.Length - 1);
         await message.ReplyWith($"pajaBusiness " +
-                                $"Active Price Range: {relevant[0].platinum}-{relevant[last].platinum}P, " +
-                                $"Avg: {avg:0.0}P, " +
+                                $"Price Range: {relevant[0].platinum}-{relevant[last].platinum}P, " +
+                                $"Sold last 48h: {volumes}, " +
                                 $"Lowest: {relevant[0].platinum}P " +
                                 $"https://warframe.market/items/{item}");
     }
