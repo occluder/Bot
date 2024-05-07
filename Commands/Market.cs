@@ -49,6 +49,7 @@ public class Market: ChatCommand
             return;
         }
 
+        Verbose("Got {Count} stat entries", stats.Payload.StatisticsClosed._48hours.Length);
         ItemOrder[] orders = marketInfo.payload.orders;
         ItemOrder[] relevant = [.. orders.Where(
             o => o is { visible: true, order_type: "sell", user.status: "ingame" }
