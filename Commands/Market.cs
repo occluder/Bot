@@ -49,10 +49,14 @@ public class Market: ChatCommand
         ItemOrder min = marketInfo.payload.orders.MinBy(x => x.platinum)!;
         int volumes = stats.Payload.StatisticsClosed._48hours.Sum(x => x.Volume);
         Statistic mostRecent = stats.Payload.StatisticsClosed._48hours.MaxBy(x => x.Datetime)!;
+        Verbose("Most recent date: {Date}", mostRecent.Datetime);
+        Verbose("Most recent: {@MostRecent}", mostRecent);
         Statistic? weekAgo = stats.Payload.StatisticsClosed._90days
             .Where(o => o.Datetime <= mostRecent.Datetime.AddDays(-7))
             .MaxBy(x => x.Datetime);
 
+        Verbose("weekAgo is null? {IsNull}", weekAgo is null);
+        Verbose("weekAgo: {@WeekAgo}", weekAgo);
         string? changeStr = weekAgo is null 
             ? null 
             : $"({(1 - (mostRecent.MovingAvg / weekAgo.MovingAvg)) * -100:+#.##;-#.##}% this week)";
