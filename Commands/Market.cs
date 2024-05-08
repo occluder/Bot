@@ -19,9 +19,7 @@ public class Market: ChatCommand
     public override async ValueTask Run(Privmsg message)
     {
         string item = string.Join("_", message.Content.ToLower().Split(' ')[1..]);
-        OneOf<ItemMarket, HttpStatusCode, Exception> response =
-            await GetFromRequest<ItemMarket>($"https://api.warframe.market/v1/items/{item}/orders?platform=pc");
-
+        var response = await GetFromRequest<ItemMarket>($"https://api.warframe.market/v1/items/{item}/orders?platform=pc");
         Verbose("Got response for {Item}", item);
         if (!response.TryPickT0(out ItemMarket? marketInfo, out OneOf<HttpStatusCode, Exception> error))
         {
@@ -34,9 +32,7 @@ public class Market: ChatCommand
             return;
         }
 
-        OneOf<StatsData, HttpStatusCode, Exception> statsResponse =
-            await GetFromRequest<StatsData>($"https://api.warframe.market/v1/items/{item}/statistics");
-
+        var statsResponse = await GetFromRequest<StatsData>($"https://api.warframe.market/v1/items/{item}/statistics");
         Verbose("Got response for {Item}", item);
         if (!statsResponse.TryPickT0(out StatsData? stats, out OneOf<HttpStatusCode, Exception> error2))
         {
@@ -50,33 +46,18 @@ public class Market: ChatCommand
         }
 
         Verbose("Got {Count} stat entries", stats.Payload.StatisticsClosed._48hours.Length);
-        ItemOrder[] orders = marketInfo.payload.orders;
-        ItemOrder[] relevant = [.. orders.Where(
-            o => o is { visible: true, order_type: "sell", user.status: "ingame" }
-        ).OrderBy(o => o.platinum)];
-        Verbose("orders all tidy");
-        int startFrom = 0;
-        uint last = 0;
-        for (int i = 0; i < relevant.Length && i < 5; i++)
-        {
-            if (last >= 5 && relevant[i].platinum >= last * 2)
-            {
-                startFrom = i;
-                break;
-            }
-
-            last = relevant[i].platinum;
-        }
-
-        Verbose("startFrom: {Start}", startFrom);
+        ItemOrder min = marketInfo.payload.orders.MinBy(x => x.platinum)!;
         int volumes = stats.Payload.StatisticsClosed._48hours.Sum(x => x.Volume);
-        Verbose("sold last 48h: {Volume}", volumes);
-        last = (uint)(relevant.Length > RELEVANT ? RELEVANT : relevant.Length - 1);
-        double avg = relevant[startFrom..].Take(RELEVANT * 2).Average(o => o.platinum);
+        Statistic mostRecent = stats.Payload.StatisticsClosed._48hours.MaxBy(x => x.Datetime)!;
+        Statistic? weekAgo = stats.Payload.StatisticsClosed._90days
+            .Where(o => o.Datetime <= mostRecent.Datetime.AddDays(-7))
+            .MaxBy(x => x.Datetime);
+
+        string? changeStr = weekAgo is null ? null : $"({(1 - (mostRecent.MovingAvg / weekAgo.MovingAvg)) * -100:+#.##;-#.##})";
         await message.ReplyWith($"pajaBusiness " +
-                                $"Avg: {avg:0.0}P, " +
+                                $"Avg: {mostRecent.MovingAvg:0.#}P {changeStr}, " +
                                 $"Sold recently: {volumes}, " +
-                                $"Lowest: {relevant[0].platinum}P " +
+                                $"Lowest: {min.platinum}P " +
                                 $"https://warframe.market/items/{item}");
     }
 }
