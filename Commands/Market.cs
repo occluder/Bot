@@ -46,7 +46,10 @@ public class Market: ChatCommand
         }
 
         Verbose("Got {Count} stat entries", stats.Payload.StatisticsClosed._48hours.Length);
-        ItemOrder min = marketInfo.payload.orders.MinBy(x => x.platinum)!;
+        ItemOrder min = marketInfo.payload.orders
+            .Where(x => x is { order_type: "sell", user.status: "ingame" })
+            .MinBy(x => x.platinum)!;
+
         int volumes = stats.Payload.StatisticsClosed._48hours.Sum(x => x.Volume);
         Statistic mostRecent = stats.Payload.StatisticsClosed._48hours.MaxBy(x => x.Datetime)!;
         Verbose("Most recent date: {Date}", mostRecent.Datetime);
@@ -61,10 +64,12 @@ public class Market: ChatCommand
             ? null 
             : $"({(1 - (mostRecent.MovingAvg / weekAgo.MovingAvg)) * -100:+#.##;-#.##}% this week)";
 
-        await message.ReplyWith($"pajaBusiness " +
-                                $"Avg: {mostRecent.MovingAvg:0.#}P {changeStr}, " +
-                                $"Sold recently: {volumes}, " +
-                                $"Lowest: {min.platinum}P " +
-                                $"https://warframe.market/items/{item}");
+        await message.ReplyWith(
+            $"pajaBusiness " +
+            $"Avg: {mostRecent.MovingAvg:0.#}P {changeStr}, " +
+            $"Sold recently: {volumes}, " +
+            $"Lowest: {min.platinum}P " +
+            $"https://warframe.market/items/{item}"
+        );
     }
 }
