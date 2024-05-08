@@ -53,7 +53,10 @@ public class Market: ChatCommand
             .Where(o => o.Datetime <= mostRecent.Datetime.AddDays(-7))
             .MaxBy(x => x.Datetime);
 
-        string? changeStr = weekAgo is null ? null : $"({(1 - (mostRecent.MovingAvg / weekAgo.MovingAvg)) * -100:+#.##;-#.##})";
+        string? changeStr = weekAgo is null 
+            ? null 
+            : $"({(1 - (mostRecent.MovingAvg / weekAgo.MovingAvg)) * -100:+#.##;-#.##}% this week)";
+
         await message.ReplyWith($"pajaBusiness " +
                                 $"Avg: {mostRecent.MovingAvg:0.#}P {changeStr}, " +
                                 $"Sold recently: {volumes}, " +
