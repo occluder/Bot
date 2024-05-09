@@ -47,7 +47,7 @@ public class Drops: ChatCommand
             case < 4:
                 string m = string.Join(", ", dropInfo
                     .OrderByDescending(d => d.chance)
-                    .Select(d => $"{d.place} ({d.chance:00.00}%)")
+                    .Select(d => $"{d.place} ({d.chance:0.##}%)")
                 );
 
                 await message.ReplyWith(m);
@@ -58,13 +58,16 @@ public class Drops: ChatCommand
                 string fullString = string.Join("\r\n", dropInfo
                     .Skip(1)
                     .OrderByDescending(d => d.chance)
-                    .Select(d => $"{d.place} ({d.chance:00.00}%)")
+                    .Select(d => $"{d.place} ({d.chance:0.##}%)")
                 );
                 
                 OneOf<string, Exception> hasteResponse = await TextUploadService.UploadToHaste(fullString);
                 hasteResponse.TryPickT0(out string? link, out _);
-                await message.ReplyWith($"{drop!.place} ({drop.chance:00.00}%) " +
-                                        $"and {dropInfo.Length - 1} other sources: {link ?? "[upload failed]"}");
+                await message.ReplyWith(
+                    $"{drop!.place} ({drop.chance:0.##}%) " +
+                    $"and {dropInfo.Length - 1} other sources: {link ?? "[upload failed]"}"
+                );
+
                 break;
         }
     }
