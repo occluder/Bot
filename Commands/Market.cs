@@ -62,7 +62,7 @@ public class Market: ChatCommand
         Verbose("weekAgo: {@WeekAgo}", weekAgo);
         string? changeStr = weekAgo is null 
             ? null 
-            : $"({(1 - (mostRecent.MovingAvg / weekAgo.MovingAvg)) * -100:+#.##;-#.##}% this week)";
+            : $"({(1 - (mostRecent.MovingAvg / weekAgo.MovingAvg)) * -100:+0.##;-0.##}% this week)";
 
         await message.ReplyWith(
             $"pajaBusiness " +
