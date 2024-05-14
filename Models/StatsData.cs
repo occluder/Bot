@@ -13,5 +13,6 @@ public record Statistic(
     [property: JsonPropertyName("median")] float Median,
     [property: JsonPropertyName("moving_avg")] float MovingAvg,
     [property: JsonPropertyName("volume")] int Volume,
-    [property: JsonPropertyName("datetime")] DateTime Datetime
+    [property: JsonPropertyName("datetime")] DateTime Datetime,
+    [property: JsonPropertyName("mod_rank")] int? ModRank
 );

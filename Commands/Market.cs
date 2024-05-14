@@ -1,4 +1,5 @@
 using System.Net;
+using System.Text;
 using Bot.Enums;
 using Bot.Models;
 using MiniTwitch.Irc.Models;
@@ -50,26 +51,84 @@ public class Market: ChatCommand
             .Where(x => x is { order_type: "sell", user.status: "ingame" })
             .MinBy(x => x.platinum)!;
 
-        int volumes = stats.Payload.StatisticsClosed._48hours.Sum(x => x.Volume);
-        Statistic mostRecent = stats.Payload.StatisticsClosed._48hours.MaxBy(x => x.Datetime)!;
-        Verbose("Most recent date: {Date}", mostRecent.Datetime);
-        Verbose("Most recent: {@MostRecent}", mostRecent);
-        Statistic? weekAgo = stats.Payload.StatisticsClosed._90days
-            .Where(o => o.Datetime <= mostRecent.Datetime.AddDays(-7))
-            .MaxBy(x => x.Datetime);
-
-        Verbose("weekAgo is null? {IsNull}", weekAgo is null);
-        Verbose("weekAgo: {@WeekAgo}", weekAgo);
-        string? changeStr = weekAgo is null 
-            ? null 
-            : $"({(1 - (mostRecent.MovingAvg / weekAgo.MovingAvg)) * -100:+0.##;-0.##}% this week)";
+        
 
         await message.ReplyWith(
-            $"pajaBusiness " +
-            $"Avg: {mostRecent.MovingAvg:0.#}P {changeStr}, " +
-            $"Sold recently: {volumes}, " +
+            $"{GetPeriodString(stats.Payload.StatisticsClosed)}, " +
             $"Lowest: {min.platinum}P " +
             $"https://warframe.market/items/{item}"
         );
+    }
+
+    private static string GetPeriodString(PeriodStats stats)
+    {
+        StringBuilder sb = new();
+        int volumes = stats._48hours.Sum(x => x.Volume);
+        Func<Statistic, Statistic, float> calcChange = (x, y) => (1 - (x.MovingAvg / y.MovingAvg)) * -100;
+        if (stats._90days.All(x => x.ModRank is not null))
+        {
+            int maxRank = stats._90days.MaxBy(x => x.ModRank)?.ModRank ?? 3;
+            int volumesMax = stats._48hours.Where(x => x.ModRank == maxRank).Sum(x => x.Volume);
+            Statistic mostRecentR0 = stats._48hours
+                .Where(o => o.ModRank == 0)
+                .MaxBy(x => x.Datetime)!;
+
+            Statistic mostRecentMax = stats._48hours
+                .Where(o => o.ModRank == maxRank)
+                .MaxBy(x => x.Datetime)!;
+
+            Statistic? weekAgoR0 = stats._90days
+                .Where(o => o.ModRank == 0)
+                .Where(o => o.Datetime <= mostRecentR0.Datetime.AddDays(-7))
+                .MaxBy(x => x.Datetime);
+
+            Statistic? weekAgoMax = stats._90days
+                .Where(o => o.ModRank == maxRank)
+                .Where(o => o.Datetime <= mostRecentR0.Datetime.AddDays(-7))
+                .MaxBy(x => x.Datetime);
+
+            sb.Append("Avg: ");
+            sb.Append(mostRecentR0.MovingAvg > 0 ? $"R0 {mostRecentR0.MovingAvg:0.##}P" : "N/A");
+            if (weekAgoR0 is not null)
+            {
+                float changeR0 = calcChange(mostRecentR0, weekAgoR0);
+                sb.Append($" ({changeR0:+0.##;-0.##}%)");
+            }
+
+            sb.Append(", ");
+            sb.Append(mostRecentMax.MovingAvg > 0 ? $"R{maxRank} {mostRecentMax.MovingAvg:0.##}P" : "N/A");
+            if (weekAgoMax is not null)
+            {
+                float changeMax = calcChange(mostRecentMax, weekAgoMax);
+                sb.Append($" ({changeMax:+0.##;-0.##}%)");
+            }
+
+            sb.Append(", ");
+            sb.Append($"Recently sold: {volumes} ({volumesMax} R{maxRank})");
+            return sb.ToString();
+        }
+
+        Statistic mostRecent = stats._48hours.MaxBy(x => x.Datetime)!;
+        Statistic? weekAgo = stats._90days
+            .Where(o => o.Datetime <= mostRecent.Datetime.AddDays(-7))
+            .MaxBy(x => x.Datetime);
+
+        if (mostRecent.MovingAvg > 0)
+        {
+            sb.Append($"Avg: {mostRecent.MovingAvg:0.##}P");
+        }
+        else
+        {
+            sb.Append("Avg: N/A");
+        }
+
+        if (weekAgo is not null)
+        {
+            sb.Append($" ({calcChange(mostRecent, weekAgo):+0.##;-0.##}% this week)");
+        }
+        sb.Append(", ");
+        sb.Append($"Recently sold: {volumes}");
+
+        return sb.ToString();
     }
 }
