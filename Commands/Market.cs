@@ -2,6 +2,7 @@ using System.Net;
 using System.Text;
 using Bot.Enums;
 using Bot.Models;
+using Microsoft.Extensions.Primitives;
 using MiniTwitch.Irc.Models;
 
 namespace Bot.Commands;
@@ -87,16 +88,16 @@ public class Market: ChatCommand
                 .Where(o => o.Datetime <= mostRecentR0.Datetime.AddDays(-7))
                 .MaxBy(x => x.Datetime);
 
-            sb.Append("Avg: ");
-            sb.Append(mostRecentR0.MovingAvg > 0 ? $"R0 {mostRecentR0.MovingAvg:0.##}P" : "N/A");
+            sb.Append("Avg: R0 ");
+            sb.Append(mostRecentR0.MovingAvg > 0 ? $"{mostRecentR0.MovingAvg:0.##}P" : "N/A");
             if (weekAgoR0 is not null)
             {
                 float changeR0 = calcChange(mostRecentR0, weekAgoR0);
                 sb.Append($" ({changeR0:+0.##;-0.##}%)");
             }
 
-            sb.Append(", ");
-            sb.Append(mostRecentMax.MovingAvg > 0 ? $"R{maxRank} {mostRecentMax.MovingAvg:0.##}P" : "N/A");
+            sb.Append($", R{maxRank} ");
+            sb.Append(mostRecentMax.MovingAvg > 0 ? $"{mostRecentMax.MovingAvg:0.##}P" : "N/A");
             if (weekAgoMax is not null)
             {
                 float changeMax = calcChange(mostRecentMax, weekAgoMax);
@@ -113,15 +114,8 @@ public class Market: ChatCommand
             .Where(o => o.Datetime <= mostRecent.Datetime.AddDays(-7))
             .MaxBy(x => x.Datetime);
 
-        if (mostRecent.MovingAvg > 0)
-        {
-            sb.Append($"Avg: {mostRecent.MovingAvg:0.##}P");
-        }
-        else
-        {
-            sb.Append("Avg: N/A");
-        }
-
+        sb.Append("Avg: ");
+        sb.Append(mostRecent.MovingAvg > 0 ? $"{mostRecent.MovingAvg:0.##}P" : "N/A");
         if (weekAgo is not null)
         {
             sb.Append($" ({calcChange(mostRecent, weekAgo):+0.##;-0.##}% this week)");
