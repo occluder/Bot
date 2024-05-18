@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text;
+using System.Text.Json;
 using Bot.Enums;
 using Bot.Models;
 using Microsoft.Extensions.Primitives;
@@ -28,7 +29,15 @@ public class Market: ChatCommand
             Warning("Error from https://api.warframe.market/v1/items/{Item}/orders?platform=pc", item);
             await error.Match(
                 statusCode => message.ReplyWith($"Received bad status code from warframe.market {statusCode} :("),
-                exception => message.ReplyWith($"Error handling code: ({exception.GetType().Name}) {exception.Message}")
+                exception =>
+                {
+                    if (exception is JsonException)
+                    {
+                        return message.ReplyWith("Item not found :/");
+                    }
+
+                    return message.ReplyWith($"Error handling code: ({exception.GetType().Name}) {exception.Message}");
+                }
             );
 
             return;
