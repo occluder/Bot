@@ -1,6 +1,7 @@
 ﻿using Bot.Models;
 using Bot.Utils;
 using MiniTwitch.Irc.Interfaces;
+using Npgsql;
 
 namespace Bot.Modules;
 
@@ -72,6 +73,10 @@ internal class BanCollector: BotModule
 
             _bans.Clear();
             _logger.Debug("Inserted {BanCount} ban logs", inserted);
+        }
+        catch (PostgresException pex)
+        {
+            _logger.Error(pex, "Failed to insert ban logs into table. Internal Query: {Query} Full Exception Details: {@Exc}", pex.InternalQuery, pex);
         }
         catch (Exception ex)
         {
