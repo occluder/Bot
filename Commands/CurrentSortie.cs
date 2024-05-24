@@ -84,20 +84,7 @@ public class CurrentSortie: ChatCommand
                 "Impact" => "+🔨",
                 _ => split[1]
             },
-            "Environmental Hazard" => split[1] switch
-            {
-                "Radiation Pockets" => "Radiation Pockets ItsBoshyTime ",
-                "Fire" => variant.Modifier + " 🔥",
-                _ => split[1]
-            },
-            "Environmental Effect" => split[1] switch
-            {
-                "Cryogenic Leakage" => "Cryogenic Leakage",
-                "Electromagnetic Anomalies" => "Electromagnetic Anomalies",
-                _ => split[1]
-            },
-            // Energy Reduction
-            _ => split[0]
+            _ => variant.Modifier
         };
     }
 }
