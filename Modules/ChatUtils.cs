@@ -66,7 +66,7 @@ public class ChatUtils: BotModule
                 ? DateTimeOffset.FromUnixTimeMilliseconds(unix.Value)
                 : DateTimeOffset.FromUnixTimeSeconds(unix.Value);
 
-            return $"{offset:yyyy-MM-dd, hh:mm:ss tt} {ShortDistance(DateTimeOffset.Now - offset)}";
+            return $"{offset:yyyy-MM-dd, h:mm:ss tt} {ShortDistance(DateTimeOffset.Now - offset)}";
         }
 
         var utc = DateTimeOffset.UtcNow;
@@ -77,7 +77,7 @@ public class ChatUtils: BotModule
         }
 
         var date = TimeZoneInfo.ConvertTime(utc, tz);
-        return $"{date:yyyy-MM-dd, hh:mm:ss tt, (UTCzzz)}";
+        return $"{date:yyyy-MM-dd, h:mm:ss tt, (UTCzzz)}";
     }
 
     private static bool WithinReasonableTime(long time, bool ms = false)
