@@ -9,12 +9,8 @@ internal class MentionsRelay: BotModule
 {
     private static readonly ILogger _logger = ForContext<MentionsRelay>();
 
-    private readonly Regex _imageHosts = new(Config.Secrets["ImageHostsRegex"], RegexOptions.Compiled,
-        TimeSpan.FromMilliseconds(50));
-
-    private readonly Regex _regex = new(Config.Secrets["MentionsRegex"], RegexOptions.Compiled,
-        TimeSpan.FromMilliseconds(50));
-
+    private readonly Regex _imageHosts = new(Config.Secrets["ImageHostsRegex"], RegexOptions.Compiled, TimeSpan.FromMilliseconds(50));
+    private readonly Regex _regex = new(Config.Secrets["MentionsRegex"], RegexOptions.Compiled, TimeSpan.FromMilliseconds(50));
     private readonly HttpClient _requests = new() { Timeout = TimeSpan.FromSeconds(15) };
 
     private async ValueTask OnMessage(Privmsg message)

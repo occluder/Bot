@@ -106,7 +106,7 @@ internal class BanCollector: BotModule
         await _timer.StopAsync();
     }
 
-    private readonly record struct BanData(
+    private record BanData(
         string Username,
         long UserId,
         string Channel,
