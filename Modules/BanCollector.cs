@@ -21,19 +21,25 @@ internal class BanCollector: BotModule
 
     private async ValueTask OnUserTimeout(IUserTimeout timeout)
     {
-        if (timeout.Duration.TotalSeconds < 2 || !ChannelsById[timeout.Channel.Id].IsLogged)
+        if (!ChannelsById[timeout.Channel.Id].IsLogged)
+        {
             return;
+        }
 
         if (_bans.Count >= MAX_BANS)
+        {
             await Commit();
+        }
 
         await _ss.WaitAsync();
-        _bans.Add(new(timeout.Target.Name,
-                      timeout.Target.Id,
-                      timeout.Channel.Name,
-                      timeout.Channel.Id,
-                      (int)timeout.Duration.TotalSeconds,
-                      Unix()));
+        _bans.Add(new(
+            timeout.Target.Name,
+            timeout.Target.Id,
+            timeout.Channel.Name,
+            timeout.Channel.Id,
+            (int)timeout.Duration.TotalSeconds,
+            Unix())
+        );
 
         _ = _ss.Release();
     }
@@ -41,18 +47,24 @@ internal class BanCollector: BotModule
     private async ValueTask OnUserBan(IUserBan ban)
     {
         if (!ChannelsById[ban.Channel.Id].IsLogged)
+        {
             return;
+        }
 
         if (_bans.Count >= MAX_BANS)
+        {
             await Commit();
+        }
 
         await _ss.WaitAsync();
-        _bans.Add(new(ban.Target.Name,
-                      ban.Target.Id,
-                      ban.Channel.Name,
-                      ban.Channel.Id,
-                      -1,
-                      Unix()));
+        _bans.Add(new(
+            ban.Target.Name,
+            ban.Target.Id,
+            ban.Channel.Name,
+            ban.Channel.Id,
+            -1,
+            Unix())
+        );
 
         _ = _ss.Release();
     }
@@ -60,7 +72,9 @@ internal class BanCollector: BotModule
     private async Task Commit()
     {
         if (!this.Enabled || _bans.Count == 0)
+        {
             return;
+        }
 
         _logger.Debug("Attempting to insert {BanCount} ban logs", _bans.Count);
         await _ss.WaitAsync();
