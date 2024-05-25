@@ -1,7 +1,6 @@
 ﻿using Bot.Interfaces;
 using Bot.Models;
 using Bot.Utils;
-using MiniTwitch.Common.Extensions;
 using MiniTwitch.Irc.Models;
 
 namespace Bot.Handlers;
@@ -36,20 +35,10 @@ public static class ChatHandler
 
     private static ValueTask OnMessage(Privmsg arg)
     {
-        try
-        {
-            ReadOnlySpan<char> content = arg.Content;
-            if (ChannelsById[arg.Channel.Id].Priority >= 50 && content.Length > Config.Prefix.Length + 1 &&
-                content.StartsWith(Config.Prefix, StringComparison.CurrentCulture))
-                return HandleCommand(arg);
-
-            return default;
-        }
-        catch (KeyNotFoundException) when (arg.Author.Id == 0 || arg.Channel.Id == 0)
-        {
-            AnonClient.ReconnectAsync().StepOver();
-            MainClient.ReconnectAsync().StepOver();
-        }
+        ReadOnlySpan<char> content = arg.Content;
+        if (ChannelsById[arg.Channel.Id].Priority >= 50 && content.Length > Config.Prefix.Length + 1 &&
+            content.StartsWith(Config.Prefix, StringComparison.CurrentCulture))
+            return HandleCommand(arg);
 
         return default;
     }

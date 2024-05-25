@@ -30,20 +30,16 @@ internal class StreamMonitor: BotModule
 
         _streams[channelId] = true;
         ListenResponse r = await TwitchPubSub.ListenTo(Topics.BroadcastSettingsUpdate(channelId));
-        if (r.IsSuccess)
-            _logger.Debug("Successfully listened to {TopicKey}", r.TopicKey);
-        else
-            _logger.Warning("Failed to listen to {TopicKey}: {Error}", r.TopicKey, r.Error);
-
         _logger.Information("{Channel} went live", ChannelsById[channelId].DisplayName);
         string? streamInfo = null;
         if (await HelixClient.GetChannelInformation(channelId) is { Success: true } result)
         {
             streamInfo = $"{result.Value.Data[0].Title} [{result.Value.Data[0].GameName}]";
+            await Insert(channelId, "LIVE", result.Value.Data[0].Title, result.Value.Data[0].GameName);
         }
 
         HelixResult cResult = await HelixClient.UpdateUserChatColor(ChatColor.Green);
-        await Task.Delay(250);
+        await Task.Delay(2000);
         await MainClient.SendMessage(
             Config.RelayChannel,
             $"ppBounce @{ChannelsById[channelId].DisplayName} went live! {streamInfo}",
@@ -59,11 +55,6 @@ internal class StreamMonitor: BotModule
         if (!IsLive(channelId))
         {
             ListenResponse r = await TwitchPubSub.ListenTo(Topics.BroadcastSettingsUpdate(channelId));
-            if (r.IsSuccess)
-                _logger.Debug("Successfully listened to {TopicKey}", r.TopicKey);
-            else
-                _logger.Warning("Failed to listen to {TopicKey}: {Error}", r.TopicKey, r.Error);
-
             _logger.Debug("{Channel} is already live", ChannelsById[channelId].DisplayName);
             _streams[channelId] = true;
         }
@@ -74,14 +65,10 @@ internal class StreamMonitor: BotModule
         _streams[channelId] = false;
         _offlineAt[channelId] = DateTime.Now;
         ListenResponse r = await TwitchPubSub.UnlistenTo(Topics.BroadcastSettingsUpdate(channelId));
-        if (r.IsSuccess)
-            _logger.Debug("Successfully unlistened to {TopicKey}", r.TopicKey);
-        else
-            _logger.Warning("Failed to unlisten to {TopicKey}: {Error}", r.TopicKey, r.Error);
-
         _logger.Information("{Channel} went offline!", ChannelsById[channelId].DisplayName);
+        await Insert(channelId, "OFFLINE", null, null);
         HelixResult result = await HelixClient.UpdateUserChatColor(ChatColor.OrangeRed);
-        await Task.Delay(250);
+        await Task.Delay(2000);
         await MainClient.SendMessage(Config.RelayChannel,
             $"Sleepo @{ChannelsById[channelId].DisplayName} is now offline!",
             result.Success);
@@ -89,8 +76,9 @@ internal class StreamMonitor: BotModule
 
     private static async ValueTask OnGameChange(ChannelId channelId, IGameChange update)
     {
+        await Insert(channelId, "GAME", null, update.NewGame);
         HelixResult result = await HelixClient.UpdateUserChatColor(ChatColor.DodgerBlue);
-        await Task.Delay(250);
+        await Task.Delay(2000);
         await MainClient.SendMessage(Config.RelayChannel,
             $"ApuSkate @{ChannelsById[channelId].DisplayName} changed game: {update.OldGame} ➡ {update.NewGame}",
             result.Success);
@@ -98,11 +86,42 @@ internal class StreamMonitor: BotModule
 
     private static async ValueTask OnTitleChange(ChannelId channelId, ITitleChange update)
     {
+        await Insert(channelId, "TITLE", update.NewTitle, null);
         HelixResult result = await HelixClient.UpdateUserChatColor(ChatColor.DodgerBlue);
-        await Task.Delay(250);
+        await Task.Delay(2000);
         await MainClient.SendMessage(Config.RelayChannel,
             $"ApuSkate @{ChannelsById[channelId].DisplayName} changed title: {update.OldTitle} ➡ {update.NewTitle}",
             result.Success);
+    }
+
+
+    private static async Task Insert(long channelId, string type, string? title, string? game)
+    {
+        var channelObj = new
+        {
+            ChannelsById[channelId].ChannelName,
+            ChannelsById[channelId].ChannelId,
+            Title = title,
+            Game = game,
+            Timestamp = Unix()
+        };
+
+        await PostgresQueryLock.WaitAsync();
+        try
+        {
+            await Postgres.ExecuteAsync(
+                $"insert into channel_stream values (@ChannelName, @ChannelId, '{type}'::ChannelStreamEvent, @Title, @Game, @Timestamp)",
+                channelObj, commandTimeout: 10
+            );
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Failed to insert channel stream {@Object}", channelObj);
+        }
+        finally
+        {
+            _ = PostgresQueryLock.Release();
+        }
     }
 
     private static IEnumerable<long> GetMonitoredChannelIds() =>
