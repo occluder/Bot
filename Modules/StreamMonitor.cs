@@ -110,7 +110,7 @@ internal class StreamMonitor: BotModule
         try
         {
             await Postgres.ExecuteAsync(
-                $"insert into channel_stream values (@ChannelName, @ChannelId, '{type}'::ChannelStreamEvent, @Title, @Game, @Timestamp)",
+                $"insert into channel_stream values (@ChannelName, @ChannelId, '{type}', @Title, @Game, @Timestamp)",
                 channelObj, commandTimeout: 10
             );
         }
