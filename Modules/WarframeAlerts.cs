@@ -7,6 +7,7 @@ namespace Bot.Modules;
 
 public class WarframeAlerts: BotModule
 {
+    private static string[] _items = ["orokin catalyst", "orokin reactor", "forma", "exilus"];
     private static IRedisSet<string> Ids => Collections.GetRedisSet<string>("warframe:data:worldstate_ids");
     private static readonly JsonSerializerOptions _options = new()
     {
@@ -41,9 +42,7 @@ public class WarframeAlerts: BotModule
             int maxLevel = alert.Mission.MaxEnemyLevel;
             string rewardStr = alert.Mission.Reward.AsString;
             string lower = rewardStr.ToLower();
-            if (lower.Contains("forma")
-                || lower.Contains("orokin catalyst")
-                || lower.Contains("orokin reactor"))
+            if (_items.Any(lower.Contains))
             {
                 await MainClient.SendMessage("pajlada", $"@warframers pajaDink 🚨 {rewardStr} alert on {missionName} ({minLevel}-{maxLevel})");
             }
@@ -60,9 +59,7 @@ public class WarframeAlerts: BotModule
             
             string rewardStr = $"[{invasion.Attacker.Reward?.AsString}] vs [{invasion.Defender.Reward?.AsString}]";
             string lower = rewardStr.ToLower();
-            if (lower.Contains("forma")
-                || lower.Contains("orokin catalyst")
-                || lower.Contains("orokin reactor"))
+            if (_items.Any(lower.Contains))
             {
                 await MainClient.SendMessage("pajlada", $"@warframers pajaDink 🚨 {rewardStr} invasion on {invasion.NodeKey}");
             }
