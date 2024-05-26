@@ -23,11 +23,16 @@ public class WarframeAlerts: BotModule
 
     private async Task CheckWorldstate()
     {
+        await CheckAlerts();
+        await CheckInvasions();
+    }
+
+    private async Task CheckAlerts()
+    {
         var alertReq = await GetFromRequest<Alert[]>("https://api.warframestat.us/pc/alerts?language=en", _options);
-        var invasionReq = await GetFromRequest<Invasion[]>("https://api.warframestat.us/pc/invasions?language=en", _options);
         if (!alertReq.IsT0)
         {
-            goto CheckInvasions;
+            return;
         }
 
         foreach (Alert alert in alertReq.AsT0)
@@ -47,8 +52,16 @@ public class WarframeAlerts: BotModule
                 await MainClient.SendMessage("pajlada", $"@warframers pajaDink 🚨 {rewardStr} alert on {missionName} ({minLevel}-{maxLevel})");
             }
         }
+    }
 
-    CheckInvasions:
+    private async Task CheckInvasions()
+    {
+        var invasionReq = await GetFromRequest<Invasion[]>("https://api.warframestat.us/pc/invasions?language=en", _options);
+        if (!invasionReq.IsT0)
+        {
+            return;
+        }
+
         foreach (Invasion invasion in invasionReq.AsT0)
         {
             if (invasion.Completed || !await HandleId(invasion.Id))
@@ -56,7 +69,6 @@ public class WarframeAlerts: BotModule
                 continue;
             }
 
-            
             string rewardStr = $"[{invasion.Attacker.Reward?.AsString}] vs [{invasion.Defender.Reward?.AsString}]";
             string lower = rewardStr.ToLower();
             if (_items.Any(lower.Contains))
