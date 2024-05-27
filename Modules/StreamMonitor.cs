@@ -38,6 +38,11 @@ internal class StreamMonitor: BotModule
             await Insert(channelId, "LIVE", result.Value.Data[0].Title, result.Value.Data[0].GameName);
         }
 
+        if (ChannelsById[channelId].Priority < 1)
+        {
+            return;
+        }
+
         HelixResult cResult = await HelixClient.UpdateUserChatColor(ChatColor.Green);
         await Task.Delay(2000);
         await MainClient.SendMessage(
@@ -67,6 +72,11 @@ internal class StreamMonitor: BotModule
         ListenResponse r = await TwitchPubSub.UnlistenTo(Topics.BroadcastSettingsUpdate(channelId));
         _logger.Information("{Channel} went offline!", ChannelsById[channelId].DisplayName);
         await Insert(channelId, "OFFLINE", null, null);
+        if (ChannelsById[channelId].Priority < 1)
+        {
+            return;
+        }
+
         HelixResult result = await HelixClient.UpdateUserChatColor(ChatColor.OrangeRed);
         await Task.Delay(2000);
         await MainClient.SendMessage(Config.RelayChannel,
@@ -77,6 +87,11 @@ internal class StreamMonitor: BotModule
     private static async ValueTask OnGameChange(ChannelId channelId, IGameChange update)
     {
         await Insert(channelId, "GAME", null, update.NewGame);
+        if (ChannelsById[channelId].Priority < 1)
+        {
+            return;
+        }
+
         HelixResult result = await HelixClient.UpdateUserChatColor(ChatColor.DodgerBlue);
         await Task.Delay(2000);
         await MainClient.SendMessage(Config.RelayChannel,
@@ -87,6 +102,11 @@ internal class StreamMonitor: BotModule
     private static async ValueTask OnTitleChange(ChannelId channelId, ITitleChange update)
     {
         await Insert(channelId, "TITLE", update.NewTitle, null);
+        if (ChannelsById[channelId].Priority < 1)
+        {
+            return;
+        }
+
         HelixResult result = await HelixClient.UpdateUserChatColor(ChatColor.DodgerBlue);
         await Task.Delay(2000);
         await MainClient.SendMessage(Config.RelayChannel,
