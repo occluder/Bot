@@ -18,7 +18,7 @@ internal class GifterCollector: BotModule
         await PostgresQueryLock.WaitAsync();
         try
         {
-            _ = await Postgres.ExecuteAsync(
+            await Postgres.ExecuteAsync(
                 """
                 insert into 
                     sub_gifters 
@@ -74,7 +74,7 @@ internal class GifterCollector: BotModule
         await PostgresQueryLock.WaitAsync();
         try
         {
-            _ = await Postgres.ExecuteAsync(
+            await Postgres.ExecuteAsync(
                 """
                 insert into
                     sub_recipient
