@@ -50,6 +50,16 @@ internal class StreamMonitor: BotModule
             $"ppBounce @{ChannelsById[channelId].DisplayName} went live! {streamInfo}",
             cResult.Success
         );
+
+        if (channelId == 31557216
+            && streamInfo?.Contains("devstream", StringComparison.OrdinalIgnoreCase) is true)
+        {
+            await MainClient.SendMessage(
+                "pajlada",
+                $"@warframers pajaDink Now live: {streamInfo}",
+                cResult.Success
+            );
+        }
     }
 
     private static async ValueTask OnViewerCountUpdate(ChannelId channelId, IViewerCountUpdate _)

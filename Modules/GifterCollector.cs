@@ -1,7 +1,6 @@
 ﻿using Bot.Models;
 using MiniTwitch.Irc.Enums;
 using MiniTwitch.Irc.Interfaces;
-using MiniTwitch.Irc.Models;
 
 namespace Bot.Modules;
 
