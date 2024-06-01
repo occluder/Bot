@@ -36,7 +36,7 @@ internal class GifterCollector: BotModule
                 """,
                 new
                 {
-                    GiftId = notice.CommunityGiftId,
+                    GiftId = (double)notice.CommunityGiftId,
                     Username = notice.Author.Name,
                     UserId = notice.Author.Id,
                     Channel = notice.Channel.Name,
@@ -93,7 +93,7 @@ internal class GifterCollector: BotModule
                 """,
                 new
                 {
-                    GiftId = notice.CommunityGiftId,
+                    GiftId = (double)notice.CommunityGiftId,
                     RecipientName = notice.Recipient.Name,
                     RecipientId = notice.Recipient.Id
                 }, commandTimeout: 10
