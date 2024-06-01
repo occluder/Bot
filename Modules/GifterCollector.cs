@@ -20,8 +20,9 @@ internal class GifterCollector: BotModule
             await Postgres.ExecuteAsync(
                 """
                 insert into 
-                    sub_gifters 
+                    sub_gifter 
                 values (
+                    @GiftId
                     @Username, 
                     @UserId, 
                     @Channel, 
@@ -33,6 +34,7 @@ internal class GifterCollector: BotModule
                 """,
                 new
                 {
+                    GiftId = notice.CommunityGiftId,
                     Username = notice.Author.Name,
                     UserId = notice.Author.Id,
                     Channel = notice.Channel.Name,
@@ -78,32 +80,16 @@ internal class GifterCollector: BotModule
                 insert into
                     sub_recipient
                 values (
-                    @ChannelName,
-                    @ChannelId,
-                    @GifterName,
-                    @GifterId,
+                    @GiftId,
                     @RecipientName,
-                    @RecipientId,
-                    @Tier,
-                    @TimeSent
+                    @RecipientId
                 )
                 """,
                 new
                 {
-                    ChannelName = notice.Channel.Name,
-                    ChannelId = notice.Channel.Id,
-                    GifterName = notice.Author.Name,
-                    GifterId = notice.Author.Id,
+                    GiftId = notice.CommunityGiftId,
                     RecipientName = notice.Recipient.Name,
-                    RecipientId = notice.Recipient.Id,
-                    Tier = notice.SubPlan switch
-                    {
-                        SubPlan.Tier1 => 1,
-                        SubPlan.Tier2 => 2,
-                        SubPlan.Tier3 => 3,
-                        _ => 0
-                    },
-                    TimeSent = notice.SentTimestamp.ToUnixTimeSeconds()
+                    RecipientId = notice.Recipient.Id
                 }, commandTimeout: 10
             );
         }
