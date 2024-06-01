@@ -1,17 +1,20 @@
 ﻿using Bot.Models;
 using MiniTwitch.Irc.Enums;
 using MiniTwitch.Irc.Interfaces;
+using Npgsql;
 
 namespace Bot.Modules;
 
 internal class GifterCollector: BotModule
 {
+    private static readonly ILogger _logger = ForContext<GifterCollector>();
+
     private async ValueTask OnGiftedSubNoticeIntro(IGiftSubNoticeIntro notice)
     {
         if (!ChannelsById[notice.Channel.Id].IsLogged)
             return;
 
-        ForContext<GifterCollector>().Debug("@{User} gifted {Amount} {Tier} subs to #{Channel}!",
+        _logger.Debug("@{User} gifted {Amount} {Tier} subs to #{Channel}!",
             notice.Author.Name, notice.GiftCount, notice.SubPlan, notice.Channel.Name);
 
         await PostgresQueryLock.WaitAsync();
@@ -51,6 +54,10 @@ internal class GifterCollector: BotModule
                 }, commandTimeout: 10
             );
         }
+        catch (PostgresException ex)
+        {
+            _logger.Error("Error inserting gifter {@Details}", ex);
+        }
         finally
         {
             _ = PostgresQueryLock.Release();
@@ -64,7 +71,7 @@ internal class GifterCollector: BotModule
             return;
         }
 
-        ForContext<GifterCollector>().Verbose(
+        _logger.Verbose(
             "@{User} received a {Tier} sub to #{Channel} from @{Gifter}!",
             notice.Recipient.Name,
             notice.SubPlan,
@@ -92,6 +99,10 @@ internal class GifterCollector: BotModule
                     RecipientId = notice.Recipient.Id
                 }, commandTimeout: 10
             );
+        }
+        catch (PostgresException ex)
+        {
+            _logger.Error("Error inserting gift recipient {@Details}", ex);
         }
         finally
         {
