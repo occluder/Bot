@@ -44,7 +44,7 @@ public class WhitelistWatch: BotModule
         }
         catch (Exception ex)
         {
-            Error("Error inserting whitelisted message {@Details}", ex);
+            Error(ex, "Error inserting whitelisted message");
         }
         finally
         {

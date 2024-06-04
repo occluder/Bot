@@ -101,7 +101,7 @@ internal class GifterCollector: BotModule
         }
         catch (Exception ex)
         {
-            _logger.Error("Error inserting gift recipient {@Details}", ex);
+            _logger.Error(ex, "Error inserting gift recipient");
         }
         finally
         {
