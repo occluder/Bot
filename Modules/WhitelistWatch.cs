@@ -38,7 +38,7 @@ public class WhitelistWatch: BotModule
                     ChannelId = message.Channel.Id,
                     Message = message.Content,
                     IsReply = message.Reply.HasContent,
-                    TimeSent = message.SentTimestamp,
+                    TimeSent = message.TmiSentTs,
                 }, commandTimeout: 10
             );
         }
