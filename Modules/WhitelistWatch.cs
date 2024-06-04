@@ -31,7 +31,7 @@ public class WhitelistWatch: BotModule
                 """,
                 new
                 {
-                    message.Id,
+                    Id = Guid.Parse(message.Id),
                     Username = message.Author.Name,
                     UserId = message.Author.Id,
                     Channel = message.Channel.Name,
