@@ -13,7 +13,7 @@ internal class GifterCollector: BotModule
         if (!ChannelsById[notice.Channel.Id].IsLogged)
             return;
 
-        _logger.Information("@{User} gifted {Amount} {Tier} subs to #{Channel}!",
+        _logger.Debug("@{User} gifted {Amount} {Tier} subs to #{Channel}!",
             notice.Author.Name, notice.GiftCount, notice.SubPlan, notice.Channel.Name);
 
         await PostgresQueryLock.WaitAsync();
