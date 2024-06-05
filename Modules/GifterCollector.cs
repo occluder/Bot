@@ -52,35 +52,12 @@ internal class GifterCollector: BotModule
                     TimeSent = notice.SentTimestamp.ToUnixTimeSeconds()
                 }, commandTimeout: 10
             );
-        }
-        catch (Exception ex)
-        {
-            _logger.Error("Error inserting gifter {@Details}", ex);
-        }
-        finally
-        {
-            _ = PostgresQueryLock.Release();
-        }
-    }
 
-    private async ValueTask OnGiftedSubNotice(IGiftSubNotice notice)
-    {
-        if (!ChannelsById[notice.Channel.Id].IsLogged)
-        {
-            return;
-        }
+            if (_gifts.Count < 1)
+            {
+                return;
+            }
 
-        _logger.Verbose(
-            "@{User} received a {Tier} sub to #{Channel} from @{Gifter}!",
-            notice.Recipient.Name,
-            notice.SubPlan,
-            notice.Channel.Name,
-            notice.Author.Name
-        );
-
-        await PostgresQueryLock.WaitAsync();
-        try
-        {
             await Postgres.ExecuteAsync(
                 """
                 insert into
@@ -91,22 +68,48 @@ internal class GifterCollector: BotModule
                     @RecipientId
                 )
                 """,
-                new
-                {
-                    GiftId = (double)notice.CommunityGiftId,
-                    RecipientName = notice.Recipient.Name,
-                    RecipientId = notice.Recipient.Id
-                }, commandTimeout: 10
+                _gifts, commandTimeout: 10
             );
+
+            _gifts.Clear();
         }
         catch (Exception ex)
         {
-            _logger.Error(ex, "Error inserting gift recipient");
+            _logger.Error(ex, "Error inserting gifter");
         }
         finally
         {
             _ = PostgresQueryLock.Release();
         }
+    }
+
+    private readonly List<object> _gifts = new(200);
+
+    private ValueTask OnGiftedSubNotice(IGiftSubNotice notice)
+    {
+        if (!ChannelsById[notice.Channel.Id].IsLogged)
+        {
+            return default;
+        }
+
+        _logger.Verbose(
+            "@{User} received a {Tier} sub to #{Channel} from @{Gifter}!",
+            notice.Recipient.Name,
+            notice.SubPlan,
+            notice.Channel.Name,
+            notice.Author.Name
+        );
+
+        _gifts.Add(
+            new
+            {
+                GiftId = (double)notice.CommunityGiftId,
+                RecipientName = notice.Recipient.Name,
+                RecipientId = notice.Recipient.Id
+            }
+        );
+
+        return default;
     }
 
     protected override ValueTask OnModuleEnabled()
