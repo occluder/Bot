@@ -68,7 +68,12 @@ internal class GifterCollector: BotModule
                     @RecipientId
                 )
                 """,
-                _gifts, commandTimeout: 10
+                _gifts.Where(x => x.TmiSentTs < UnixMs() - 60000).Select(x => new
+                {
+                    GiftId = (double)x.CommunityGiftId,
+                    RecipientName = x.Recipient.Name,
+                    RecipientId = x.Recipient.Id
+                }), commandTimeout: 10
             );
 
             _gifts.Clear();
@@ -83,7 +88,7 @@ internal class GifterCollector: BotModule
         }
     }
 
-    private readonly List<object> _gifts = new(200);
+    private readonly List<IGiftSubNotice> _gifts = new(250);
 
     private ValueTask OnGiftedSubNotice(IGiftSubNotice notice)
     {
@@ -100,15 +105,7 @@ internal class GifterCollector: BotModule
             notice.Author.Name
         );
 
-        _gifts.Add(
-            new
-            {
-                GiftId = (double)notice.CommunityGiftId,
-                RecipientName = notice.Recipient.Name,
-                RecipientId = notice.Recipient.Id
-            }
-        );
-
+        _gifts.Add(notice);
         return default;
     }
 
