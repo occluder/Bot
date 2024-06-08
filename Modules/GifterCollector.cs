@@ -52,31 +52,6 @@ internal class GifterCollector: BotModule
                     TimeSent = notice.SentTimestamp.ToUnixTimeSeconds()
                 }, commandTimeout: 10
             );
-
-            if (_gifts.Count < 1)
-            {
-                return;
-            }
-
-            await Postgres.ExecuteAsync(
-                """
-                insert into
-                    sub_recipient
-                values (
-                    @GiftId,
-                    @RecipientName,
-                    @RecipientId
-                )
-                """,
-                _gifts.Where(x => x.TmiSentTs < UnixMs() - 60000).Select(x => new
-                {
-                    GiftId = (double)x.CommunityGiftId,
-                    RecipientName = x.Recipient.Name,
-                    RecipientId = x.Recipient.Id
-                }), commandTimeout: 10
-            );
-
-            _gifts.Clear();
         }
         catch (Exception ex)
         {
@@ -88,13 +63,11 @@ internal class GifterCollector: BotModule
         }
     }
 
-    private readonly List<IGiftSubNotice> _gifts = new(250);
-
-    private ValueTask OnGiftedSubNotice(IGiftSubNotice notice)
+    private async ValueTask OnGiftedSubNotice(IGiftSubNotice notice)
     {
         if (!ChannelsById[notice.Channel.Id].IsLogged)
         {
-            return default;
+            return;
         }
 
         _logger.Verbose(
@@ -105,8 +78,35 @@ internal class GifterCollector: BotModule
             notice.Author.Name
         );
 
-        _gifts.Add(notice);
-        return default;
+        await PostgresQueryLock.WaitAsync();
+        try
+        {
+            await Postgres.ExecuteAsync(
+                """
+                insert into
+                    sub_recipient
+                values (
+                    @GiftId,
+                    @RecipientName,
+                    @RecipientId
+                )
+                """,
+                new
+                {
+                    GiftId = (double)notice.CommunityGiftId,
+                    RecipientName = notice.Recipient.Name,
+                    RecipientId = notice.Recipient.Id
+                }, commandTimeout: 10
+            );
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Error inserting recipient");
+        }
+        finally
+        {
+            PostgresQueryLock.Release();
+        }
     }
 
     protected override ValueTask OnModuleEnabled()
