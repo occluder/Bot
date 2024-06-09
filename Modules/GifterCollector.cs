@@ -1,17 +1,27 @@
 ﻿using Bot.Models;
 using MiniTwitch.Irc.Enums;
 using MiniTwitch.Irc.Interfaces;
+using Sqids;
 
 namespace Bot.Modules;
 
 internal class GifterCollector: BotModule
 {
     private static readonly ILogger _logger = ForContext<GifterCollector>();
+    private static readonly SqidsEncoder<ulong> _encoder = new();
 
     private async ValueTask OnGiftedSubNoticeIntro(IGiftSubNoticeIntro notice)
     {
         if (!ChannelsById[notice.Channel.Id].IsLogged)
+        {
             return;
+        }
+
+        if (notice.CommunityGiftId == 0)
+        {
+            _logger.Warning("Received sub gift intro notice with CommunityGiftId 0");
+            return;
+        }
 
         _logger.Debug("@{User} gifted {Amount} {Tier} subs to #{Channel}!",
             notice.Author.Name, notice.GiftCount, notice.SubPlan, notice.Channel.Name);
@@ -36,7 +46,7 @@ internal class GifterCollector: BotModule
                 """,
                 new
                 {
-                    GiftId = (double)notice.CommunityGiftId,
+                    GiftId = _encoder.Encode(notice.CommunityGiftId),
                     Username = notice.Author.Name,
                     UserId = notice.Author.Id,
                     Channel = notice.Channel.Name,
@@ -70,6 +80,12 @@ internal class GifterCollector: BotModule
             return;
         }
 
+        if (notice.CommunityGiftId == 0)
+        {
+            _logger.Warning("Received sub gift notice with CommunityGiftId 0");
+            return;
+        }
+
         _logger.Verbose(
             "@{User} received a {Tier} sub to #{Channel} from @{Gifter}!",
             notice.Recipient.Name,
@@ -93,7 +109,7 @@ internal class GifterCollector: BotModule
                 """,
                 new
                 {
-                    GiftId = (double)notice.CommunityGiftId,
+                    GiftId = _encoder.Encode(notice.CommunityGiftId),
                     RecipientName = notice.Recipient.Name,
                     RecipientId = notice.Recipient.Id
                 }, commandTimeout: 10
