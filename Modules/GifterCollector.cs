@@ -1,6 +1,7 @@
 ﻿using Bot.Models;
 using MiniTwitch.Irc.Enums;
 using MiniTwitch.Irc.Interfaces;
+using MiniTwitch.Irc.Models;
 using Sqids;
 
 namespace Bot.Modules;
@@ -26,6 +27,59 @@ internal class GifterCollector: BotModule
         _logger.Debug("@{User} gifted {Amount} {Tier} subs to #{Channel}!",
             notice.Author.Name, notice.GiftCount, notice.SubPlan, notice.Channel.Name);
 
+        await InsertGifter(
+            notice.CommunityGiftId,
+            notice.Author,
+            notice.Channel,
+            notice.TotalGiftCount,
+            notice.SubPlan,
+            notice.SentTimestamp.ToUnixTimeSeconds()
+        );
+    }
+
+    private async ValueTask OnGiftedSubNotice(IGiftSubNotice notice)
+    {
+        if (!ChannelsById[notice.Channel.Id].IsLogged)
+        {
+            return;
+        }
+
+        if (notice.CommunityGiftId == 0)
+        {
+            ulong newId = (ulong)Unix();
+            await InsertGifter(
+                newId,
+                notice.Author,
+                notice.Channel,
+                1,
+                notice.SubPlan,
+                notice.SentTimestamp.ToUnixTimeSeconds()
+            );
+
+            await InsertRecipient(newId, notice.Recipient);
+            return;
+        }
+
+        _logger.Verbose(
+            "@{User} received a {Tier} sub to #{Channel} from @{Gifter}!",
+            notice.Recipient.Name,
+            notice.SubPlan,
+            notice.Channel.Name,
+            notice.Author.Name
+        );
+
+        await InsertRecipient(notice.CommunityGiftId, notice.Recipient);
+    }
+
+    private static async Task InsertGifter(
+        ulong giftId,
+        MessageAuthor author,
+        IBasicChannel channel,
+        int giftAmount,
+        SubPlan tier,
+        long timeSent
+    )
+    {
         await PostgresQueryLock.WaitAsync();
         try
         {
@@ -44,23 +98,23 @@ internal class GifterCollector: BotModule
                     @TimeSent
                 )
                 """,
-                new
+            new
+            {
+                GiftId = _encoder.Encode(giftId),
+                Username = author.Name,
+                UserId = author.Id,
+                Channel = channel.Name,
+                ChannelId = channel.Id,
+                GiftAmount = giftAmount,
+                Tier = tier switch
                 {
-                    GiftId = _encoder.Encode(notice.CommunityGiftId),
-                    Username = notice.Author.Name,
-                    UserId = notice.Author.Id,
-                    Channel = notice.Channel.Name,
-                    ChannelId = notice.Channel.Id,
-                    GiftAmount = notice.GiftCount,
-                    Tier = notice.SubPlan switch
-                    {
-                        SubPlan.Tier1 => 1,
-                        SubPlan.Tier2 => 2,
-                        SubPlan.Tier3 => 3,
-                        _ => 0
-                    },
-                    TimeSent = notice.SentTimestamp.ToUnixTimeSeconds()
-                }, commandTimeout: 10
+                    SubPlan.Tier1 => 1,
+                    SubPlan.Tier2 => 2,
+                    SubPlan.Tier3 => 3,
+                    _ => 0,
+                },
+                TimeSent = timeSent
+            }, commandTimeout: 10
             );
         }
         catch (Exception ex)
@@ -73,27 +127,8 @@ internal class GifterCollector: BotModule
         }
     }
 
-    private async ValueTask OnGiftedSubNotice(IGiftSubNotice notice)
+    private static async Task InsertRecipient(ulong giftId, IGiftSubRecipient recipient)
     {
-        if (!ChannelsById[notice.Channel.Id].IsLogged)
-        {
-            return;
-        }
-
-        if (notice.CommunityGiftId == 0)
-        {
-            _logger.Warning("Received sub gift notice with CommunityGiftId 0");
-            return;
-        }
-
-        _logger.Verbose(
-            "@{User} received a {Tier} sub to #{Channel} from @{Gifter}!",
-            notice.Recipient.Name,
-            notice.SubPlan,
-            notice.Channel.Name,
-            notice.Author.Name
-        );
-
         await PostgresQueryLock.WaitAsync();
         try
         {
@@ -107,12 +142,12 @@ internal class GifterCollector: BotModule
                     @RecipientId
                 )
                 """,
-                new
-                {
-                    GiftId = _encoder.Encode(notice.CommunityGiftId),
-                    RecipientName = notice.Recipient.Name,
-                    RecipientId = notice.Recipient.Id
-                }, commandTimeout: 10
+            new
+            {
+                GiftId = _encoder.Encode(giftId),
+                RecipientName = recipient.Name,
+                RecipientId = recipient.Id
+            }, commandTimeout: 10
             );
         }
         catch (Exception ex)
