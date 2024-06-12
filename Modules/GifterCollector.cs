@@ -69,7 +69,7 @@ internal class GifterCollector: BotModule
         {
             if (notice.CommunityGiftId == 0)
             {
-                ulong newId = (ulong)Unix();
+                ulong newId = (ulong)UnixMs();
                 await InsertGifter(
                     newId,
                     notice.Author,
