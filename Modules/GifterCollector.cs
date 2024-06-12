@@ -27,36 +27,32 @@ internal class GifterCollector: BotModule
         _logger.Debug("@{User} gifted {Amount} {Tier} subs to #{Channel}!",
             notice.Author.Name, notice.GiftCount, notice.SubPlan, notice.Channel.Name);
 
-        await InsertGifter(
-            notice.CommunityGiftId,
-            notice.Author,
-            notice.Channel,
-            notice.TotalGiftCount,
-            notice.SubPlan,
-            notice.SentTimestamp.ToUnixTimeSeconds()
-        );
+        await PostgresQueryLock.WaitAsync();
+        try
+        {
+            await InsertGifter(
+                notice.CommunityGiftId,
+                notice.Author,
+                notice.Channel,
+                notice.TotalGiftCount,
+                notice.SubPlan,
+                notice.SentTimestamp.ToUnixTimeSeconds()
+            );
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Failed to insert gifter");
+        }
+        finally
+        {
+            PostgresQueryLock.Release();
+        }
     }
 
     private async ValueTask OnGiftedSubNotice(IGiftSubNotice notice)
     {
         if (!ChannelsById[notice.Channel.Id].IsLogged)
         {
-            return;
-        }
-
-        if (notice.CommunityGiftId == 0)
-        {
-            ulong newId = (ulong)Unix();
-            await InsertGifter(
-                newId,
-                notice.Author,
-                notice.Channel,
-                1,
-                notice.SubPlan,
-                notice.SentTimestamp.ToUnixTimeSeconds()
-            );
-
-            await InsertRecipient(newId, notice.Recipient);
             return;
         }
 
@@ -68,10 +64,40 @@ internal class GifterCollector: BotModule
             notice.Author.Name
         );
 
-        await InsertRecipient(notice.CommunityGiftId, notice.Recipient);
+        await PostgresQueryLock.WaitAsync();
+        try
+        {
+            if (notice.CommunityGiftId == 0)
+            {
+                ulong newId = (ulong)Unix();
+                await InsertGifter(
+                    newId,
+                    notice.Author,
+                    notice.Channel,
+                    1,
+                    notice.SubPlan,
+                    notice.SentTimestamp.ToUnixTimeSeconds()
+                );
+
+                await InsertRecipient(newId, notice.Recipient);
+                return;
+            }
+
+            await InsertRecipient(notice.CommunityGiftId, notice.Recipient);
+            // Throttle to 20 inserts/s
+            await Task.Delay(50);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Failed to insert recipient/gifter");
+        }
+        finally
+        {
+            PostgresQueryLock.Release();
+        }
     }
 
-    private static async Task InsertGifter(
+    private static Task<int> InsertGifter(
         ulong giftId,
         MessageAuthor author,
         IBasicChannel channel,
@@ -80,24 +106,21 @@ internal class GifterCollector: BotModule
         long timeSent
     )
     {
-        await PostgresQueryLock.WaitAsync();
-        try
-        {
-            await Postgres.ExecuteAsync(
-                """
-                insert into 
-                    sub_gifter 
-                values (
-                    @GiftId,
-                    @Username, 
-                    @UserId, 
-                    @Channel, 
-                    @ChannelId, 
-                    @GiftAmount, 
-                    @Tier, 
-                    @TimeSent
-                )
-                """,
+        return Postgres.ExecuteAsync(
+            """
+            insert into 
+                sub_gifter 
+            values (
+                @GiftId,
+                @Username, 
+                @UserId, 
+                @Channel, 
+                @ChannelId, 
+                @GiftAmount, 
+                @Tier, 
+                @TimeSent
+            )
+            """,
             new
             {
                 GiftId = _encoder.Encode(giftId),
@@ -115,49 +138,28 @@ internal class GifterCollector: BotModule
                 },
                 TimeSent = timeSent
             }, commandTimeout: 10
-            );
-        }
-        catch (Exception ex)
-        {
-            _logger.Error(ex, "Error inserting gifter");
-        }
-        finally
-        {
-            _ = PostgresQueryLock.Release();
-        }
+        );
     }
 
-    private static async Task InsertRecipient(ulong giftId, IGiftSubRecipient recipient)
+    private static Task<int> InsertRecipient(ulong giftId, IGiftSubRecipient recipient)
     {
-        await PostgresQueryLock.WaitAsync();
-        try
-        {
-            await Postgres.ExecuteAsync(
-                """
-                insert into
-                    sub_recipient
-                values (
-                    @GiftId,
-                    @RecipientName,
-                    @RecipientId
-                )
-                """,
+        return Postgres.ExecuteAsync(
+            """
+            insert into
+                sub_recipient
+            values (
+                @GiftId,
+                @RecipientName,
+                @RecipientId
+            )
+            """,
             new
             {
                 GiftId = _encoder.Encode(giftId),
                 RecipientName = recipient.Name,
                 RecipientId = recipient.Id
             }, commandTimeout: 10
-            );
-        }
-        catch (Exception ex)
-        {
-            _logger.Error(ex, "Error inserting recipient");
-        }
-        finally
-        {
-            PostgresQueryLock.Release();
-        }
+        );
     }
 
     protected override ValueTask OnModuleEnabled()
