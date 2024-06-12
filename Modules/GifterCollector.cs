@@ -34,7 +34,7 @@ internal class GifterCollector: BotModule
                 notice.CommunityGiftId,
                 notice.Author,
                 notice.Channel,
-                notice.TotalGiftCount,
+                notice.GiftCount,
                 notice.SubPlan,
                 notice.SentTimestamp.ToUnixTimeSeconds()
             );
