@@ -19,7 +19,7 @@ public class LoggerSetup: IStartupTask
             .Enrich.WithClassName()
             .WriteTo.Console(
                 outputTemplate:
-                "[{Timestamp:yyyy.m.dd HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}{NewLine}",
+                "[{Timestamp:yyyy.MM.dd HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}{NewLine}",
                 levelSwitch: LogSwitch)
             .WriteTo.Discord(Config.Links["Webhook"])
             .CreateLogger();
