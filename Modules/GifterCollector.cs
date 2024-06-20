@@ -24,9 +24,6 @@ internal class GifterCollector: BotModule
             return;
         }
 
-        _logger.Debug("@{User} gifted {Amount} {Tier} subs to #{Channel}!",
-            notice.Author.Name, notice.GiftCount, notice.SubPlan, notice.Channel.Name);
-
         await PostgresQueryLock.WaitAsync();
         try
         {
@@ -106,6 +103,8 @@ internal class GifterCollector: BotModule
         long timeSent
     )
     {
+        var giftIdEncoded = _encoder.Encode(giftId);
+        _logger.Information("Gift ({Count}): {Id}", giftAmount, giftIdEncoded);
         return Postgres.ExecuteAsync(
             """
             insert into 
@@ -123,7 +122,7 @@ internal class GifterCollector: BotModule
             """,
             new
             {
-                GiftId = _encoder.Encode(giftId),
+                GiftId = giftIdEncoded,
                 Username = author.Name,
                 UserId = author.Id,
                 Channel = channel.Name,
