@@ -64,12 +64,14 @@ internal class GifterCollector: BotModule
             notice.Author.Name
         );
 
+        // Throttle to 10 inserts/s
+        await Task.Delay(100);
         await PostgresQueryLock.WaitAsync();
         try
         {
             if (notice.CommunityGiftId == 0)
             {
-                ulong newId = (ulong)UnixMs();
+                ulong newId = (ulong)notice.TmiSentTs;
                 await InsertGifter(
                     newId,
                     notice.Author,
@@ -84,8 +86,6 @@ internal class GifterCollector: BotModule
             }
 
             await InsertRecipient(notice.CommunityGiftId, notice.Recipient);
-            // Throttle to 20 inserts/s
-            await Task.Delay(50);
         }
         catch (Exception ex)
         {
