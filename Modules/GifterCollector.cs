@@ -159,16 +159,17 @@ internal class GifterCollector: BotModule
         AnonClient.OnGiftedSubNoticeIntro += OnGiftedSubNoticeIntro;
         MainClient.OnGiftedSubNotice += OnGiftedSubNotice;
         AnonClient.OnGiftedSubNotice += OnGiftedSubNotice;
+        _timer.Start();
         return default;
     }
 
-    protected override ValueTask OnModuleDisabled()
+    protected override async ValueTask OnModuleDisabled()
     {
         MainClient.OnGiftedSubNoticeIntro -= OnGiftedSubNoticeIntro;
         AnonClient.OnGiftedSubNoticeIntro -= OnGiftedSubNoticeIntro;
         MainClient.OnGiftedSubNotice -= OnGiftedSubNotice;
         AnonClient.OnGiftedSubNotice -= OnGiftedSubNotice;
-        return default;
+        await _timer.StopAsync();
     }
 
     record Recipient(string GiftId, string RecipientName, long RecipientId);
