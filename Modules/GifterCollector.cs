@@ -115,7 +115,7 @@ internal class GifterCollector: BotModule
             }
         }
 
-        _logger.Information("GiftCollector ran {Inserted} inserts, removed {Removed} from list", inserted, removed);
+        _logger.Debug("GiftCollector ran {Inserted} inserts, removed {Removed} from list", inserted, removed);
     }
 
     private static Task<int> InsertGifter(object obj)
