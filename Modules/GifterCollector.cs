@@ -1,61 +1,69 @@
 ﻿using Bot.Models;
-using Bot.Utils;
 using MiniTwitch.Irc.Enums;
 using MiniTwitch.Irc.Interfaces;
+using MiniTwitch.Irc.Models;
 using Sqids;
 
 namespace Bot.Modules;
 
 internal class GifterCollector: BotModule
 {
-    static readonly ILogger _logger = ForContext<GifterCollector>();
-    static readonly SqidsEncoder<ulong> _encoder = new();
-    readonly BackgroundTimer _timer;
+    private static readonly ILogger _logger = ForContext<GifterCollector>();
+    private static readonly SqidsEncoder<ulong> _encoder = new();
 
-    public GifterCollector()
-    {
-        _timer = new(TimeSpan.FromMinutes(10), CommitOld, PostgresQueryLock);
-    }
-
-    private ValueTask OnGiftedSubNoticeIntro(IGiftSubNoticeIntro notice)
+    private async ValueTask OnGiftedSubNoticeIntro(IGiftSubNoticeIntro notice)
     {
         if (!ChannelsById[notice.Channel.Id].IsLogged)
         {
-            return default;
+            return;
         }
 
-        var giftId = _encoder.Encode(notice.CommunityGiftId);
-        _giftIds[notice.TmiSentTs] = giftId;
-        _gifters[giftId] = new
+        if (notice.CommunityGiftId == 0)
         {
-            GiftId = giftId,
-            Username = notice.Author.Name,
-            UserId = notice.Author.Id,
-            Channel = notice.Channel.Name,
-            ChannelId = notice.Channel.Id,
-            GiftAmount = notice.GiftCount,
-            Tier = notice.SubPlan switch
-            {
-                SubPlan.Tier1 => 1,
-                SubPlan.Tier2 => 2,
-                SubPlan.Tier3 => 3,
-                _ => 0,
-            },
-            TimeSent = notice.SentTimestamp.ToUnixTimeSeconds(),
-        };
+            _logger.Warning("Received sub gift intro notice with CommunityGiftId 0");
+            return;
+        }
 
-        return default;
+        await PostgresQueryLock.WaitAsync();
+        try
+        {
+            await InsertGifter(
+                notice.CommunityGiftId,
+                notice.Author,
+                notice.Channel,
+                notice.GiftCount,
+                notice.SubPlan,
+                notice.SentTimestamp.ToUnixTimeSeconds()
+            );
+
+            await InsertRecipient(
+                _recipients.Where(x => TimeSpan.FromMilliseconds(UnixMs() - x.Key) >= TimeSpan.FromMinutes(5))
+                .Select(x => new
+                {
+                    GiftId = _encoder.Encode(x.Value.CommunityGiftId),
+                    RecipientName = x.Value.Recipient.Name,
+                    RecipientId = x.Value.Recipient.Id,
+                })
+                .ToArray()
+            );
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Failed to insert gifter");
+        }
+        finally
+        {
+            PostgresQueryLock.Release();
+        }
     }
 
-    readonly List<Recipient> _recipients = [];
-    readonly Dictionary<string, object> _gifters = [];
-    readonly Dictionary<long, string> _giftIds = [];
+    readonly Dictionary<long, IGiftSubNotice> _recipients = [];
 
-    private ValueTask OnGiftedSubNotice(IGiftSubNotice notice)
+    private async ValueTask OnGiftedSubNotice(IGiftSubNotice notice)
     {
         if (!ChannelsById[notice.Channel.Id].IsLogged)
         {
-            return default;
+            return;
         }
 
         _logger.Verbose(
@@ -68,58 +76,50 @@ internal class GifterCollector: BotModule
 
         if (notice.CommunityGiftId == 0)
         {
-            var giftId = _encoder.Encode((ulong)notice.TmiSentTs);
-            _giftIds[notice.TmiSentTs] = giftId;
-            _gifters[giftId] = new
+            ulong newId = (ulong)notice.TmiSentTs;
+            await PostgresQueryLock.WaitAsync();
+            try
             {
-                GiftId = giftId,
-                Username = notice.Author.Name,
-                UserId = notice.Author.Id,
-                Channel = notice.Channel.Name,
-                ChannelId = notice.Channel.Id,
-                GiftAmount = 1,
-                Tier = notice.SubPlan switch
-                {
-                    SubPlan.Tier1 => 1,
-                    SubPlan.Tier2 => 2,
-                    SubPlan.Tier3 => 3,
-                    _ => 0,
-                },
-                TimeSent = notice.SentTimestamp.ToUnixTimeSeconds(),
-            };
-            _recipients.Add(new(giftId, notice.Recipient.Name, notice.Recipient.Id));
+                await InsertGifter(
+                    newId,
+                    notice.Author,
+                    notice.Channel,
+                    1,
+                    notice.SubPlan,
+                    notice.SentTimestamp.ToUnixTimeSeconds()
+                );
 
-            return default;
-        }
-
-        var giftId2 = _encoder.Encode(notice.CommunityGiftId);
-        _recipients.Add(new(giftId2, notice.Recipient.Name, notice.Recipient.Id));
-
-        return default;
-    }
-
-    async Task CommitOld()
-    {
-        int inserted = 0;
-        int removed = 0;
-        foreach (var oldGift in _giftIds.Where(x => UnixMs() - x.Key > 60_000).ToArray())
-        {
-            _giftIds.Remove(oldGift.Key);
-            inserted += await InsertGifter(_gifters[oldGift.Value]);
-            _gifters.Remove(oldGift.Value);
-            var recipients = _recipients.Where(x => x.GiftId == oldGift.Value).ToArray();
-            inserted += await InsertRecipient(recipients);
-            foreach (var recipient in recipients)
-            {
-                removed += _recipients.Remove(recipient) ? 1 : 0;
+                await InsertRecipient([
+                    new
+                    {
+                        GiftId = _encoder.Encode(newId),
+                        RecipientName = notice.Recipient.Name,
+                        RecipientId = notice.Recipient.Id
+                    }
+                ]);
             }
+            finally
+            {
+                PostgresQueryLock.Release();
+            }
+
+            return;
         }
 
-        _logger.Debug("GiftCollector ran {Inserted} inserts, removed {Removed} from list", inserted, removed);
+        _recipients[notice.TmiSentTs] = notice;
     }
 
-    private static Task<int> InsertGifter(object obj)
+    private static Task<int> InsertGifter(
+        ulong giftId,
+        MessageAuthor author,
+        IBasicChannel channel,
+        int giftAmount,
+        SubPlan tier,
+        long timeSent
+    )
     {
+        var giftIdEncoded = _encoder.Encode(giftId);
+        _logger.Information("Gift ({Count}): {Id}", giftAmount, giftIdEncoded);
         return Postgres.ExecuteAsync(
             """
             insert into 
@@ -134,11 +134,28 @@ internal class GifterCollector: BotModule
                 @Tier, 
                 @TimeSent
             )
-            """, obj, commandTimeout: 10
+            """,
+            new
+            {
+                GiftId = giftIdEncoded,
+                Username = author.Name,
+                UserId = author.Id,
+                Channel = channel.Name,
+                ChannelId = channel.Id,
+                GiftAmount = giftAmount,
+                Tier = tier switch
+                {
+                    SubPlan.Tier1 => 1,
+                    SubPlan.Tier2 => 2,
+                    SubPlan.Tier3 => 3,
+                    _ => 0,
+                },
+                TimeSent = timeSent
+            }, commandTimeout: 10
         );
     }
 
-    private static Task<int> InsertRecipient(IReadOnlyCollection<object> objects)
+    private static Task<int> InsertRecipient(object[] objects)
     {
         return Postgres.ExecuteAsync(
             """
@@ -149,7 +166,13 @@ internal class GifterCollector: BotModule
                 @RecipientName,
                 @RecipientId
             )
-            """, objects, commandTimeout: 10
+            """,
+            new
+            {
+                GiftId = _encoder.Encode(giftId),
+                RecipientName = recipient.Name,
+                RecipientId = recipient.Id
+            }, commandTimeout: 10
         );
     }
 
@@ -159,18 +182,15 @@ internal class GifterCollector: BotModule
         AnonClient.OnGiftedSubNoticeIntro += OnGiftedSubNoticeIntro;
         MainClient.OnGiftedSubNotice += OnGiftedSubNotice;
         AnonClient.OnGiftedSubNotice += OnGiftedSubNotice;
-        _timer.Start();
         return default;
     }
 
-    protected override async ValueTask OnModuleDisabled()
+    protected override ValueTask OnModuleDisabled()
     {
         MainClient.OnGiftedSubNoticeIntro -= OnGiftedSubNoticeIntro;
         AnonClient.OnGiftedSubNoticeIntro -= OnGiftedSubNoticeIntro;
         MainClient.OnGiftedSubNotice -= OnGiftedSubNotice;
         AnonClient.OnGiftedSubNotice -= OnGiftedSubNotice;
-        await _timer.StopAsync();
+        return default;
     }
-
-    record Recipient(string GiftId, string RecipientName, long RecipientId);
 }
