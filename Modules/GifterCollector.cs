@@ -98,6 +98,10 @@ internal class GifterCollector: BotModule
                     }
                 ]);
             }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Error inserting something");
+            }
             finally
             {
                 PostgresQueryLock.Release();
@@ -166,13 +170,7 @@ internal class GifterCollector: BotModule
                 @RecipientName,
                 @RecipientId
             )
-            """,
-            new
-            {
-                GiftId = _encoder.Encode(giftId),
-                RecipientName = recipient.Name,
-                RecipientId = recipient.Id
-            }, commandTimeout: 10
+            """, objects, commandTimeout: 10
         );
     }
 
