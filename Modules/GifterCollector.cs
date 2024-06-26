@@ -1,4 +1,5 @@
-﻿using Bot.Models;
+﻿using System.Collections.Concurrent;
+using Bot.Models;
 using MiniTwitch.Irc.Enums;
 using MiniTwitch.Irc.Interfaces;
 using MiniTwitch.Irc.Models;
@@ -36,16 +37,27 @@ internal class GifterCollector: BotModule
                 notice.SentTimestamp.ToUnixTimeSeconds()
             );
 
-            await InsertRecipient(
-                _recipients.Where(x => TimeSpan.FromMilliseconds(UnixMs() - x.Key) >= TimeSpan.FromMinutes(5))
+            var recipients = _recipients
+                .Where(x => TimeSpan.FromMilliseconds(UnixMs() - x.Key) >= TimeSpan.FromMinutes(5))
                 .Select(x => new
                 {
                     GiftId = _encoder.Encode(x.Value.CommunityGiftId),
                     RecipientName = x.Value.Recipient.Name,
                     RecipientId = x.Value.Recipient.Id,
+                    x.Key,
                 })
-                .ToArray()
-            );
+                .ToArray();
+
+            if (recipients.Length == 0)
+            {
+                return;
+            }
+
+            await InsertRecipient(recipients);
+            foreach (var recipient in recipients)
+            {
+                _recipients.TryRemove(recipient.Key, out _);
+            }
         }
         catch (Exception ex)
         {
@@ -57,7 +69,7 @@ internal class GifterCollector: BotModule
         }
     }
 
-    readonly Dictionary<long, IGiftSubNotice> _recipients = [];
+    readonly ConcurrentDictionary<long, IGiftSubNotice> _recipients = [];
 
     private async ValueTask OnGiftedSubNotice(IGiftSubNotice notice)
     {
