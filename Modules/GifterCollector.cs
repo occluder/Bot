@@ -53,11 +53,11 @@ internal class GifterCollector: BotModule
                 return;
             }
 
-            await InsertRecipient(recipients);
             foreach (var recipient in recipients)
             {
                 _recipients.TryRemove(recipient.Key, out _);
             }
+            await InsertRecipient(recipients);
         }
         catch (Exception ex)
         {
