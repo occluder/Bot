@@ -86,43 +86,42 @@ internal class GifterCollector: BotModule
             notice.Author.Name
         );
 
-        if (notice.CommunityGiftId == 0)
+        if (notice.CommunityGiftId != 0)
         {
-            ulong newId = (ulong)notice.TmiSentTs;
-            await PostgresQueryLock.WaitAsync();
-            try
-            {
-                await InsertGifter(
-                    newId,
-                    notice.Author,
-                    notice.Channel,
-                    1,
-                    notice.SubPlan,
-                    notice.SentTimestamp.ToUnixTimeSeconds()
-                );
+            _recipients[notice.TmiSentTs] = notice;
+            return;
+        }
 
-                await InsertRecipient([
-                    new
+        ulong newId = (ulong)notice.TmiSentTs;
+        await PostgresQueryLock.WaitAsync();
+        try
+        {
+            await InsertGifter(
+                newId,
+                notice.Author,
+                notice.Channel,
+                1,
+                notice.SubPlan,
+                notice.SentTimestamp.ToUnixTimeSeconds()
+            );
+
+            await InsertRecipient([
+                new
                     {
                         GiftId = _encoder.Encode(newId),
                         RecipientName = notice.Recipient.Name,
                         RecipientId = notice.Recipient.Id
                     }
-                ]);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex, "Error inserting something");
-            }
-            finally
-            {
-                PostgresQueryLock.Release();
-            }
-
-            return;
+            ]);
         }
-
-        _recipients[notice.TmiSentTs] = notice;
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Error inserting something");
+        }
+        finally
+        {
+            PostgresQueryLock.Release();
+        }
     }
 
     private static Task<int> InsertGifter(
@@ -135,7 +134,7 @@ internal class GifterCollector: BotModule
     )
     {
         var giftIdEncoded = _encoder.Encode(giftId);
-        _logger.Information("Gift ({Count}): {Id}", giftAmount, giftIdEncoded);
+        _logger.Debug("Gift ({Count}): {Id}", giftAmount, giftIdEncoded);
         return Postgres.ExecuteAsync(
             """
             insert into 
