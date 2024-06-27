@@ -42,7 +42,13 @@ public class ModeratorTracker: BotModule
         {
             await Postgres.ExecuteAsync(
                 """
-                insert into channel_moderator values (
+                insert into channel_moderator (
+                    username,
+                    user_id,
+                    channel,
+                    channel_id,
+                    last_seen
+                ) values (
                     @Username,
                     @UserId,
                     @Channel,
