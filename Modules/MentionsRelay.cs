@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Json;
+﻿using System.Drawing;
+using System.Net.Http.Json;
 using System.Text.RegularExpressions;
 using Bot.Models;
 using MiniTwitch.Irc.Models;
@@ -31,6 +32,7 @@ internal class MentionsRelay: BotModule
                     {
                         title = $"@`{message.Reply.ParentUsername}` said in #`{message.Channel.Name}`",
                         description = message.Reply.ParentMessage,
+                        color = Unsigned24Color(message.Author.ChatColor),
                         timestamp = DateTime.Now,
                         fields = new[]
                         {
@@ -58,6 +60,7 @@ internal class MentionsRelay: BotModule
                     {
                         title = $"@`{message.Author.Name}` in #`{message.Channel.Name}`",
                         description = message.Content,
+                        color = Unsigned24Color(message.Author.ChatColor),
                         timestamp = DateTime.Now,
                         image = _imageHosts.Match(message.Content) is { Success: true } imageMatch
                             ? new
@@ -81,6 +84,17 @@ internal class MentionsRelay: BotModule
         {
             _logger.Error(ex, "POST {Url}", Config.Links["MentionsWebhook"]);
         }
+    }
+
+    static uint Unsigned24Color(Color color)
+    {
+        uint c = 0;
+        c |= color.R;
+        c <<= 8;
+        c |= color.G;
+        c <<= 8;
+        c |= color.B;
+        return c;
     }
 
     protected override ValueTask OnModuleEnabled()
