@@ -17,11 +17,16 @@ internal class MentionsRelay: BotModule
     private async ValueTask OnMessage(Privmsg message)
     {
         if (UserBlacklisted(message.Author.Id))
+        {
             return;
+        }
 
         if (_regex.Match(message.Content) is { Success: false })
+        {
             return;
+        }
 
+        string? pfp = (await HelixClient.GetUsers(message.Author.Id)).Value?.Data.FirstOrDefault()?.ProfileImageUrl;
         object? payload = null;
         if (message.Reply.HasContent)
             payload = new
@@ -34,6 +39,7 @@ internal class MentionsRelay: BotModule
                         description = message.Reply.ParentMessage,
                         color = Unsigned24Color(message.Author.ChatColor),
                         timestamp = DateTime.Now,
+                        thumbnail = new { url = pfp },
                         fields = new[]
                         {
                             new
@@ -62,6 +68,7 @@ internal class MentionsRelay: BotModule
                         description = message.Content,
                         color = Unsigned24Color(message.Author.ChatColor),
                         timestamp = DateTime.Now,
+                        thumbnail = new { url = pfp },
                         image = _imageHosts.Match(message.Content) is { Success: true } imageMatch
                             ? new
                             {
