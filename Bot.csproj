@@ -12,7 +12,7 @@
         <PackageReference Include="Dapper" Version="2.1.44" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.2" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
-        <PackageReference Include="MiniTwitch.Helix" Version="0.3.1-prerelease" />
+        <PackageReference Include="MiniTwitch.Helix" Version="0.4.0-prerelease" />
         <PackageReference Include="MiniTwitch.Irc" Version="1.2.15" />
         <PackageReference Include="MiniTwitch.PubSub" Version="1.0.3" />
         <PackageReference Include="Npgsql" Version="8.0.3" />
