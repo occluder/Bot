@@ -35,8 +35,11 @@ internal class WhisperNotifications: BotModule
     private async ValueTask OnWhisperReceived(Whisper whisper)
     {
         if (UserBlacklisted(whisper.Author.Id))
+        {
             return;
+        }
 
+        string? pfp = (await HelixClient.GetUsers(whisper.Author.Id)).Value?.Data.FirstOrDefault()?.ProfileImageUrl;
         var payload = new
         {
             content = Config.Secrets["ParentHandle"],
@@ -45,8 +48,9 @@ internal class WhisperNotifications: BotModule
                 new
                 {
                     title = $"@`{whisper.Author.Name}` ({whisper.Author.Id}) sent you a whisper",
-                    color = 2393480,
+                    color = Unsigned24Color(whisper.Author.ChatColor),
                     description = whisper.Content,
+                    thumbnail = new { url = pfp },
                     timestamp = DateTime.Now
                 }
             }

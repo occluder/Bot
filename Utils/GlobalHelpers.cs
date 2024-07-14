@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Drawing;
+using System.Net;
 using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
@@ -8,6 +9,17 @@ namespace Bot.Utils;
 internal static class GlobalHelpers
 {
     private static readonly HttpClient _httpClient = new();
+
+    public static uint Unsigned24Color(Color color)
+    {
+        uint c = 0;
+        c |= color.R;
+        c <<= 8;
+        c |= color.G;
+        c <<= 8;
+        c |= color.B;
+        return c;
+    }
 
     public static long Unix() => DateTimeOffset.Now.ToUnixTimeSeconds();
 
@@ -54,7 +66,8 @@ internal static class GlobalHelpers
 
     public static string PrettyTimeString(TimeSpan time)
     {
-        if (time.Hours > 0) return $"{time:h'h 'mm'm 'ss's'}";
+        if (time.Hours > 0)
+            return $"{time:h'h 'mm'm 'ss's'}";
         return time.Minutes > 0 ? $"{time:mm'm 'ss's'}" : $"{time:ss's'}";
     }
 }

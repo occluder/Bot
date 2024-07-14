@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using System.Text.RegularExpressions;
 using Bot.Models;
 using MiniTwitch.Irc.Models;
@@ -91,17 +90,6 @@ internal class MentionsRelay: BotModule
         {
             _logger.Error(ex, "POST {Url}", Config.Links["MentionsWebhook"]);
         }
-    }
-
-    static uint Unsigned24Color(Color color)
-    {
-        uint c = 0;
-        c |= color.R;
-        c <<= 8;
-        c |= color.G;
-        c <<= 8;
-        c |= color.B;
-        return c;
     }
 
     protected override ValueTask OnModuleEnabled()
