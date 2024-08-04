@@ -3,7 +3,6 @@ using System.Text;
 using System.Text.Json;
 using Bot.Enums;
 using Bot.Models;
-using Microsoft.Extensions.Primitives;
 using MiniTwitch.Irc.Models;
 
 namespace Bot.Commands;
@@ -61,7 +60,7 @@ public class Market: ChatCommand
             .Where(x => x is { order_type: "sell", user.status: "ingame" })
             .MinBy(x => x.platinum)!;
 
-        
+
 
         await message.ReplyWith(
             $"{GetPeriodString(stats.Payload.StatisticsClosed)}, " +
@@ -87,29 +86,29 @@ public class Market: ChatCommand
                 .Where(o => o.ModRank == maxRank)
                 .MaxBy(x => x.Datetime)!;
 
-            Statistic? weekAgoR0 = stats._90days
+            Statistic? monthAgoR0 = stats._90days
                 .Where(o => o.ModRank == 0)
-                .Where(o => o.Datetime <= mostRecentR0.Datetime.AddDays(-7))
+                .Where(o => o.Datetime <= mostRecentR0.Datetime.AddDays(-30))
                 .MaxBy(x => x.Datetime);
 
-            Statistic? weekAgoMax = stats._90days
+            Statistic? monthAgoMax = stats._90days
                 .Where(o => o.ModRank == maxRank)
-                .Where(o => o.Datetime <= mostRecentR0.Datetime.AddDays(-7))
+                .Where(o => o.Datetime <= mostRecentR0.Datetime.AddDays(-30))
                 .MaxBy(x => x.Datetime);
 
             sb.Append("Avg: R0 ");
             sb.Append(mostRecentR0.MovingAvg > 0 ? $"{mostRecentR0.MovingAvg:0.##}P" : "N/A");
-            if (weekAgoR0 is not null)
+            if (monthAgoR0 is not null)
             {
-                float changeR0 = calcChange(mostRecentR0, weekAgoR0);
+                float changeR0 = calcChange(mostRecentR0, monthAgoR0);
                 sb.Append($" ({changeR0:+0.##;-0.##}%)");
             }
 
             sb.Append($", R{maxRank} ");
             sb.Append(mostRecentMax.MovingAvg > 0 ? $"{mostRecentMax.MovingAvg:0.##}P" : "N/A");
-            if (weekAgoMax is not null)
+            if (monthAgoMax is not null)
             {
-                float changeMax = calcChange(mostRecentMax, weekAgoMax);
+                float changeMax = calcChange(mostRecentMax, monthAgoMax);
                 sb.Append($" ({changeMax:+0.##;-0.##}%)");
             }
 
@@ -119,15 +118,15 @@ public class Market: ChatCommand
         }
 
         Statistic mostRecent = stats._48hours.MaxBy(x => x.Datetime)!;
-        Statistic? weekAgo = stats._90days
-            .Where(o => o.Datetime <= mostRecent.Datetime.AddDays(-7))
+        Statistic? monthAgo = stats._90days
+            .Where(o => o.Datetime <= mostRecent.Datetime.AddDays(-30))
             .MaxBy(x => x.Datetime);
 
         sb.Append("Avg: ");
         sb.Append(mostRecent.MovingAvg > 0 ? $"{mostRecent.MovingAvg:0.##}P" : "N/A");
-        if (weekAgo is not null)
+        if (monthAgo is not null)
         {
-            sb.Append($" ({calcChange(mostRecent, weekAgo):+0.##;-0.##}% this week)");
+            sb.Append($" ({calcChange(mostRecent, monthAgo):+0.##;-0.##}% this month)");
         }
         sb.Append(", ");
         sb.Append($"Recently sold: {volumes}");
