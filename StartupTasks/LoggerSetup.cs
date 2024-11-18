@@ -2,7 +2,6 @@
 using Bot.Interfaces;
 using Bot.Utils.Logging;
 using Serilog.Core;
-using Serilog.Enrichers.ClassName;
 using Serilog.Events;
 
 namespace Bot.StartupTasks;
