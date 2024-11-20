@@ -13,7 +13,7 @@
         <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
         <PackageReference Include="MiniTwitch.Helix" Version="1.0.0" />
-        <PackageReference Include="MiniTwitch.Irc" Version="1.3.0" />
+        <PackageReference Include="MiniTwitch.Irc" Version="2.0.0" />
         <PackageReference Include="MiniTwitch.PubSub" Version="2.0.0" />
         <PackageReference Include="Npgsql" Version="9.0.1" />
         <PackageReference Include="OneOf" Version="3.0.271" />
