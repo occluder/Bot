@@ -9,7 +9,7 @@ public class MemoryUsage: IMetric
 
     public async Task Report()
     {
-        if (++_invc % 20 != 0)
+        if (++_invc % 4 != 0)
             return;
 
         await PostgresQueryLock.WaitAsync();

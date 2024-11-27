@@ -23,7 +23,7 @@ public class ChannelMessages: IMetric
 
     public async Task Report()
     {
-        if (++_invc % 20 != 0)
+        if (++_invc % 4 != 0)
             return;
 
         await PostgresQueryLock.WaitAsync();
@@ -43,7 +43,8 @@ public class ChannelMessages: IMetric
             PostgresQueryLock.Release();
         }
 
-        foreach ((long channelId, _) in _messageCount) _messageCount[channelId] = 0;
+        foreach ((long channelId, _) in _messageCount)
+            _messageCount[channelId] = 0;
     }
 }
 
