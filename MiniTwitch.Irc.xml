@@ -1,0 +1,3100 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MiniTwitch.Irc</name>
+    </assembly>
+    <members>
+        <member name="T:MiniTwitch.Irc.Enums.AnnouncementColor">
+            <summary>
+            Represents the color of an announcement message
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.AnnouncementColor.Unknown">
+            <summary>
+            Default enum value
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.AnnouncementColor.Primary">
+            <summary>
+            Slightly lighter <see cref="F:MiniTwitch.Irc.Enums.AnnouncementColor.Orange"/>
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.AnnouncementColor.Blue">
+            <summary>
+            The color blue
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.AnnouncementColor.Green">
+            <summary>
+            The color green
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.AnnouncementColor.Orange">
+            <summary>
+            The color orange
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.AnnouncementColor.Purple">
+            <summary>
+            The color purple
+            </summary>
+        </member>
+        <member name="T:MiniTwitch.Irc.Enums.CurrencyCode">
+            <summary>
+            Represents a 3-letter currency code
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.None">
+            <summary>
+            Fallback value
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.AED">
+            <summary>
+            United Arab Emirates dirham
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.AFN">
+            <summary>
+            Afghan afghani
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.ALL">
+            <summary>
+            Albanian lek
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.AMD">
+            <summary>
+            Armenian dram
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.ANG">
+            <summary>
+            Netherlands Antillean guilder
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.AOA">
+            <summary>
+            Angolan kwanza
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.ARS">
+            <summary>
+            Argentine peso
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.AUD">
+            <summary>
+            Australian dollar
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.AWG">
+            <summary>
+            Aruban florin
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.AZN">
+            <summary>
+            Azerbaijani manat
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.BAM">
+            <summary>
+            Bosnia and Herzegovina convertible mark
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.BBD">
+            <summary>
+            Barbados dollar
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.BDT">
+            <summary>
+            Bangladeshi taka
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.BGN">
+            <summary>
+            Bulgarian lev
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.BHD">
+            <summary>
+            Bahraini dinar
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.BIF">
+            <summary>
+            Burundian franc
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.BMD">
+            <summary>
+            Bermudian dollar
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.BND">
+            <summary>
+            Brunei dollar
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.BOB">
+            <summary>
+            Boliviano
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.BOV">
+            <summary>
+            Bolivian Mvdol (funds code)
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.BRL">
+            <summary>
+            Brazilian real
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.BSD">
+            <summary>
+            Bahamian dollar
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.BTN">
+            <summary>
+            Bhutanese ngultrum
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.BWP">
+            <summary>
+            Botswana pula
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.BYN">
+            <summary>
+            Belarusian ruble
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.BZD">
+            <summary>
+            Belize dollar
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.CAD">
+            <summary>
+            Canadian dollar
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.CDF">
+            <summary>
+            Congolese franc
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.CHE">
+            <summary>
+             WIR euro (complementary currency)
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.CHF">
+            <summary>
+            Swiss franc
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.CHW">
+            <summary>
+             WIR franc (complementary currency)
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.CLF">
+            <summary>
+            Unidad de Fomento (funds code)
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.CLP">
+            <summary>
+            Chilean peso
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.COP">
+            <summary>
+            Colombian peso
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.COU">
+            <summary>
+            a
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.CRC">
+            <summary>
+            Costa Rican colon
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.CUP">
+            <summary>
+            Cuban peso
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.CVE">
+            <summary>
+            Cape Verdean escudo
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.CZK">
+            <summary>
+            Czech koruna
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.DJF">
+            <summary>
+            Djiboutian franc
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.DKK">
+            <summary>
+            Danish krone
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.DOP">
+            <summary>
+            Dominican peso
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.DZD">
+            <summary>
+            Algerian dinar
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.EGP">
+            <summary>
+            Egyptian pound
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.ERN">
+            <summary>
+            Eritrean nakfa
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.ETB">
+            <summary>
+            Ethiopian birr
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.EUR">
+            <summary>
+            Euro
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.FJD">
+            <summary>
+            Fiji dollar
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.FKP">
+            <summary>
+            Falkland Islands pound
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.GBP">
+            <summary>
+            Pound sterling
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.GEL">
+            <summary>
+            Georgian lari
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.GHS">
+            <summary>
+            Ghanaian cedi
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.GIP">
+            <summary>
+            Gibraltar pound
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.GMD">
+            <summary>
+            Gambian dalasi
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.GNF">
+            <summary>
+            Guinean franc
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.GTQ">
+            <summary>
+            Guatemalan quetzal
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.GYD">
+            <summary>
+            Guyanese dollar
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.HKD">
+            <summary>
+            Hong Kong dollar
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.HNL">
+            <summary>
+            Honduran lempira
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.HTG">
+            <summary>
+            Haitian gourde
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.HUF">
+            <summary>
+            Hungarian forint
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.IDR">
+            <summary>
+            Indonesian rupiah
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.ILS">
+            <summary>
+            Israeli new shekel
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.INR">
+            <summary>
+            Indian rupee
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.IQD">
+            <summary>
+            Iraqi dinar
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.IRR">
+            <summary>
+            Iranian rial
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.ISK">
+            <summary>
+            Icelandic króna (plural: krónur)
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.JMD">
+            <summary>
+            Jamaican dollar
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.JOD">
+            <summary>
+            Jordanian dinar
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.JPY">
+            <summary>
+            Japanese yen
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.KES">
+            <summary>
+            Kenyan shilling
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.KGS">
+            <summary>
+            Kyrgyzstani som
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.KHR">
+            <summary>
+            Cambodian riel
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.KMF">
+            <summary>
+            Comoro franc
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.KPW">
+            <summary>
+            North Korean won
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.KRW">
+            <summary>
+            South Korean won
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.KWD">
+            <summary>
+            Kuwaiti dinar
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.KYD">
+            <summary>
+            Cayman Islands dollar
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.KZT">
+            <summary>
+            Kazakhstani tenge
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.LAK">
+            <summary>
+            Lao kip
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.LBP">
+            <summary>
+            Lebanese pound
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.LKR">
+            <summary>
+            Sri Lankan rupee
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.LRD">
+            <summary>
+            Liberian dollar
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.LSL">
+            <summary>
+            Lesotho loti
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.LYD">
+            <summary>
+            Libyan dinar
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.MAD">
+            <summary>
+            Moroccan dirham
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.MDL">
+            <summary>
+            Moldovan leu
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.MGA">
+            <summary>
+            Malagasy ariary
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.MKD">
+            <summary>
+            Macedonian denar
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.MMK">
+            <summary>
+            Myanmar kyat
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.MNT">
+            <summary>
+            Mongolian tögrög
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.MOP">
+            <summary>
+            Macanese pataca
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.MRU">
+            <summary>
+            Mauritanian ouguiya
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.MUR">
+            <summary>
+            Mauritian rupee
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.MVR">
+            <summary>
+            Maldivian rufiyaa
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.MWK">
+            <summary>
+            Malawian kwacha
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.MXN">
+            <summary>
+            Mexican peso
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.MXV">
+            <summary>
+            Mexican Unidad de Inversion (UDI) (funds code)
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.MYR">
+            <summary>
+            Malaysian ringgit
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.MZN">
+            <summary>
+            Mozambican metical
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.NAD">
+            <summary>
+            Namibian dollar
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.NGN">
+            <summary>
+            Nigerian naira
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.NIO">
+            <summary>
+            Nicaraguan córdoba
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.NOK">
+            <summary>
+            Norwegian krone
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.NPR">
+            <summary>
+            Nepalese rupee
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.NZD">
+            <summary>
+            New Zealand dollar
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.OMR">
+            <summary>
+            Omani rial
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.PAB">
+            <summary>
+            Panamanian balboa
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.PEN">
+            <summary>
+            Peruvian sol
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.PGK">
+            <summary>
+            Papua New Guinean kina
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.PHP">
+            <summary>
+            Philippine peso
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.PKR">
+            <summary>
+            Pakistani rupee
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.PLN">
+            <summary>
+            Polish złoty
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.PYG">
+            <summary>
+            Paraguayan guaraní
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.QAR">
+            <summary>
+            Qatari riyal
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.RON">
+            <summary>
+            Romanian leu
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.RSD">
+            <summary>
+            Serbian dinar
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.CNY">
+            <summary>
+             Renminbi
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.RUB">
+            <summary>
+            Russian ruble
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.RWF">
+            <summary>
+            Rwandan franc
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.SAR">
+            <summary>
+            Saudi riyal
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.SBD">
+            <summary>
+            Solomon Islands dollar
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.SCR">
+            <summary>
+            Seychelles rupee
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.SDG">
+            <summary>
+            Sudanese pound
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.SEK">
+            <summary>
+            Swedish krona (plural: kronor)
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.SGD">
+            <summary>
+            Singapore dollar
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.SHP">
+            <summary>
+            Saint Helena pound
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.SLE">
+            <summary>
+            Sierra Leonean leone (new leone)
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.SLL">
+            <summary>
+            Sierra Leonean leone (old leone)
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.SOS">
+            <summary>
+            Somali shilling
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.SRD">
+            <summary>
+            Surinamese dollar
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.SSP">
+            <summary>
+            South Sudanese pound
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.STN">
+            <summary>
+            São Tomé and Príncipe dobra
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.SVC">
+            <summary>
+            Salvadoran colón
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.SYP">
+            <summary>
+            Syrian pound
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.SZL">
+            <summary>
+            Swazi lilangeni
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.THB">
+            <summary>
+            Thai baht
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.TJS">
+            <summary>
+            Tajikistani somoni
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.TMT">
+            <summary>
+            Turkmenistan manat
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.TND">
+            <summary>
+            Tunisian dinar
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.TOP">
+            <summary>
+            Tongan paʻanga
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.TRY">
+            <summary>
+            Turkish lira
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.TTD">
+            <summary>
+            Trinidad and Tobago dollar
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.TWD">
+            <summary>
+            New Taiwan dollar
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.TZS">
+            <summary>
+            Tanzanian shilling
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.UAH">
+            <summary>
+            Ukrainian hryvnia
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.UGX">
+            <summary>
+            Ugandan shilling
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.USD">
+            <summary>
+            United States dollar
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.USN">
+            <summary>
+            United States dollar (next day) (funds code)
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.UYI">
+            <summary>
+            Uruguay Peso en Unidades Indexadas (URUIURUI) (funds code)
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.UYU">
+            <summary>
+            Uruguayan peso
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.UYW">
+            <summary>
+            Unidad previsional
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.UZS">
+            <summary>
+            Uzbekistan sum
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.VED">
+            <summary>
+             Venezuelan digital bolívar
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.VES">
+            <summary>
+            Venezuelan sovereign bolívar
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.VND">
+            <summary>
+            Vietnamese đồng
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.VUV">
+            <summary>
+            Vanuatu vatu
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.WST">
+            <summary>
+            Samoan tala
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.XAF">
+            <summary>
+            CFA franc BEAC
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.XAG">
+            <summary>
+            troy ounce)
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.XAU">
+            <summary>
+            troy ounce)
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.XBA">
+            <summary>
+            European Composite Unit (EURCO) (bond market unit)
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.XBB">
+            <summary>
+            European Monetary Unit (E.M.U.-6) (bond market unit)
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.XBC">
+            <summary>
+            European Unit of Account 9 (E.U.A.-9) (bond market unit)
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.XBD">
+            <summary>
+            European Unit of Account 17 (E.U.A.-17) (bond market unit)
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.XCD">
+            <summary>
+            East Caribbean dollar
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.XDR">
+            <summary>
+            Special drawing rights
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.XOF">
+            <summary>
+            CFA franc BCEAO
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.XPD">
+            <summary>
+            troy ounce)
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.XPF">
+            <summary>
+            CFP franc (franc Pacifique)
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.XPT">
+            <summary>
+            troy ounce)
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.XSU">
+            <summary>
+            SUCRE
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.XTS">
+            <summary>
+            Code reserved for testing
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.XUA">
+            <summary>
+            ADB Unit of Account
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.XXX">
+            <summary>
+            No currency
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.YER">
+            <summary>
+            Yemeni rial
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.ZAR">
+            <summary>
+            South African rand
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.ZMW">
+            <summary>
+            Zambian kwacha
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.CurrencyCode.ZWL">
+            <summary>
+             Zimbabwean dollar (fifth)
+            </summary>
+        </member>
+        <member name="T:MiniTwitch.Irc.Enums.IgnoreCommand">
+            <summary>
+            Represents ignorable IRC commands
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.IgnoreCommand.None">
+            <summary>
+            Don't skip anything
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.IgnoreCommand.PRIVMSG">
+            <summary>
+            Skip PRIVMSGs
+            <para>Affected events: <see cref="E:MiniTwitch.Irc.IrcClient.OnMessage"/></para>
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.IgnoreCommand.USERNOTICE">
+            <summary>
+            Ignore USERNOTICEs
+            <para>Affected events: <see cref="E:MiniTwitch.Irc.IrcClient.OnAnnouncement"/>, <see cref="E:MiniTwitch.Irc.IrcClient.OnGiftedSubNotice"/>, <see cref="E:MiniTwitch.Irc.IrcClient.OnGiftedSubNoticeIntro"/>, <see cref="E:MiniTwitch.Irc.IrcClient.OnPaidUpgradeNotice"/>, </para>
+            <para><see cref="E:MiniTwitch.Irc.IrcClient.OnPrimeUpgradeNotice"/>, <see cref="E:MiniTwitch.Irc.IrcClient.OnRaidNotice"/>, <see cref="E:MiniTwitch.Irc.IrcClient.OnSubscriptionNotice"/></para>
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.IgnoreCommand.CLEARCHAT">
+            <summary>
+            Ignore CLEARCHATs
+            <para>Affected events: <see cref="E:MiniTwitch.Irc.IrcClient.OnChatClear"/>, <see cref="E:MiniTwitch.Irc.IrcClient.OnUserBan"/>, <see cref="E:MiniTwitch.Irc.IrcClient.OnUserTimeout"/></para>
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.IgnoreCommand.CLEARMSG">
+            <summary>
+            Ignore CLEARMSGs
+            <para>Affected events: <see cref="E:MiniTwitch.Irc.IrcClient.OnMessageDelete"/></para>
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.IgnoreCommand.WHISPER">
+            <summary>
+            Ignore WHISPERs
+            <para>Affected events: <see cref="E:MiniTwitch.Irc.IrcClient.OnWhisper"/></para>
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.IgnoreCommand.USERSTATE">
+            <summary>
+            Ignore USERSTATEs
+            <para>Affected events: <see cref="E:MiniTwitch.Irc.IrcClient.OnUserstate"/></para>
+            <para>Affected properties: <see cref="P:MiniTwitch.Irc.Models.ClientOptions.ModMessageRateLimit"/></para>
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.IgnoreCommand.JOIN">
+            <summary>
+            Ignore JOINs
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.IgnoreCommand.PART">
+            <summary>
+            Ignore PARTs
+            <para>Affected events: <see cref="E:MiniTwitch.Irc.IrcClient.OnChannelPart"/></para>
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.IgnoreCommand.NOTICE">
+            <summary>
+            Ignore NOTICEs
+            <para>Affected events: <see cref="E:MiniTwitch.Irc.IrcClient.OnNotice"/></para>
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.IgnoreCommand.ROOMSTATE">
+            <summary>
+            Ignore ROOMSTATEs
+            <para>Affected events: <see cref="E:MiniTwitch.Irc.IrcClient.OnChannelJoin"/></para>
+            </summary>
+        </member>
+        <member name="T:MiniTwitch.Irc.Enums.NoticeType">
+            <summary>
+            Represents various types of notices that can be received from Twitch
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.Unknown">
+            <summary>
+            The default enum value for a notice
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.Emote_only_on">
+            <summary>
+            Indicates that "Emote Only" mode has been enabled.
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.Emote_only_off">
+            <summary>
+            Indicates that "Emote Only" mode has been disabled.
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.Followers_on">
+            <summary>
+            Indicates that "Followers Only" mode has been enabled.
+            <para>Note: Unlike <see cref="F:MiniTwitch.Irc.Enums.NoticeType.Followers_on_zero"/>, this notice is given when a user needs to be following for X amount of minutes</para>
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.Followers_on_zero">
+            <summary>
+            Indicates that "Followers Only" mode has been enabled.
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.Followers_off">
+            <summary>
+            Indicates that "Followers Only" mode has been disabled.
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.Subs_on">
+            <summary>
+            Indicates that "Subs Only" mode has been enabled.
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.Subs_off">
+            <summary>
+            Indicates that "Subs Only" mode has been disabled.
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.R9K_on">
+            <summary>
+            Indicates that "Unique" mode has been enabled.
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.R9K_off">
+            <summary>
+            Indicates that "Unique" mode has been disabled.
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.Slow_on">
+            <summary>
+            Indicates that "Slow" mode has been enabled.
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.Slow_off">
+            <summary>
+            Indicates that "Slow" mode has been disabled.
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.Cmds_available">
+            <summary>
+            The response to a "/help" message.
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.Msg_channel_suspended">
+            <summary>
+            Indicates that you have tried joining a suspended channel.
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.Msg_duplicate">
+            <summary>
+            Indicates that you have tried sending a duplicate message.
+            <para>"Your message is identical to the one you sent within the last 30 seconds."</para>
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.Msg_emoteonly">
+            <summary>
+            Indicates that "Emote Only" mode has been enabled.
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.Msg_followersonly_zero">
+            <summary>
+            Indicates that your message was not sent due to "Followers Only" mode restrictions.
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.Msg_followersonly">
+            <summary>
+            Indicates that your message was not sent due to "Followers Only" mode restrictions.
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.Msg_rejected_mandatory">
+            <summary>
+            Indicates that your message was not sent because it conflicts with the channel's moderation settings.
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.Msg_R9K">
+            <summary>
+            Indicates that you tried sending a non-unique message in "Unique" mode.
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.Msg_slowmode">
+            <summary>
+            Indicates that you have not waited long enough between your messages to comply with "Slow" mode
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.Msg_subsonly">
+            <summary>
+            Indicates that your message was not sent due to "Subs Only" mode restrictions.
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.Msg_timedout">
+            <summary>
+            Indicates that your message was not sent because you are timed out.
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.Msg_banned">
+            <summary>
+            Indicates that you have been banned from the channel.
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.Msg_requires_verified_phone_number">
+            <summary>
+            Indicates that your message was not sent because the channel requires verification through a phone number.
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.Msg_ratelimit">
+            <summary>
+            Indicates that your message was not sent because you are sending messages too quickly.
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.Msg_suspended">
+            <summary>
+            Indicates that your account has been suspended.
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.Msg_verified_email">
+            <summary>
+            Indicates that your message was not sent because the channel requires verification through an email.
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.No_permission">
+            <summary>
+            Indicates that you tried using a command that you have no permission for.
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.Unavailable_command">
+            <summary>
+            Indicates that you tried using a command that is not available through 3rd party clients.
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.Unrecognized_cmd">
+            <summary>
+            Indicates that you tried using a command that does not exist
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.Bad_auth">
+            <summary>
+            Indicates that your authentication process was unsuccessful
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.Invalid_parent">
+            <summary>
+            Indicates that you tried to reply to a message that cannot be replied to
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.NoticeType.Msg_warned">
+            <summary>
+            Indicates that you received a warning that must be acknowledged in a browser
+            </summary>
+        </member>
+        <member name="T:MiniTwitch.Irc.Enums.SubPlan">
+            <summary>
+            Represents a subscription plan
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.SubPlan.None">
+            <summary>
+            Default value
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.SubPlan.Prime">
+            <summary>
+            Prime sub
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.SubPlan.Tier1">
+            <summary>
+            Tier 1 sub
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.SubPlan.Tier2">
+            <summary>
+            Tier 2 sub
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.SubPlan.Tier3">
+            <summary>
+            Tier 3 sub
+            </summary>
+        </member>
+        <member name="T:MiniTwitch.Irc.Enums.UserType">
+            <summary>
+            Represents the role of a user
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.UserType.None">
+            <summary>
+            Default value - no roles
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.UserType.Mod">
+            <summary>
+            Local moderator
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.UserType.Staff">
+            <summary>
+            Twitch staff
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.UserType.GlobalModerator">
+            <summary>
+            Global moderator
+            </summary>
+        </member>
+        <member name="F:MiniTwitch.Irc.Enums.UserType.Admin">
+            <summary>
+            Twitch admin
+            </summary>
+        </member>
+        <member name="T:MiniTwitch.Irc.Interfaces.IAnnouncementNotice">
+            <summary>
+            Contains information about an announcement message
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IAnnouncementNotice.Color">
+            <summary>
+            Color of the announcement
+            <para>Default is <see cref="F:MiniTwitch.Irc.Enums.AnnouncementColor.Primary"/></para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IAnnouncementNotice.Message">
+            <summary>
+            The message content of the announcement
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IAnnouncementNotice.Emotes">
+            <summary>
+            Emote sets in the announcement message
+            <para><see cref="F:System.String.Empty"/> if there are none</para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IAnnouncementNotice.Flags">
+            <summary>
+            Automod flags in the announcement message
+            <para><see cref="F:System.String.Empty"/> if there are none</para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IAnnouncementNotice.Source">
+            <inheritdoc cref="P:MiniTwitch.Irc.Models.Usernotice.Source"/>
+        </member>
+        <member name="T:MiniTwitch.Irc.Interfaces.IBanTarget">
+            <summary>
+            Contains information about a user ban
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IBanTarget.Name">
+            <summary>
+            Username of the user receiving the ban
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IBanTarget.Id">
+            <summary>
+            ID of the user receiving the ban
+            </summary>
+        </member>
+        <member name="T:MiniTwitch.Irc.Interfaces.IBasicChannel">
+            <summary>
+            Contains the name and ID of a channel
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IBasicChannel.Name">
+            <summary>
+            The channel's username
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IBasicChannel.Id">
+            <summary>
+            The channel's ID
+            </summary>
+        </member>
+        <member name="T:MiniTwitch.Irc.Interfaces.ICharityDonation">
+            <summary>
+            Contains information about a charity donation
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.ICharityDonation.CharityName">
+            <summary>
+            Name of the charity
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.ICharityDonation.DonationAmount">
+            <summary>
+            The donation amount
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.ICharityDonation.DonationCurrency">
+            <summary>
+            Currency of the donation
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.ICharityDonation.SystemMessage">
+            <summary>
+            The message emitted in chat when the event occurs
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.ICharityDonation.Source">
+            <inheritdoc cref="P:MiniTwitch.Irc.Models.Usernotice.Source"/>
+        </member>
+        <member name="T:MiniTwitch.Irc.Interfaces.IChatClear">
+            <summary>
+            Contains information about a chat that has been cleared
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IChatClear.Channel">
+            <summary>
+            The channel where the event occurred
+            </summary>
+        </member>
+        <member name="T:MiniTwitch.Irc.Interfaces.IDeletedMessageAuthor">
+            <summary>
+            Contains information about the author of a deleted message
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IDeletedMessageAuthor.Name">
+            <summary>
+            Username of the deleted message's sender
+            </summary>
+        </member>
+        <member name="T:MiniTwitch.Irc.Interfaces.IEmoteOnlyModified">
+            <summary>
+            Contains information about a new emote-only state
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IEmoteOnlyModified.Name">
+            <summary>
+            Name of the channel where the event occurred
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IEmoteOnlyModified.Id">
+            <summary>
+            ID of the channel where the event occurred
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IEmoteOnlyModified.EmoteOnlyEnabled">
+            <summary>
+            <see langword="true"/> if emote-only mode is activated; <see langword="false"/> if deactivated
+            </summary>
+        </member>
+        <member name="T:MiniTwitch.Irc.Interfaces.IFollowersOnlyModified">
+            <summary>
+            Contains information about a new followers-only state
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IFollowersOnlyModified.FollowerModeDuration">
+            <summary>
+            Minimum amount of time a user needs to be following in order to chat
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IFollowersOnlyModified.Name">
+            <summary>
+            Name of the channel where this event occurred
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IFollowersOnlyModified.Id">
+            <summary>
+            ID of the channel where this event occurred
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IFollowersOnlyModified.FollowerModeEnabled">
+            <summary>
+            <see langword="true"/> if followers-only mode is activated; <see langword="false"/> if deactivated
+            </summary>
+        </member>
+        <member name="T:MiniTwitch.Irc.Interfaces.IGazatuChannel">
+            <summary>
+            Tiny interface containing only the name of a channel
+            <para><see href="https://www.urbandictionary.com/define.php?term=gazatu"/></para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IGazatuChannel.Name">
+            <summary>
+            The channel's username
+            </summary>
+        </member>
+        <member name="T:MiniTwitch.Irc.Interfaces.IGiftSubNotice">
+            <summary>
+            Contains information about a single gifted subscription
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IGiftSubNotice.SystemMessage">
+            <summary>
+            The message emitted in chat when the user gifted the subscription
+            <para>Example: Goop_456789 gifted a Tier 1 sub to Zackpanjang! They have given 11 Gift Subs in the channel!</para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IGiftSubNotice.Recipient">
+            <summary>
+            The recipient of the gift subscription
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IGiftSubNotice.SubPlanName">
+            <summary>
+            Name of the subscription plan
+            <para>Example 1: Channel Subscription (mandeow)</para>
+            <para>Example 2: Channel Subscription (forsenlol)</para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IGiftSubNotice.Months">
+            <summary>
+            The cumulative amount of months the recipient has been subscribed
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IGiftSubNotice.GiftedMonths">
+            <summary>
+            The amount of months the recipient received in the gift subscription
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IGiftSubNotice.TotalGiftCount">
+            <summary>
+            Total amount of the gifts the author has given
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IGiftSubNotice.SubPlan">
+            <summary>
+            The tier of the gift subscription
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IGiftSubNotice.CommunityGiftId">
+            <summary>
+            Id of the parent <see cref="T:MiniTwitch.Irc.Interfaces.IGiftSubNoticeIntro"/> gift message
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IGiftSubNotice.Source">
+            <inheritdoc cref="P:MiniTwitch.Irc.Models.Usernotice.Source"/>
+        </member>
+        <member name="T:MiniTwitch.Irc.Interfaces.IGiftSubNoticeIntro">
+            <summary>
+            contains information about a user who is about to gift one or more subscriptions to the community
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IGiftSubNoticeIntro.SystemMessage">
+            <summary>
+            The message emitted in chat when the event occurs
+            <para>Example: xHypnoticPowerx is gifting 25 Tier 1 Subs to Mande's community! They've gifted a total of 62 in the channel!</para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IGiftSubNoticeIntro.GiftCount">
+            <summary>
+            The amount of subscriptions the author is gifting
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IGiftSubNoticeIntro.TotalGiftCount">
+            <summary>
+            Total amount of the gifts the author has given
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IGiftSubNoticeIntro.SubPlan">
+            <summary>
+            The tier of the gift subscriptions
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IGiftSubNoticeIntro.CommunityGiftId">
+            <summary>
+            Id of the gift message to link it with <see cref="T:MiniTwitch.Irc.Interfaces.IGiftSubNotice"/> messages
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IGiftSubNoticeIntro.Source">
+            <inheritdoc cref="P:MiniTwitch.Irc.Models.Usernotice.Source"/>
+        </member>
+        <member name="T:MiniTwitch.Irc.Interfaces.IGiftSubRecipient">
+            <summary>
+            Represents a user that received a gift sub
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IGiftSubRecipient.Name">
+            <inheritdoc cref="P:MiniTwitch.Irc.Models.MessageAuthor.Name"/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IGiftSubRecipient.DisplayName">
+            <inheritdoc cref="P:MiniTwitch.Irc.Models.MessageAuthor.DisplayName"/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IGiftSubRecipient.Id">
+            <inheritdoc cref="P:MiniTwitch.Irc.Models.MessageAuthor.Id"/>
+        </member>
+        <member name="T:MiniTwitch.Irc.Interfaces.IMembershipClientOptions">
+            <summary>
+            An object used for configuring the membership client
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IMembershipClientOptions.JoinRateLimit">
+            <summary>
+            The amount of outgoing JOINs allowed in a 10 second time period
+            <para>Default value is 20</para>
+            <para>Twitch docs: <see href="https://dev.twitch.tv/docs/irc/#rate-limits"/></para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IMembershipClientOptions.Logger">
+            <summary>
+            Logging destination
+            <para>Adding a logger is not required, but highly recommended</para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IMembershipClientOptions.ReconnectionDelay">
+            <summary>
+            The time to wait before trying to reconnect
+            <para>Default value is <see langword="30"/> seconds</para>
+            </summary>
+        </member>
+        <member name="T:MiniTwitch.Irc.Interfaces.IMembershipUser">
+            <summary>
+            Represents a user in twitch.tv/membership messages
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IMembershipUser.Name">
+            <summary>
+            The user's name
+            </summary>
+        </member>
+        <member name="T:MiniTwitch.Irc.Interfaces.IPaidUpgradeNotice">
+            <summary>
+            Contains information about a user that continued their gifted subscription
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IPaidUpgradeNotice.SystemMessage">
+            <summary>
+            The message emitted in chat when the event occurs
+            <para>Example: special_forces_of_russia is continuing the Gift Sub they got from potnayakatka64!</para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IPaidUpgradeNotice.GifterUsername">
+            <summary>
+            Username of the previous subscription's gifter
+            <para>Note: Value is <see cref="F:System.String.Empty"/> if the previous subscription's gifter was anonymous</para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IPaidUpgradeNotice.GifterDisplayName">
+            <summary>
+            Display name of the previous subscription's gifter
+            <para>Note: Value is <see cref="F:System.String.Empty"/> if the previous subscription's gifter was anonymous</para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IPaidUpgradeNotice.Source">
+            <inheritdoc cref="P:MiniTwitch.Irc.Models.Usernotice.Source"/>
+        </member>
+        <member name="T:MiniTwitch.Irc.Interfaces.IPartedChannel">
+            <summary>
+            Contains information about a parted channel
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IPartedChannel.Name">
+            <summary>
+            The parted channel's username
+            </summary>
+        </member>
+        <member name="T:MiniTwitch.Irc.Interfaces.IPrimeUpgradeNotice">
+            <summary>
+            Contains information about a user that changed their prime subscription into a paid one
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IPrimeUpgradeNotice.SystemMessage">
+            <summary>
+            The message emitted in chat when the event occurs
+            <para>Example: DrDisRespexs converted from a Prime sub to a Tier 1 sub!</para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IPrimeUpgradeNotice.SubPlan">
+            <summary>
+            The tier of the new subscription
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IPrimeUpgradeNotice.Source">
+            <inheritdoc cref="P:MiniTwitch.Irc.Models.Usernotice.Source"/>
+        </member>
+        <member name="T:MiniTwitch.Irc.Interfaces.IR9KModified">
+            <summary>
+            Contains information about a new unique-messages-only mode state
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IR9KModified.Name">
+            <summary>
+            Name of the channel where the event occurred
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IR9KModified.Id">
+            <summary>
+            ID of the channel where the event occurred
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IR9KModified.UniqueModeEnabled">
+            <summary>
+            <see langword="true"/> if unique mode is activated; <see langword="false"/> if deactivated
+            </summary>
+        </member>
+        <member name="T:MiniTwitch.Irc.Interfaces.IRaidNotice">
+            <summary>
+            Contains information about a raid
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IRaidNotice.Author">
+            <summary>
+            The user raiding the channel
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IRaidNotice.SystemMessage">
+            <summary>
+            The message emitted in chat when the event occurs
+            <para>Example: 1 raiders from occluder have joined!</para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IRaidNotice.ViewerCount">
+            <summary>
+            The amount of viewers joining from the raid
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IRaidNotice.Source">
+            <inheritdoc cref="P:MiniTwitch.Irc.Models.Usernotice.Source"/>
+        </member>
+        <member name="T:MiniTwitch.Irc.Interfaces.ISlowModeModified">
+            <summary>
+            Contains information about a new slow mode state
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.ISlowModeModified.SlowModeDuration">
+            <summary>
+            The amount of time a user needs to wait between messages
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.ISlowModeModified.Name">
+            <summary>
+            Username of the channel where the event occurred
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.ISlowModeModified.Id">
+            <summary>
+            ID of the channel where the event occurred
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.ISlowModeModified.SlowModeEnabled">
+            <summary>
+            <see langword="true"/> if slow mode is activated; <see langword="false"/> if deactivated
+            </summary>
+        </member>
+        <member name="T:MiniTwitch.Irc.Interfaces.ISubOnlyModified">
+            <summary>
+            Contains information about a new sub-only mode state
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.ISubOnlyModified.Name">
+            <summary>
+            Username of the channel where the event occurred
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.ISubOnlyModified.Id">
+            <summary>
+            ID of the channel where the event occurred
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.ISubOnlyModified.SubOnlyEnabled">
+            <summary>
+            <see langword="true"/> if sub-only mode is activated; <see langword="false"/> if deactivated
+            </summary>
+        </member>
+        <member name="T:MiniTwitch.Irc.Interfaces.ISubNotice">
+            <summary>
+            Represents a user subscription
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.ISubNotice.Emotes">
+            <summary>
+            Emote sets in the resubscription message
+            <para><see cref="F:System.String.Empty"/> if there are none, or if the user is a first time sub</para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.ISubNotice.Flags">
+            <summary>
+            Automod flags in the resubscription message
+            <para><see cref="F:System.String.Empty"/> if there are none, or if the user is a first time sub</para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.ISubNotice.SystemMessage">
+            <summary>
+            The message emitted in chat when the event occurs
+            <para>Example 1: SleepyHeadszZ subscribed at Tier 1.</para>
+            <para>Example 2: Syn993 subscribed at Tier 1. They've subscribed for 5 months, currently on a 4 month streak!</para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.ISubNotice.CumulativeMonths">
+            <summary>
+            Cumulative amount of months the user has been subscribed
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.ISubNotice.ShouldShareStreak">
+            <summary>
+            Whether the user shared their month streak in the subscription message or not
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.ISubNotice.MonthStreak">
+            <summary>
+            How many months in a row the user has been subscribed
+            <para>Note: Always 0 if <see cref="P:MiniTwitch.Irc.Interfaces.ISubNotice.ShouldShareStreak"/> is <see langword="false"/></para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.ISubNotice.SubPlan">
+            <summary>
+            The tier of the subscription
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.ISubNotice.SubPlanName">
+            <summary>
+            Name of the subscription plan
+            <para>Example 1: Channel Subscription (mandeow)</para>
+            <para>Example 2: Channel Subscription (forsenlol)</para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.ISubNotice.Message">
+            <summary>
+            The user's resubscription message content
+            <para>Note 1: Always <see cref="F:System.String.Empty"/> for first time subscribers</para>
+            <para>Note 2: May be <see cref="F:System.String.Empty"/> even for resubscriptions</para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.ISubNotice.Source">
+            <inheritdoc cref="P:MiniTwitch.Irc.Models.Usernotice.Source"/>
+        </member>
+        <member name="T:MiniTwitch.Irc.Interfaces.IUnixTimestamped">
+            <summary>
+            Interface for IRC messages with the "tmi-sent-ts" tag
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IUnixTimestamped.TmiSentTs">
+            <summary>
+            Milliseconds Unix timestamp of when the message was sent
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IUnixTimestamped.SentTimestamp">
+            <summary>
+            Gets TmiSentTs as <see cref="T:System.DateTimeOffset"/>
+            </summary>
+        </member>
+        <member name="T:MiniTwitch.Irc.Interfaces.IUserBan">
+            <summary>
+            Contains information about a user ban
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IUserBan.Target">
+            <summary>
+            The target user of the ban
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IUserBan.Channel">
+            <summary>
+            The channel where the event occurred
+            </summary>
+        </member>
+        <member name="T:MiniTwitch.Irc.Interfaces.IUsernotice">
+            <summary>
+            Contains shared USERNOTICE tags
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IUsernotice.Author">
+            <summary>
+            Author of the event
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IUsernotice.Channel">
+            <summary>
+            The channel where the event occurred
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IUsernotice.Id">
+            <summary>
+            Unique ID to identify the event's message
+            </summary>
+        </member>
+        <member name="T:MiniTwitch.Irc.Interfaces.IUserstateSelf">
+            <summary>
+            Represents information about you when you send a  message or join a channel
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IUserstateSelf.BadgeInfo">
+            <inheritdoc cref="P:MiniTwitch.Irc.Models.MessageAuthor.BadgeInfo"/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IUserstateSelf.Badges">
+            <inheritdoc cref="P:MiniTwitch.Irc.Models.MessageAuthor.Badges"/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IUserstateSelf.ChatColor">
+            <inheritdoc cref="P:MiniTwitch.Irc.Models.MessageAuthor.ChatColor"/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IUserstateSelf.Name">
+            <summary>
+            Your username
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IUserstateSelf.DisplayName">
+            <summary>
+            Your display name
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IUserstateSelf.Type">
+            <summary>
+            Your user type
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IUserstateSelf.IsMod">
+            <summary>
+            Whether you are a moderator
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IUserstateSelf.IsVip">
+            <summary>
+            Whether you are a VIP
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IUserstateSelf.IsSubscriber">
+            <summary>
+            Whether you are a subscriber
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IUserstateSelf.IsTurbo">
+            <summary>
+            Whether you have site-wide commercial free mode enabled
+            <para>Note: This value is always <see langword="false"/></para>
+            </summary>
+        </member>
+        <member name="T:MiniTwitch.Irc.Interfaces.IUserTimeout">
+            <summary>
+            Contains information about a user timeout
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IUserTimeout.Duration">
+            <summary>
+            The duration of the timeout
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IUserTimeout.Target">
+            <summary>
+            The target user of the timeout
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IUserTimeout.Channel">
+            <summary>
+            The channel where the event occurred
+            </summary>
+        </member>
+        <member name="T:MiniTwitch.Irc.Interfaces.IWhisperAuthor">
+            <summary>
+            Contains information about the author of a whisper
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IWhisperAuthor.Badges">
+            <inheritdoc cref="P:MiniTwitch.Irc.Models.MessageAuthor.Badges"/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IWhisperAuthor.ChatColor">
+            <inheritdoc cref="P:MiniTwitch.Irc.Models.MessageAuthor.ChatColor"/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IWhisperAuthor.DisplayName">
+            <inheritdoc cref="P:MiniTwitch.Irc.Models.MessageAuthor.DisplayName"/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IWhisperAuthor.Name">
+            <inheritdoc cref="P:MiniTwitch.Irc.Models.MessageAuthor.Name"/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IWhisperAuthor.Id">
+            <inheritdoc cref="P:MiniTwitch.Irc.Models.MessageAuthor.Id"/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IWhisperAuthor.Type">
+            <inheritdoc cref="P:MiniTwitch.Irc.Models.MessageAuthor.Type"/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Interfaces.IWhisperAuthor.IsTurbo">
+            <inheritdoc cref="P:MiniTwitch.Irc.Models.MessageAuthor.IsTurbo"/>
+        </member>
+        <member name="T:MiniTwitch.Irc.IrcClient">
+            <summary>
+            Responsible for all communication with Twitch IRC. Parses and invokes events for IRC messages
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.IrcClient.ExceptionHandler">
+            <summary>
+            The action to invoke when an exception is caught within an event
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.IrcClient.JoinedChannels">
+            <summary>
+            List of the currently joined channels
+            <para>Note: The client will attempt to rejoin all channels upon reconnection</para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.IrcClient.DefaultLogger">
+            <summary>
+            The default logger for <see cref="T:MiniTwitch.Irc.Models.IrcChannel"/>, only used when <see cref="T:Microsoft.Extensions.Logging.ILogger"/> is not provided in client options
+            <para>Can be toggled with <see cref="P:MiniTwitch.Common.DefaultMiniTwitchLogger`1.Enabled"/></para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.IrcClient.IsConnected">
+            <summary>
+            Whether the client is currently connected
+            </summary>
+        </member>
+        <member name="E:MiniTwitch.Irc.IrcClient.OnConnect">
+            <summary>
+            Invoked upon connecting to TMI
+            <para>Note: This is only invoked once. Following connections to TMI will invoke <see cref="E:MiniTwitch.Irc.IrcClient.OnReconnect"/></para>
+            </summary>
+        </member>
+        <member name="E:MiniTwitch.Irc.IrcClient.OnReconnect">
+            <summary>
+            Invoked upon reconnecting to TMI
+            </summary>
+        </member>
+        <member name="E:MiniTwitch.Irc.IrcClient.OnDisconnect">
+            <summary>
+            Invoked upon disconnection from TMI
+            </summary>
+        </member>
+        <member name="E:MiniTwitch.Irc.IrcClient.OnMessage">
+            <summary>
+            Invoked when a message is received
+            </summary>
+        </member>
+        <member name="E:MiniTwitch.Irc.IrcClient.OnGiftedSubNoticeIntro">
+            <summary>
+            Invoked when a user is about to gift subscription(s)
+            <para>Provides a count of how many they are gifting (<see cref="P:MiniTwitch.Irc.Interfaces.IGiftSubNoticeIntro.GiftCount"/>), and how much they have gifted in total (<see cref="P:MiniTwitch.Irc.Interfaces.IGiftSubNoticeIntro.TotalGiftCount"/>)</para>
+            </summary>
+        </member>
+        <member name="E:MiniTwitch.Irc.IrcClient.OnGiftedSubNotice">
+            <summary>
+            Invoked when a user is gifted a subscription
+            </summary>
+        </member>
+        <member name="E:MiniTwitch.Irc.IrcClient.OnSubscriptionNotice">
+            <summary>
+            Invoked when a user (re)subscribes
+            </summary>
+        </member>
+        <member name="E:MiniTwitch.Irc.IrcClient.OnRaidNotice">
+            <summary>
+            Invoked when a raid occurs
+            </summary>
+        </member>
+        <member name="E:MiniTwitch.Irc.IrcClient.OnPaidUpgradeNotice">
+            <summary>
+            Invoked when a user continues their gifted subscription
+            <para>Note: <see cref="P:MiniTwitch.Irc.Interfaces.IPaidUpgradeNotice.GifterUsername"/> and <see cref="P:MiniTwitch.Irc.Interfaces.IPaidUpgradeNotice.GifterDisplayName"/> will equal to <see cref="F:System.String.Empty"/> if the gifted subscription was from an anonymous gifter</para>
+            </summary>
+        </member>
+        <member name="E:MiniTwitch.Irc.IrcClient.OnPrimeUpgradeNotice">
+            <summary>
+            Invoked when a user converts their subscription plan from Prime to paid (Tier 1, 2 or 3)
+            </summary>
+        </member>
+        <member name="E:MiniTwitch.Irc.IrcClient.OnAnnouncement">
+            <summary>
+            Invoked when a chat announcement is sent
+            </summary>
+        </member>
+        <member name="E:MiniTwitch.Irc.IrcClient.OnUserTimeout">
+            <summary>
+            Invoked when a user gets timed out
+            </summary>
+        </member>
+        <member name="E:MiniTwitch.Irc.IrcClient.OnUserBan">
+            <summary>
+            Invoked when a user gets banned
+            </summary>
+        </member>
+        <member name="E:MiniTwitch.Irc.IrcClient.OnChatClear">
+            <summary>
+            Invoked when a chat gets cleared
+            </summary>
+        </member>
+        <member name="E:MiniTwitch.Irc.IrcClient.OnMessageDelete">
+            <summary>
+            Invoked when a message gets deleted
+            </summary>
+        </member>
+        <member name="E:MiniTwitch.Irc.IrcClient.OnChannelJoin">
+            <summary>
+            Invoked when a channel is joined
+            <para>Contains ROOMSTATE information such as <see cref="P:MiniTwitch.Irc.Models.IrcChannel.FollowerModeEnabled"/>, <see cref="P:MiniTwitch.Irc.Models.IrcChannel.SubOnlyEnabled"/>, <see cref="P:MiniTwitch.Irc.Models.IrcChannel.SlowModeDuration"/>...</para>
+            </summary>
+        </member>
+        <member name="E:MiniTwitch.Irc.IrcClient.OnEmoteOnlyModified">
+            <summary>
+            Invoked when "Emote Only" mode is either activated or deactivated
+            </summary>
+        </member>
+        <member name="E:MiniTwitch.Irc.IrcClient.OnFollowerModeModified">
+            <summary>
+            Invoked when "Followers Only" mode is either activated, modified or deactivated
+            </summary>
+        </member>
+        <member name="E:MiniTwitch.Irc.IrcClient.OnUniqueModeModified">
+            <summary>
+            Invoked when "R9K"/"Unique" mode is either activated or deactivated
+            </summary>
+        </member>
+        <member name="E:MiniTwitch.Irc.IrcClient.OnSlowModeModified">
+            <summary>
+            Invoked when "Slow" mode is either activated, modified or deactivated
+            </summary>
+        </member>
+        <member name="E:MiniTwitch.Irc.IrcClient.OnSubOnlyModified">
+            <summary>
+            Invoked when "Subscribers Only" mode is either activated or deactivated
+            </summary>
+        </member>
+        <member name="E:MiniTwitch.Irc.IrcClient.OnChannelPart">
+            <summary>
+            Invoked when a channel is parted
+            </summary>
+        </member>
+        <member name="E:MiniTwitch.Irc.IrcClient.OnNotice">
+            <summary>
+            Invoked when a NOTICE is received
+            </summary>
+        </member>
+        <member name="E:MiniTwitch.Irc.IrcClient.OnUserstate">
+            <summary>
+            Invoked when a USERSTATE is received
+            <para>USERSTATEs are received upon initially joining a channel or sending a message</para>
+            <para> They provide information about you (<seealso cref="P:MiniTwitch.Irc.Models.Userstate.Self"/>), and your available emote sets (<see cref="P:MiniTwitch.Irc.Models.Userstate.EmoteSets"/>) in that channel</para>
+            </summary>
+        </member>
+        <member name="E:MiniTwitch.Irc.IrcClient.OnWhisper">
+            <summary>
+            Invoked when a whisper Is received
+            </summary>
+        </member>
+        <member name="E:MiniTwitch.Irc.IrcClient.OnCharityDonation">
+            <summary>
+            Invoked when a user donates to a charity during a fundraiser
+            </summary>
+        </member>
+        <member name="M:MiniTwitch.Irc.IrcClient.#ctor(System.Action{MiniTwitch.Irc.Models.ClientOptions})">
+            <summary>
+            Creates a new instance of <see cref="T:MiniTwitch.Irc.IrcClient"/>
+            </summary>
+        </member>
+        <member name="M:MiniTwitch.Irc.IrcClient.Connect(System.String)">
+            <summary>
+            Attempts connection to TMI like <see cref="M:MiniTwitch.Irc.IrcClient.ConnectAsync(System.String,System.Threading.CancellationToken)"/>, but connects in a "fire and forget" style
+            </summary>
+        </member>
+        <member name="M:MiniTwitch.Irc.IrcClient.ConnectAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Connects to TMI
+            </summary>
+            <returns><see langword="true"/> if the connection is successful; Otherwise, after 15 seconds: <see langword="false"/></returns>
+        </member>
+        <member name="M:MiniTwitch.Irc.IrcClient.Disconnect">
+            <summary>
+            Disconnects from TMI in a "fire and forget" style
+            <para>Note: To reconnect, you must use <see cref="M:MiniTwitch.Irc.IrcClient.ReconnectAsync(System.Threading.CancellationToken)"/></para>
+            </summary>
+        </member>
+        <member name="M:MiniTwitch.Irc.IrcClient.DisconnectAsync(System.Threading.CancellationToken)">
+            <summary>
+            Disconnects from TMI
+            <para>Note: To reconnect, you must use <see cref="M:MiniTwitch.Irc.IrcClient.ReconnectAsync(System.Threading.CancellationToken)"/></para>
+            </summary>
+        </member>
+        <member name="M:MiniTwitch.Irc.IrcClient.ReconnectAsync(System.Threading.CancellationToken)">
+            <summary>
+            Disconnects then reconnects to TMI
+            </summary>
+        </member>
+        <member name="M:MiniTwitch.Irc.IrcClient.SendRaw(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Send a raw message to TMI
+            </summary>
+            <param name="message">The message to send</param>
+            <param name="cancellationToken">A cancellation token to stop further execution of asynchronous actions</param>
+        </member>
+        <member name="M:MiniTwitch.Irc.IrcClient.SendMessage(System.String,System.String,System.Boolean,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Sends a chat message
+            </summary>
+            <param name="channel">The channel to send the message to</param>
+            <param name="message">The message to send</param>
+            <param name="action">Whether to prepend .me to the message</param>
+            <param name="nonce">Custom nonce to send with the message. Value can't contain spaces</param>
+            <param name="cancellationToken">A cancellation token to stop further execution of asynchronous actions</param>
+        </member>
+        <member name="M:MiniTwitch.Irc.IrcClient.ReplyTo(MiniTwitch.Irc.Models.Privmsg,System.String,System.Boolean,System.Boolean,System.Threading.CancellationToken)">
+            <summary>
+            Replies to a chat message
+            </summary>
+            <param name="parentMessage">The message to reply to</param>
+            <param name="message">The message to reply with</param>
+            <param name="action">Prepend .me to the message</param>
+            <param name="replyInThread">Prefer replying to the target message in the same thread instead of creating a new one</param>
+            <param name="cancellationToken">A cancellation token to stop further execution of asynchronous actions</param>
+        </member>
+        <member name="M:MiniTwitch.Irc.IrcClient.ReplyTo(System.String,System.String,System.String,System.Boolean,System.Threading.CancellationToken)">
+            <summary>
+            Replies to a chat message
+            </summary>
+            <param name="messageId">The ID of the message to reply to</param>
+            <param name="channel">the channel in which that message was sent</param>
+            <param name="reply">The message to reply with</param>
+            <param name="action">Prepend .me to the message</param>
+            <param name="cancellationToken">A cancellation token to stop further execution of asynchronous actions</param>
+            <returns></returns>
+        </member>
+        <member name="M:MiniTwitch.Irc.IrcClient.JoinChannel(MiniTwitch.Irc.Interfaces.IBasicChannel,System.Threading.CancellationToken)">
+            <summary>
+            Used for joining a channel
+            </summary>
+            <param name="channel">The channel to join</param>
+            <param name="cancellationToken">A cancellation token to stop further execution of asynchronous actions</param>
+            <returns><see langword="true"/> if the join is successful; Otherwise, after 10 seconds: <see langword="false"/></returns>
+        </member>
+        <member name="M:MiniTwitch.Irc.IrcClient.JoinChannels(System.Collections.Generic.IEnumerable{MiniTwitch.Irc.Interfaces.IBasicChannel},System.Threading.CancellationToken)">
+            <summary>
+            Used for joining multiple channels
+            </summary>
+            <param name="channels">The channels to join</param>
+            <param name="cancellationToken">A cancellation token to stop further execution of asynchronous actions</param>
+            <returns><see langword="true"/> if all joins are successful; Otherwise, <see langword="false"/></returns>
+        </member>
+        <member name="M:MiniTwitch.Irc.IrcClient.PartChannel(MiniTwitch.Irc.Interfaces.IBasicChannel,System.Threading.CancellationToken)">
+            <summary>
+            Used for leaving/parting a joined channel
+            </summary>
+            <param name="channel">The channel to part</param>
+            <param name="cancellationToken">A cancellation token to stop further execution of asynchronous actions</param>
+        </member>
+        <member name="M:MiniTwitch.Irc.IrcClient.JoinChannel(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Used for joining a channel
+            </summary>
+            <param name="channel">Username of the channel to join</param>
+            <param name="cancellationToken">A cancellation token to stop further execution of asynchronous actions</param>
+            <returns><see langword="true"/> if the join is successful; Otherwise, after 10 seconds: <see langword="false"/></returns>
+        </member>
+        <member name="M:MiniTwitch.Irc.IrcClient.JoinChannels(System.Collections.Generic.IEnumerable{System.String},System.Threading.CancellationToken)">
+            <summary>
+            Used for joining multiple channels
+            </summary>
+            <param name="channels">Usernames of channels to join</param>
+            <param name="cancellationToken">A cancellation token to stop further execution of asynchronous actions</param>
+            <returns><see langword="true"/> if all joins are successful; Otherwise, <see langword="false"/></returns>
+        </member>
+        <member name="M:MiniTwitch.Irc.IrcClient.PartChannel(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Used for leaving/parting a joined channel
+            </summary>
+            <param name="channel">name of the channel to part</param>
+            <param name="cancellationToken">A cancellation token to stop further execution of asynchronous actions</param>
+        </member>
+        <member name="M:MiniTwitch.Irc.IrcClient.DisposeAsync">
+            <inheritdoc/>
+        </member>
+        <member name="T:MiniTwitch.Irc.IrcMembershipClient">
+            <summary>
+            Listens only to user JOINs or PARTs from channels. Most other IRC messages are ignored 
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.IrcMembershipClient.ExceptionHandler">
+            <summary>
+            The action to invoke when an exception is caught within an event
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.IrcMembershipClient.IsConnected">
+            <summary>
+            Whether the client is currently connected
+            </summary>
+        </member>
+        <member name="E:MiniTwitch.Irc.IrcMembershipClient.OnConnect">
+            <summary>
+            Invoked upon connecting to TMI
+            <para>Note: This is only invoked once. Following connections to TMI will invoke <see cref="E:MiniTwitch.Irc.IrcMembershipClient.OnReconnect"/></para>
+            </summary>
+        </member>
+        <member name="E:MiniTwitch.Irc.IrcMembershipClient.OnReconnect">
+            <summary>
+            Invoked upon reconnecting to TMI
+            </summary>
+        </member>
+        <member name="E:MiniTwitch.Irc.IrcMembershipClient.OnDisconnect">
+            <summary>
+            Invoked upon disconnection from TMI
+            </summary>
+        </member>
+        <member name="E:MiniTwitch.Irc.IrcMembershipClient.OnUserJoin">
+            <summary>
+            Invoked when a user joins a channel
+            </summary>
+        </member>
+        <member name="E:MiniTwitch.Irc.IrcMembershipClient.OnUserPart">
+            <summary>
+            Invoked when a user parts a channel
+            </summary>
+        </member>
+        <member name="M:MiniTwitch.Irc.IrcMembershipClient.#ctor(System.Action{MiniTwitch.Irc.Interfaces.IMembershipClientOptions})">
+            <summary>
+            Creates a new instance of <see cref="T:MiniTwitch.Irc.IrcMembershipClient"/>
+            </summary>
+        </member>
+        <member name="M:MiniTwitch.Irc.IrcMembershipClient.Connect">
+            <summary>
+            Attempts connection to TMI like <see cref="M:MiniTwitch.Irc.IrcMembershipClient.ConnectAsync(System.Threading.CancellationToken)"/>, but connects in a "fire and forget" style
+            </summary>
+        </member>
+        <member name="M:MiniTwitch.Irc.IrcMembershipClient.ConnectAsync(System.Threading.CancellationToken)">
+            <summary>
+            Connects to TMI
+            </summary>
+            <returns><see langword="true"/> if the connection is successful; Otherwise, after 15 seconds: <see langword="false"/></returns>
+        </member>
+        <member name="M:MiniTwitch.Irc.IrcMembershipClient.Disconnect">
+            <summary>
+            Disconnects from TMI in a "fire and forget" style
+            </summary>
+        </member>
+        <member name="M:MiniTwitch.Irc.IrcMembershipClient.DisconnectAsync(System.Threading.CancellationToken)">
+            <summary>
+            Disconnects from TMI
+            </summary>
+        </member>
+        <member name="M:MiniTwitch.Irc.IrcMembershipClient.ReconnectAsync(System.Threading.CancellationToken)">
+            <summary>
+            Disconnects then reconnects to TMI
+            </summary>
+        </member>
+        <member name="M:MiniTwitch.Irc.IrcMembershipClient.JoinChannel(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Used for joining a channel
+            </summary>
+            <param name="channel">Username of the channel to join</param>
+            <param name="cancellationToken">A cancellation token to stop further execution of asynchronous actions</param>
+            <returns><see langword="true"/> if the join is successful; Otherwise, after 10 seconds: <see langword="false"/></returns>
+        </member>
+        <member name="M:MiniTwitch.Irc.IrcMembershipClient.JoinChannels(System.Collections.Generic.IEnumerable{System.String},System.Threading.CancellationToken)">
+            <summary>
+            Used for joining multiple channels
+            </summary>
+            <param name="channels">Usernames of channels to join</param>
+            <param name="cancellationToken">A cancellation token to stop further execution of asynchronous actions</param>
+            <returns><see langword="true"/> if all joins are successful; Otherwise, <see langword="false"/></returns>
+        </member>
+        <member name="M:MiniTwitch.Irc.IrcMembershipClient.PartChannel(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Used for leaving/parting a joined channel
+            </summary>
+            <param name="channel">name of the channel to part</param>
+            <param name="cancellationToken">A cancellation token to stop further execution of asynchronous actions</param>
+        </member>
+        <member name="M:MiniTwitch.Irc.IrcMembershipClient.DisposeAsync">
+            <inheritdoc/>
+        </member>
+        <member name="T:MiniTwitch.Irc.Models.Clearchat">
+            <summary>
+            Represents a CLEARCHAT message
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Clearchat.Duration">
+            <summary>
+            Duration of the timeout
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Clearchat.Target">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Clearchat.Channel">
+            <summary>
+            The channel where the event occurred
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Clearchat.TmiSentTs">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Clearchat.SentTimestamp">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.Clearchat.Construct(System.String)">
+            <summary>
+            Construct a timeout or ban from a string. Useful for testing
+            </summary>
+            <param name="rawData">The raw IRC message <para>Example input: <c></c>@badge-info=subscriber/10;badges=subscriber/6;color=#F2647B;display-name=occluder;emotes=;first-msg=0;flags=;id=5adf1e72-72b1-46c1-99df-eca4bf90120f;mod=0;returning-chatter=0;room-id=11148817;subscriber=1;tmi-sent-ts=1679785255155;turbo=0;user-id=783267696;user-type= :occluder!occluder@occluder.tmi.twitch.tv PRIVMSG #pajlada :!vanish</para></param>
+            <returns><see cref="T:MiniTwitch.Irc.Models.Clearchat"/> with the related data</returns>
+        </member>
+        <member name="T:MiniTwitch.Irc.Models.Clearmsg">
+            <summary>
+            Represents a CLEARMSG message
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Clearmsg.Target">
+            <inheritdoc cref="T:MiniTwitch.Irc.Interfaces.IDeletedMessageAuthor"/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Clearmsg.Channel">
+            <summary>
+            The channel where the event occurred
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Clearmsg.MessageId">
+            <summary>
+            Unique ID identifying the deleted message
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Clearmsg.MessageContent">
+            <summary>
+            The content of the deleted message
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Clearmsg.TmiSentTs">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Clearmsg.SentTimestamp">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.Clearmsg.Construct(System.String)">
+            <summary>
+            Construct a "deleted message" message from a string. Useful for testing
+            </summary>
+            <param name="rawData">The raw IRC message <para>Example input: @login=occluder;room-id=;target-msg-id=55dc74c9-a6b2-4443-9b68-3446a5ddb7ed;tmi-sent-ts=1678798254260 :tmi.twitch.tv CLEARMSG #occluder :frozen lol! </para></param>
+            <returns><see cref="T:MiniTwitch.Irc.Models.Clearmsg"/> with the related data</returns>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.Clearmsg.op_Implicit(MiniTwitch.Irc.Models.Clearmsg)~System.String">
+            <inheritdoc/>
+        </member>
+        <member name="T:MiniTwitch.Irc.Models.ClientOptions">
+            <summary>
+            An object used for client configuration
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.ClientOptions.Username">
+            <summary>
+            The username of the account
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.ClientOptions.OAuth">
+            <summary>
+            The OAuth token of the account
+            <para>Note: Prepending "oauth:" is not necessary</para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.ClientOptions.IgnoreCommands">
+            <summary>
+            IRC commands to ignore from being fully parsed and handled. Multiple values can be set with <see langword="|"/>
+            <para>Note: This can help with CPU and memory usage, but it will stop corresponding events from firing</para>
+            <para>Only use it if you know what you are doing!</para>
+            <para>Default is <see cref="F:MiniTwitch.Irc.Enums.IgnoreCommand.None"/></para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.ClientOptions.Anonymous">
+            <summary>
+            Whether to connect anonymously or not
+            <para>Note: You will not be able to send messages if connect anonymously</para>
+            <para>Default is <see langword="false"/></para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.ClientOptions.HideAuthenticationLogs">
+            <summary>
+            Whether to hide the sending of <see cref="P:MiniTwitch.Irc.Models.ClientOptions.Username"/> and <see cref="P:MiniTwitch.Irc.Models.ClientOptions.OAuth"/> from logging (if a logger through <see cref="P:MiniTwitch.Irc.Models.ClientOptions.Logger"/> is provided)
+            <para>Default is <see langword="true"/></para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.ClientOptions.Logger">
+            <summary>
+            Logging destination
+            <para>Adding a logger is not required, but it's highly recommended</para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.ClientOptions.JoinRateLimit">
+            <summary>
+            The amount of outgoing JOINs allowed in a 10 second time period
+            <para>Twitch docs: <see href="https://dev.twitch.tv/docs/irc/#rate-limits"/></para>
+            <para>Default value is <see langword="20"/></para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.ClientOptions.MessageRateLimit">
+            <summary>
+            The amount of outgoing PRIVMSGs allowed in a 30 second period
+            <para>Twitch docs: <see href="https://dev.twitch.tv/docs/irc/#rate-limits"/></para>
+            <para>Default value is <see langword="20"/></para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.ClientOptions.ModMessageRateLimit">
+            <summary>
+            The amount of outgoing PRIVMSGs in moderated channels allowed in a 30 second period
+            <para>Twitch docs: <see href="https://dev.twitch.tv/docs/irc/#rate-limits"/></para>
+            <para>Note: Adding <see cref="F:MiniTwitch.Irc.Enums.IgnoreCommand.USERSTATE"/> to <see cref="P:MiniTwitch.Irc.Models.ClientOptions.IgnoreCommands"/> makes this obsolete</para>
+            <para>Default value is <see langword="100"/></para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.ClientOptions.UseGlobalRateLimit">
+            <summary>
+            Applies <see cref="P:MiniTwitch.Irc.Models.ClientOptions.MessageRateLimit"/> and <see cref="P:MiniTwitch.Irc.Models.ClientOptions.ModMessageRateLimit"/> globally instead of per channel
+            <para>Relevant issue: <see href="https://git.kotmisia.pl/Mm2PL/docs/issues/12"/></para>
+            <para>Default value is <see langword="true"/></para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.ClientOptions.ReconnectionDelay">
+            <summary>
+            The time to wait before trying to reconnect
+            <para>Default value is <see langword="1"/> minute</para>
+            </summary>
+        </member>
+        <member name="T:MiniTwitch.Irc.Models.IrcChannel">
+            <summary>
+            Represents an IRC chatroom
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.IrcChannel.FollowerModeDuration">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.IrcChannel.SlowModeDuration">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.IrcChannel.Name">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.IrcChannel.Id">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.IrcChannel.EmoteOnlyEnabled">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.IrcChannel.UniqueModeEnabled">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.IrcChannel.SubOnlyEnabled">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.IrcChannel.FollowerModeEnabled">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.IrcChannel.SlowModeEnabled">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.IrcChannel.Construct(System.String)">
+            <summary>
+            Construct a channel from a string. Useful for testing
+            </summary>
+            <param name="rawData">The raw IRC message <para>Example input: @emote-only=0;followers-only=-1;r9k=0;room-id=783267696;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE #occluder</para></param>
+            <returns><see cref="T:MiniTwitch.Irc.Models.IrcChannel"/> with the related data</returns>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.IrcChannel.Equals(MiniTwitch.Irc.Models.IrcChannel)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.IrcChannel.Equals(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.IrcChannel.Equals(MiniTwitch.Irc.Models.MessageAuthor)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.IrcChannel.op_Equality(MiniTwitch.Irc.Models.IrcChannel,MiniTwitch.Irc.Models.IrcChannel)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.IrcChannel.op_Inequality(MiniTwitch.Irc.Models.IrcChannel,MiniTwitch.Irc.Models.IrcChannel)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.IrcChannel.GetHashCode">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.IrcChannel.ToString">
+            <summary>
+            Returns the channel's name
+            </summary>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.IrcChannel.op_Implicit(MiniTwitch.Irc.Models.IrcChannel)~System.String">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.IrcChannel.op_Implicit(MiniTwitch.Irc.Models.IrcChannel)~System.Int64">
+            <inheritdoc/>
+        </member>
+        <member name="T:MiniTwitch.Irc.Models.MembershipArgs">
+            <summary>
+            Represents information about a membership event
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.MembershipArgs.User">
+            <inheritdoc cref="T:MiniTwitch.Irc.Interfaces.IMembershipUser"/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.MembershipArgs.Channel">
+            <summary>
+            The channel where the event occurred
+            </summary>
+        </member>
+        <member name="T:MiniTwitch.Irc.Models.MessageAnimation">
+            <summary>
+            Struct that holds information about message animations
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.MessageAnimation.IsAnimated">
+            <summary>
+            Whether the message is animated
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.MessageAnimation.AnimationId">
+            <summary>
+            Message animation
+            </summary>
+        </member>
+        <member name="T:MiniTwitch.Irc.Models.MessageAuthor">
+            <summary>
+            Represents an author of a message or a certain event
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.MessageAuthor.BadgeInfo">
+            <summary>
+            Contains metadata related to the chat badges in the badges tag
+            <para>Currently, this tag contains metadata only for subscriber badges, to indicate the number of months the user has been a subscriber</para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.MessageAuthor.Badges">
+            <summary>
+            Comma-separated list of chat badges in the form, &lt;badge&gt;/&lt;version&gt;. For example, admin/1. There are many possible badge values, but here are few:
+            <list type="bullet">
+            <item>admin</item>
+            <item>bits</item>
+            <item>broadcaster</item>
+            <item>moderator</item>
+            <item>subscriber</item>
+            <item>turbo</item>
+            </list>
+            <para>Most badges have only 1 version, but some badges like subscriber badges offer different versions of the badge depending on how long the user has subscribed</para>
+            <para>To get the badge, use the <see href="https://dev.twitch.tv/docs/api/reference#get-global-chat-badges">Get Global Chat Badges</see> and <see href="https://dev.twitch.tv/docs/api/reference#get-channel-chat-badges">Get Channel Chat Badges</see> APIs. Match the badge to the <c>set-id</c> field’s value in the response. Then, match the version to the <c>id</c> field in the list of versions</para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.MessageAuthor.ChatColor">
+            <summary>
+            The color of the user’s name in the chat room
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.MessageAuthor.DisplayName">
+            <summary>
+            The user’s display name, escaped as described in the <see href="https://ircv3.net/specs/core/message-tags-3.2.html">IRCv3</see> spec
+            <para>Note: Can contain characters outside [a-zA-Z0-9_]</para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.MessageAuthor.Name">
+            <summary>
+            The user's name
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.MessageAuthor.Id">
+            <summary>
+            The user's ID
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.MessageAuthor.Type">
+            <summary>
+            The type of the user 
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.MessageAuthor.IsSubscriber">
+            <summary>
+            whether the user is a subscriber
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.MessageAuthor.IsMod">
+            <summary>
+            Whether the user is a moderator
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.MessageAuthor.IsVip">
+            <summary>
+            Whether the user is a VIP
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.MessageAuthor.IsTurbo">
+            <summary>
+            Whether the user has site-wide commercial free mode enabled
+            <para>Note: This value is always <see langword="false"/></para>
+            </summary>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.MessageAuthor.Equals(MiniTwitch.Irc.Models.IrcChannel)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.MessageAuthor.Equals(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.MessageAuthor.Equals(MiniTwitch.Irc.Models.MessageAuthor)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.MessageAuthor.op_Equality(MiniTwitch.Irc.Models.MessageAuthor,MiniTwitch.Irc.Models.MessageAuthor)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.MessageAuthor.op_Inequality(MiniTwitch.Irc.Models.MessageAuthor,MiniTwitch.Irc.Models.MessageAuthor)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.MessageAuthor.GetHashCode">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.MessageAuthor.ToString">
+            <summary>
+            Returns the author's name
+            </summary>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.MessageAuthor.op_Implicit(MiniTwitch.Irc.Models.MessageAuthor)~System.String">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.MessageAuthor.op_Implicit(MiniTwitch.Irc.Models.MessageAuthor)~System.Int64">
+            <inheritdoc/>
+        </member>
+        <member name="T:MiniTwitch.Irc.Models.MessageReply">
+            <summary>
+            Represents data for a message that is being replied to
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.MessageReply.ParentDisplayName">
+            <summary>
+            Display name of the replied-to message's author
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.MessageReply.ParentMessage">
+            <summary>
+            Content of the replied-to message
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.MessageReply.ParentMessageId">
+            <summary>
+            Unique ID to identify the replied-to message
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.MessageReply.ParentUsername">
+            <summary>
+            Name of the replied-to message's author
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.MessageReply.ParentUserId">
+            <summary>
+            ID of the replied-to message's author
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.MessageReply.ParentThreadMessageId">
+            <summary>
+            ID of the first message in the thread of the replied-to message
+            <para>This value is equal to <see cref="P:MiniTwitch.Irc.Models.MessageReply.ParentMessageId"/> if the replied-to message is not in a thread</para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.MessageReply.ParentThreadUsername">
+            <summary>
+            Username of the first message's author in the thread of the replied-to message
+            <para>This value is equal to <see cref="P:MiniTwitch.Irc.Models.MessageReply.ParentUsername"/> if the replied-to message is not in a thread</para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.MessageReply.HasContent">
+            <summary>
+            Whether there are reply contents in this message
+            </summary>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.MessageReply.op_Implicit(MiniTwitch.Irc.Models.MessageReply)~System.String">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.MessageReply.op_Implicit(MiniTwitch.Irc.Models.MessageReply)~System.Boolean">
+            <inheritdoc/>
+        </member>
+        <member name="T:MiniTwitch.Irc.Models.MessageSource">
+            <summary>
+            Source information about messages in shared chats
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.MessageSource.HasSource">
+            <summary>
+            Whether source information is available.
+            <para>When <see langword="false"/>, indicates that the channel does not have shared chat enabled</para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.MessageSource.BadgeInfo">
+            <inheritdoc cref="P:MiniTwitch.Irc.Models.MessageAuthor.BadgeInfo"/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.MessageSource.Badges">
+            <inheritdoc cref="P:MiniTwitch.Irc.Models.MessageAuthor.Badges"/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.MessageSource.MessageId">
+            <inheritdoc cref="P:MiniTwitch.Irc.Models.Privmsg.Id"/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.MessageSource.ChannelId">
+            <summary>
+            ID of the channel where this message originates from
+            </summary>
+        </member>
+        <member name="T:MiniTwitch.Irc.Models.MissingCredentialsException">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.MissingCredentialsException.#ctor">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.MissingCredentialsException.#ctor(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="T:MiniTwitch.Irc.Models.Notice">
+            <summary>
+            Represents a notice received from Twitch
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Notice.Channel">
+            <summary>
+            The channel related to the notice
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Notice.SystemMessage">
+            <summary>
+            The notice message
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Notice.Type">
+            <summary>
+            Type of the notice
+            </summary>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.Notice.Construct(System.String)">
+            <summary>
+            Construct a notice from a string. Useful for testing
+            </summary>
+            <param name="rawData">The raw IRC message <para>Example input: @msg-id=msg_channel_suspended :tmi.twitch.tv NOTICE #foretack :This channel does not exist or has been suspended.</para></param>
+            <returns><see cref="T:MiniTwitch.Irc.Models.Notice"/> with the related data</returns>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.Notice.Equals(MiniTwitch.Irc.Models.Notice)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.Notice.Equals(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.Notice.op_Equality(MiniTwitch.Irc.Models.Notice,MiniTwitch.Irc.Models.Notice)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.Notice.op_Inequality(MiniTwitch.Irc.Models.Notice,MiniTwitch.Irc.Models.Notice)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.Notice.GetHashCode">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.Notice.op_Implicit(MiniTwitch.Irc.Models.Notice)~System.String">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.Notice.op_Implicit(MiniTwitch.Irc.Models.Notice)~MiniTwitch.Irc.Enums.NoticeType">
+            <inheritdoc/>
+        </member>
+        <member name="T:MiniTwitch.Irc.Models.Privmsg">
+            <summary>
+            Represents a chat message
+            <para>Twitch docs: <see href="https://dev.twitch.tv/docs/irc/tags/#privmsg-tags"/></para>
+            <para>Note: Object can be implicitly converted to <see langword="string"/>, which returns <see cref="P:MiniTwitch.Irc.Models.Privmsg.Content"/></para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Privmsg.Author">
+            <summary>
+            Author of the message
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Privmsg.Reply">
+            <summary>
+            Reply contents of the message
+            <para>Note: If <see cref="P:MiniTwitch.Irc.Models.MessageReply.HasContent"/> is <see langword="false"/>, strings are <see cref="F:System.String.Empty"/> and numbers are <see langword="0"/></para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Privmsg.Channel">
+            <summary>
+            The channel where the message was sent
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Privmsg.Content">
+            <summary>
+            Content of the message
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Privmsg.Emotes">
+            <summary>
+            Emote sets in the content of the message
+            <para><see cref="F:System.String.Empty"/> if there are none</para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Privmsg.Flags">
+            <summary>
+            Automod flags in the content of the message
+            <para><see cref="F:System.String.Empty"/> if there are none</para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Privmsg.Id">
+            <summary>
+            Unique ID to identify the message
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Privmsg.Bits">
+            <summary>
+            The amount of bits cheered in the message
+            <para>Default is 0</para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Privmsg.Nonce">
+            <summary>
+            Client nonce that was sent with the message
+            <para>Note: Can be <see cref="F:System.String.Empty"/></para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Privmsg.IsFirstMessage">
+            <summary>
+            Whether the was the author's first message in the channel
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Privmsg.IsAction">
+            <summary>
+            Whether the message is an action. Action messages are sent with .me
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Privmsg.IsReturningChatter">
+            <summary>
+            Whether the user is a returning chatter
+            <para>This tag is not documented <see href="https://dev.twitch.tv/docs/irc/tags/#privmsg-tags"/> </para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Privmsg.CustomRewardId">
+            <summary>
+            The ID of the custom reward that was redeemed if the message was sent with a custom reward
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Privmsg.IsHighlighted">
+            <summary>
+            Whether the message is highlighted.
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Privmsg.Animation">
+            <summary>
+            Information about the message animation.
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Privmsg.IsGigantifiedEmoteMessage">
+            <summary>
+            Whether the emotes in the message are gigantified
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Privmsg.Source">
+            <summary>
+            Source information about the message.
+            <para>Only populated if <see cref="P:MiniTwitch.Irc.Models.MessageSource.HasSource"/> is <see langword="true"/></para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Privmsg.TmiSentTs">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Privmsg.SentTimestamp">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.Privmsg.ReplyWith(System.String,System.Boolean,System.Boolean,System.Threading.CancellationToken)">
+            <summary>
+            Reply to the message
+            </summary>
+            <param name="reply">The reply to send</param>
+            <param name="action">Prepend .me</param>
+            <param name="replyInThread">Prefer replying to the target message in the same thread instead of creating a new one</param>
+            <param name="cancellationToken">A cancellation token to stop further execution of asynchronous actions</param>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.Privmsg.Construct(System.String)">
+            <summary>
+            Construct a message from a string. Useful for testing
+            </summary>
+            <param name="rawData">The raw IRC message <para>Example input: @badge-info=subscriber/10;badges=subscriber/6;color=#F2647B;display-name=occluder;emotes=;first-msg=0;flags=;id=1eef01e3-634a-493b-b1a7-4f65040fa986;mod=0;returning-chatter=0;room-id=11148817;subscriber=1;tmi-sent-ts=1679231590118;turbo=0;user-id=783267696;user-type= :occluder!occluder@occluder.tmi.twitch.tv PRIVMSG #pajlada :-tags lol!</para></param>
+            <returns><see cref="T:MiniTwitch.Irc.Models.Privmsg"/> with the related data</returns>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.Privmsg.Equals(MiniTwitch.Irc.Models.Privmsg)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.Privmsg.Equals(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.Privmsg.Equals(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.Privmsg.op_Equality(MiniTwitch.Irc.Models.Privmsg,MiniTwitch.Irc.Models.Privmsg)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.Privmsg.op_Inequality(MiniTwitch.Irc.Models.Privmsg,MiniTwitch.Irc.Models.Privmsg)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.Privmsg.GetHashCode">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.Privmsg.op_Implicit(MiniTwitch.Irc.Models.Privmsg)~System.String">
+            <inheritdoc/>
+        </member>
+        <member name="T:MiniTwitch.Irc.Models.Usernotice">
+            <summary>
+            Represents the USERNOTICE command
+            <para>Twitch docs: <see href="https://dev.twitch.tv/docs/irc/commands/#usernotice"/>, <see href="https://dev.twitch.tv/docs/irc/tags/#usernotice-tags"/></para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Usernotice.Author">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Usernotice.Recipient">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Usernotice.Channel">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Usernotice.SubPlan">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Usernotice.Color">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Usernotice.Emotes">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Usernotice.Flags">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Usernotice.Id">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Usernotice.SubPlanName">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Usernotice.SystemMessage">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Usernotice.Message">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Usernotice.GifterUsername">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Usernotice.GifterDisplayName">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Usernotice.CharityName">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Usernotice.DonationAmount">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Usernotice.DonationCurrency">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Usernotice.CumulativeMonths">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Usernotice.Months">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Usernotice.MonthStreak">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Usernotice.GiftedMonths">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Usernotice.GiftCount">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Usernotice.TotalGiftCount">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Usernotice.ViewerCount">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Usernotice.ShouldShareStreak">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Usernotice.CommunityGiftId">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Usernotice.Source">
+            <summary>
+            Source information about the message.
+            <para>Only populated if <see cref="P:MiniTwitch.Irc.Models.MessageSource.HasSource"/> is <see langword="true"/></para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Usernotice.TmiSentTs">
+            <inheritdoc/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Usernotice.SentTimestamp">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.Usernotice.Construct(System.String)">
+            <summary>
+            Construct a <see cref="T:MiniTwitch.Irc.Models.Usernotice"/> from a string. Useful for testing
+            </summary>
+            <param name="rawData">The raw IRC message</param>
+            <returns><see cref="T:MiniTwitch.Irc.Models.Usernotice"/> with the related data</returns>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.Usernotice.Equals(MiniTwitch.Irc.Models.Usernotice)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.Usernotice.Equals(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.Usernotice.op_Equality(MiniTwitch.Irc.Models.Usernotice,MiniTwitch.Irc.Models.Usernotice)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.Usernotice.op_Inequality(MiniTwitch.Irc.Models.Usernotice,MiniTwitch.Irc.Models.Usernotice)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.Usernotice.GetHashCode">
+            <inheritdoc/>
+        </member>
+        <member name="T:MiniTwitch.Irc.Models.Userstate">
+            <summary>
+            Represents the IRC USERSTATE command
+            <para>Twitch docs: <see href="https://dev.twitch.tv/docs/irc/commands/#userstate"/>, <see href="https://dev.twitch.tv/docs/irc/commands/#userstate"/></para>
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Userstate.Self">
+            <summary>
+            You as a message author
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Userstate.Channel">
+            <summary>
+            The channel where <see cref="P:MiniTwitch.Irc.Models.Userstate.Self"/> applies
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Userstate.EmoteSets">
+            <summary>
+            The emote sets you have
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Userstate.Nonce">
+            <summary>
+            Client nonce that of the corresponding message
+            <para>Note: Can be <see cref="F:System.String.Empty"/></para>
+            </summary>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.Userstate.Construct(System.String)">
+            <summary>
+            Construct a <see cref="T:MiniTwitch.Irc.Models.Userstate"/> from a string. Useful for testing
+            </summary>
+            <param name="rawData">The raw IRC message</param>
+            <returns><see cref="T:MiniTwitch.Irc.Models.Userstate"/> with the related data</returns>
+        </member>
+        <member name="T:MiniTwitch.Irc.Models.Whisper">
+            <summary>
+            Represents a whispered message
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Whisper.Author">
+            <summary>
+            The author of the whisper
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Whisper.Emotes">
+            <inheritdoc cref="P:MiniTwitch.Irc.Models.Privmsg.Emotes"/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Whisper.Id">
+            <inheritdoc cref="P:MiniTwitch.Irc.Models.Privmsg.Id"/>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Whisper.ThreadId">
+            <summary>
+            The index of the message
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Whisper.Content">
+            <summary>
+            The content of the message
+            </summary>
+        </member>
+        <member name="P:MiniTwitch.Irc.Models.Whisper.IsAction">
+            <summary>
+            <inheritdoc cref="P:MiniTwitch.Irc.Models.Privmsg.IsAction"/>
+            </summary>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.Whisper.Construct(System.String)">
+            <summary>
+            Construct a <see cref="T:MiniTwitch.Irc.Models.Whisper"/> from a string. Useful for testing
+            </summary>
+            <param name="rawData">The raw IRC message</param>
+            <returns><see cref="T:MiniTwitch.Irc.Models.Whisper"/> with the related data</returns>
+        </member>
+        <member name="M:MiniTwitch.Irc.Models.Whisper.op_Implicit(MiniTwitch.Irc.Models.Whisper)~System.String">
+            <inheritdoc/>
+        </member>
+    </members>
+</doc>
