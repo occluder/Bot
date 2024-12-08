@@ -12,7 +12,6 @@
     <PackageReference Include="Dapper" Version="2.1.44" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
     <PackageReference Include="MiniTwitch.Helix" Version="1.0.0" />
     <PackageReference Include="MiniTwitch.PubSub" Version="2.0.0" />
     <PackageReference Include="Npgsql" Version="9.0.1" />
@@ -25,10 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!--<PackageReference Include="MiniTwitch.Irc" Version="2.0.0" />-->
-    <Reference Include="MiniTwitch.Irc">
-      <HintPath>MiniTwitch.Irc.dll</HintPath>
-    </Reference>
+    <PackageReference Include="MiniTwitch.Irc" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup>
