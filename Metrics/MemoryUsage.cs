@@ -12,7 +12,7 @@ public class MemoryUsage: IMetric
         if (++_invc % 4 != 0)
             return;
 
-        await PostgresQueryLock.WaitAsync();
+        await LiveConnectionLock.WaitAsync();
         try
         {
             long ts = Unix();
@@ -50,7 +50,7 @@ public class MemoryUsage: IMetric
                 },
             ];
 
-            await Postgres.ExecuteAsync(
+            await LiveDbConnection.ExecuteAsync(
                 "insert into metrics_memory values (@Measurement, @Bytes, @Ts)",
                 metrics
             );
@@ -61,7 +61,7 @@ public class MemoryUsage: IMetric
         }
         finally
         {
-            PostgresQueryLock.Release();
+            LiveConnectionLock.Release();
         }
     }
 }

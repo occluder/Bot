@@ -20,7 +20,7 @@ public class NameCheck: ChatCommand
 
     public override async ValueTask Run(Privmsg message)
     {
-        IEnumerable<UserDto> queryResult = await Postgres.QueryAsync<UserDto>(
+        IEnumerable<UserDto> queryResult = await LiveDbConnection.QueryAsync<UserDto>(
             """
                 select username, user_id
                 from users

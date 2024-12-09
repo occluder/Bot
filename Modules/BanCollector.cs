@@ -16,7 +16,7 @@ internal class BanCollector: BotModule
 
     public BanCollector()
     {
-        _timer = new(TimeSpan.FromMinutes(1), Commit, PostgresQueryLock);
+        _timer = new(TimeSpan.FromMinutes(1), Commit, LiveConnectionLock);
     }
 
     private async ValueTask OnUserTimeout(IUserTimeout timeout)
@@ -80,7 +80,7 @@ internal class BanCollector: BotModule
         await _ss.WaitAsync();
         try
         {
-            int inserted = await Postgres.ExecuteAsync(
+            int inserted = await LiveDbConnection.ExecuteAsync(
                 "insert into chat_bans values (@Username, @UserId, @Channel, @ChannelId, @Duration, @TimeSent)",
                 _bans
             );

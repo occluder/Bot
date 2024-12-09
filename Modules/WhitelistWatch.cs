@@ -11,10 +11,10 @@ public class WhitelistWatch: BotModule
             return;
         }
 
-        await PostgresQueryLock.WaitAsync();
+        await LiveConnectionLock.WaitAsync();
         try
         {
-            await Postgres.ExecuteAsync(
+            await LiveDbConnection.ExecuteAsync(
                 """
                 insert into
                     whitelisted_message
@@ -48,7 +48,7 @@ public class WhitelistWatch: BotModule
         }
         finally
         {
-            _ = PostgresQueryLock.Release();
+            _ = LiveConnectionLock.Release();
         }
     }
 

@@ -10,13 +10,14 @@ public class NewUsers: IMetric
 
     public async Task Report()
     {
-        if (++_invc % 20 != 0) return;
+        if (++_invc % 20 != 0)
+            return;
 
         int count = 0;
-        await PostgresQueryLock.WaitAsync();
+        await LiveConnectionLock.WaitAsync();
         try
         {
-            dynamic result = await Postgres.QueryFirstAsync(
+            dynamic result = await LiveDbConnection.QueryFirstAsync(
                 "select count(*) from users where added_at > @AddedAt",
                 new
                 {
@@ -32,7 +33,7 @@ public class NewUsers: IMetric
         }
         finally
         {
-            PostgresQueryLock.Release();
+            LiveConnectionLock.Release();
         }
 
         await RedisDatabaseAsync.StringSetAsync(KEY, count, TimeSpan.FromHours(6));

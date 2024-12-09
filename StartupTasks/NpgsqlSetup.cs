@@ -1,7 +1,6 @@
 ﻿using System.Data;
 using Bot.Enums;
 using Bot.Interfaces;
-using Bot.Metrics;
 using Bot.Utils;
 using Npgsql;
 
@@ -9,16 +8,13 @@ namespace Bot.StartupTasks;
 
 public class NpgsqlSetup: IStartupTask
 {
-    private static readonly SemaphoreSlim _semaphore = new(1);
-    public static IDbConnection Postgres { get; private set; } = default!;
-
-    public static SemaphoreSlim PostgresQueryLock
+    public static SemaphoreSlim LiveConnectionLock { get; } = new(1);
+    public static IDbConnection LiveDbConnection { get; set; } = default!;
+    public static async Task<IDbConnection> NewDbConnection()
     {
-        get
-        {
-            Queries.Count++;
-            return _semaphore;
-        }
+        var conn = new NpgsqlConnection(Config.Secrets["DbConnectionString"]);
+        await conn.OpenAsync();
+        return conn;
     }
 
     public async ValueTask<StartupTaskState> Run()
@@ -28,7 +24,7 @@ public class NpgsqlSetup: IStartupTask
         {
             var conn = new NpgsqlConnection(Config.Secrets["DbConnectionString"]);
             await conn.OpenAsync();
-            Postgres = conn;
+            LiveDbConnection = conn;
         }
         catch (Exception ex)
         {

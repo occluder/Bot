@@ -29,10 +29,10 @@ public class Query: ChatCommand
     {
         int firstSpace = message.Content.IndexOf(' ') + 1;
         string sql = message.Content[firstSpace..];
-        await PostgresQueryLock.WaitAsync();
+        await LiveConnectionLock.WaitAsync();
         try
         {
-            IEnumerable<dynamic>? results = await Postgres.QueryAsync(sql, commandTimeout: 5);
+            IEnumerable<dynamic>? results = await LiveDbConnection.QueryAsync(sql, commandTimeout: 5);
             string serialized = JsonSerializer.Serialize(results, _options);
             if (serialized.Length > 450)
             {
@@ -54,7 +54,7 @@ public class Query: ChatCommand
         }
         finally
         {
-            PostgresQueryLock.Release();
+            LiveConnectionLock.Release();
         }
     }
 }

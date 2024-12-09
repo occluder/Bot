@@ -39,7 +39,7 @@ public class EditUser: ChatCommand
 
         if (response.TryPickT0(out IvrUser[] users, out _))
         {
-            await PostgresQueryLock.WaitAsync();
+            await LiveConnectionLock.WaitAsync();
             try
             {
                 IvrUser user = users.Single();
@@ -51,7 +51,7 @@ public class EditUser: ChatCommand
                     LastModified = msg.SentTimestamp.ToUnixTimeSeconds()
                 };
 
-                await Postgres.ExecuteAsync(
+                await LiveDbConnection.ExecuteAsync(
                     "insert into user_permissions values (@Username, @UserId, @Permissions, @LastModified)",
                     permission
                 );
@@ -61,7 +61,7 @@ public class EditUser: ChatCommand
             }
             finally
             {
-                PostgresQueryLock.Release();
+                LiveConnectionLock.Release();
             }
         }
         else
@@ -73,10 +73,10 @@ public class EditUser: ChatCommand
     private async ValueTask UnBlackList(Privmsg msg)
     {
         long uid = GetArgument<long>("UserId");
-        await PostgresQueryLock.WaitAsync();
+        await LiveConnectionLock.WaitAsync();
         try
         {
-            int count = await Postgres.ExecuteAsync("delete from user_permissions where user_id = @UserId", new
+            int count = await LiveDbConnection.ExecuteAsync("delete from user_permissions where user_id = @UserId", new
             {
                 UserId = uid
             });
@@ -86,7 +86,7 @@ public class EditUser: ChatCommand
         }
         finally
         {
-            PostgresQueryLock.Release();
+            LiveConnectionLock.Release();
         }
     }
 }

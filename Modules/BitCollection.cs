@@ -6,16 +6,16 @@ namespace Bot.Modules;
 internal class BitCollection: BotModule
 {
     private static readonly ILogger _logger = ForContext<BitCollection>();
-    
+
     private async ValueTask OnMessage(Privmsg message)
     {
         if (message.Bits == 0 || !ChannelsById[message.Channel.Id].IsLogged)
             return;
-        
-        await PostgresQueryLock.WaitAsync();
+
+        await LiveConnectionLock.WaitAsync();
         try
         {
-            _ = await Postgres.ExecuteAsync(
+            _ = await LiveDbConnection.ExecuteAsync(
                 "insert into bits_users values (@Username, @UserId, @Channel, @ChannelId, @BitAmount, @TimeSent)",
                 new
                 {
@@ -35,7 +35,7 @@ internal class BitCollection: BotModule
         }
         finally
         {
-            _ = PostgresQueryLock.Release();
+            _ = LiveConnectionLock.Release();
         }
     }
 

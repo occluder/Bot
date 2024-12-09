@@ -15,7 +15,7 @@ internal class ChannelsSetup: IStartupTask
         TwitchChannelDto[] channels;
         try
         {
-            channels = (await Postgres.QueryAsync<TwitchChannelDto>("select * from channels", commandTimeout: 5))
+            channels = (await LiveDbConnection.QueryAsync<TwitchChannelDto>("select * from channels", commandTimeout: 5))
                 .ToArray();
         }
         catch (Exception ex)
@@ -61,7 +61,7 @@ internal class ChannelsSetup: IStartupTask
 
     public static async Task JoinChannel(IvrUser user, int priority, bool isLogged)
     {
-        await PostgresQueryLock.WaitAsync();
+        await LiveConnectionLock.WaitAsync();
         try
         {
             TwitchChannelDto channelDto = new()
@@ -75,7 +75,7 @@ internal class ChannelsSetup: IStartupTask
                 Tags = isLogged ? null : "nologs"
             };
 
-            _ = await Postgres.ExecuteAsync(
+            _ = await LiveDbConnection.ExecuteAsync(
                 "insert into channels values (@DisplayName, @ChannelName, @ChannelId, @AvatarUrl, @Priority, @Tags, @DateAdded)",
                 channelDto
             );
@@ -87,16 +87,16 @@ internal class ChannelsSetup: IStartupTask
         }
         finally
         {
-            _ = PostgresQueryLock.Release();
+            _ = LiveConnectionLock.Release();
         }
     }
 
     public static async Task PartChannel(long channelId)
     {
-        await PostgresQueryLock.WaitAsync();
+        await LiveConnectionLock.WaitAsync();
         try
         {
-            _ = await Postgres.ExecuteAsync("delete from channels where channel_id = @ChannelId",
+            _ = await LiveDbConnection.ExecuteAsync("delete from channels where channel_id = @ChannelId",
                 new { ChannelId = channelId }
             );
 
@@ -111,7 +111,7 @@ internal class ChannelsSetup: IStartupTask
         }
         finally
         {
-            _ = PostgresQueryLock.Release();
+            _ = LiveConnectionLock.Release();
         }
     }
 }

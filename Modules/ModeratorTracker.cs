@@ -37,10 +37,10 @@ public class ModeratorTracker: BotModule
     {
         object[] vals = [.. _mods];
         _mods.Clear();
-        await PostgresQueryLock.WaitAsync();
+        await LiveConnectionLock.WaitAsync();
         try
         {
-            await Postgres.ExecuteAsync(
+            await LiveDbConnection.ExecuteAsync(
                 """
                 insert into channel_moderator (
                     username,
@@ -66,7 +66,7 @@ public class ModeratorTracker: BotModule
         }
         finally
         {
-            PostgresQueryLock.Release();
+            LiveConnectionLock.Release();
         }
     }
 

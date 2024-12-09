@@ -25,7 +25,7 @@ internal class GifterCollector: BotModule
             return;
         }
 
-        await PostgresQueryLock.WaitAsync();
+        await LiveConnectionLock.WaitAsync();
         try
         {
             await InsertGifter(
@@ -65,7 +65,7 @@ internal class GifterCollector: BotModule
         }
         finally
         {
-            PostgresQueryLock.Release();
+            LiveConnectionLock.Release();
         }
     }
 
@@ -93,7 +93,7 @@ internal class GifterCollector: BotModule
         }
 
         ulong newId = (ulong)notice.TmiSentTs;
-        await PostgresQueryLock.WaitAsync();
+        await LiveConnectionLock.WaitAsync();
         try
         {
             await InsertGifter(
@@ -120,7 +120,7 @@ internal class GifterCollector: BotModule
         }
         finally
         {
-            PostgresQueryLock.Release();
+            LiveConnectionLock.Release();
         }
     }
 
@@ -135,7 +135,7 @@ internal class GifterCollector: BotModule
     {
         var giftIdEncoded = _encoder.Encode(giftId);
         _logger.Debug("Gift ({Count}): {Id}", giftAmount, giftIdEncoded);
-        return Postgres.ExecuteAsync(
+        return LiveDbConnection.ExecuteAsync(
             """
             insert into 
                 sub_gifter 
@@ -172,7 +172,7 @@ internal class GifterCollector: BotModule
 
     private static Task<int> InsertRecipient(object[] objects)
     {
-        return Postgres.ExecuteAsync(
+        return LiveDbConnection.ExecuteAsync(
             """
             insert into
                 sub_recipient

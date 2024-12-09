@@ -26,12 +26,12 @@ public class ChannelMessages: IMetric
         if (++_invc % 4 != 0)
             return;
 
-        await PostgresQueryLock.WaitAsync();
+        await LiveConnectionLock.WaitAsync();
         try
         {
             Point[] values = _messageCount.Select(kvp => new Point(ChannelsById[kvp.Key].ChannelName, kvp.Value))
                 .ToArray();
-            await Postgres.ExecuteAsync("insert into metrics_channel_messages values (@Channel, @MessageCount)",
+            await LiveDbConnection.ExecuteAsync("insert into metrics_channel_messages values (@Channel, @MessageCount)",
                 values);
         }
         catch (Exception ex)
@@ -40,7 +40,7 @@ public class ChannelMessages: IMetric
         }
         finally
         {
-            PostgresQueryLock.Release();
+            LiveConnectionLock.Release();
         }
 
         foreach ((long channelId, _) in _messageCount)

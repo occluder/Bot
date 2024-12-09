@@ -22,10 +22,10 @@ public class FollowersCollector: BotModule
         if (_inserted % 50 == 0 && Followers.Count < MAX_REDIS_LIST_SIZE) return;
         FollowData[] redisFollowers = (await Followers.GetRangeAsync()).ToArray();
         _logger.Verbose("Attempting to insert {FollowerCount} followers", redisFollowers.Length);
-        await PostgresQueryLock.WaitAsync();
+        await LiveConnectionLock.WaitAsync();
         try
         {
-            int inserted = await Postgres.ExecuteAsync(
+            int inserted = await LiveDbConnection.ExecuteAsync(
                 "insert into users values (@Username, @UserId, @TimeFollowed) " +
                 "on conflict on constraint pk_users do nothing", redisFollowers);
 
@@ -38,7 +38,7 @@ public class FollowersCollector: BotModule
         }
         finally
         {
-            PostgresQueryLock.Release();
+            LiveConnectionLock.Release();
         }
     }
 

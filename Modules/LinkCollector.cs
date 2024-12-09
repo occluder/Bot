@@ -22,7 +22,7 @@ internal class LinkCollector: BotModule
 
     public LinkCollector()
     {
-        _timer = new(TimeSpan.FromMinutes(5), Commit, PostgresQueryLock);
+        _timer = new(TimeSpan.FromMinutes(5), Commit, LiveConnectionLock);
     }
 
     private async ValueTask OnMessage(Privmsg arg)
@@ -68,7 +68,7 @@ internal class LinkCollector: BotModule
         await _ss.WaitAsync();
         try
         {
-            int inserted = await Postgres.ExecuteAsync(
+            int inserted = await LiveDbConnection.ExecuteAsync(
                 "insert into chat_links values " +
                 "(@Username, @UserId, @Channel, @ChannelId, @LinkText, @TimeSent)",
                 _links

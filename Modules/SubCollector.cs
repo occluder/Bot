@@ -15,7 +15,7 @@ public class SubCollector: BotModule
 
     public SubCollector()
     {
-        _timer = new(TimeSpan.FromHours(2), Commit, PostgresQueryLock);
+        _timer = new(TimeSpan.FromHours(2), Commit, LiveConnectionLock);
     }
 
     private static async ValueTask OnSub(ISubNotice notice)
@@ -55,7 +55,7 @@ public class SubCollector: BotModule
         _logger.Debug("Attempting to insert {SubCount} subs", subs.Length);
         try
         {
-            int inserted = await Postgres.ExecuteAsync(
+            int inserted = await LiveDbConnection.ExecuteAsync(
                 "insert into subscriptions values " +
                 "(@Username, @UserId, @Channel, @ChannelId, @CumulativeMonths, @Tier, @TimeSent)",
                 subs

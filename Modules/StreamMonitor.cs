@@ -136,10 +136,10 @@ internal class StreamMonitor: BotModule
             Timestamp = Unix()
         };
 
-        await PostgresQueryLock.WaitAsync();
+        await LiveConnectionLock.WaitAsync();
         try
         {
-            await Postgres.ExecuteAsync(
+            await LiveDbConnection.ExecuteAsync(
                 $"insert into channel_stream values (@ChannelName, @ChannelId, '{type}', @Title, @Game, @Timestamp)",
                 channelObj, commandTimeout: 10
             );
@@ -150,7 +150,7 @@ internal class StreamMonitor: BotModule
         }
         finally
         {
-            _ = PostgresQueryLock.Release();
+            _ = LiveConnectionLock.Release();
         }
     }
 
