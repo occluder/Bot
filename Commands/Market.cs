@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using System.Text;
 using System.Text.Json;
 using Bot.Enums;
@@ -124,11 +124,12 @@ public class Market: ChatCommand
 
         sb.Append("Avg: ");
         sb.Append(mostRecent.MovingAvg > 0 ? $"{mostRecent.MovingAvg:0.##}P" : "N/A");
+        sb.Append(", ");
         if (monthAgo is not null)
         {
-            sb.Append($" ({calcChange(mostRecent, monthAgo):+0.##;-0.##}% this month)");
+            sb.Append($"Trend: {monthAgo.MovingAvg:0.#}P→{mostRecent.MovingAvg:0.#}P");
+            sb.Append($" ({calcChange(mostRecent, monthAgo):+0.##;-0.##}%),");
         }
-        sb.Append(", ");
         sb.Append($"Recently sold: {volumes}");
 
         return sb.ToString();
