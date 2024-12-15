@@ -96,24 +96,30 @@ public class Market: ChatCommand
                 .Where(o => o.Datetime <= mostRecentR0.Datetime.AddDays(-30))
                 .MaxBy(x => x.Datetime);
 
-            sb.Append("Avg: R0 ");
-            sb.Append(mostRecentR0.MovingAvg > 0 ? $"{mostRecentR0.MovingAvg:0.##}P" : "N/A");
+            sb.Append("Avg: (R0) ");
             if (monthAgoR0 is not null)
             {
                 float changeR0 = calcChange(mostRecentR0, monthAgoR0);
-                sb.Append($" ({changeR0:+0.##;-0.##}%)");
+                sb.Append($"{monthAgoR0.MovingAvg:0.#}P→{mostRecentR0.MovingAvg:0.#} ({changeR0:+0.##;-0.##}%)");
+            }
+            else
+            {
+                sb.Append(mostRecentR0.MovingAvg > 0 ? $"{mostRecentR0.MovingAvg:0.##}P" : "N/A");
             }
 
-            sb.Append($", R{maxRank} ");
-            sb.Append(mostRecentMax.MovingAvg > 0 ? $"{mostRecentMax.MovingAvg:0.##}P" : "N/A");
+            sb.Append($"| (R{maxRank}) ");
             if (monthAgoMax is not null)
             {
                 float changeMax = calcChange(mostRecentMax, monthAgoMax);
-                sb.Append($" ({changeMax:+0.##;-0.##}%)");
+                sb.Append($"{monthAgoMax.MovingAvg:0.#}P→{mostRecentMax.MovingAvg:0.#} ({changeMax:+0.##;-0.##}%)");
+            }
+            else
+            {
+                sb.Append(mostRecentMax.MovingAvg > 0 ? $"{mostRecentMax.MovingAvg:0.##}P" : "N/A");
             }
 
             sb.Append(", ");
-            sb.Append($"Recently sold: {volumes} ({volumesMax} R{maxRank})");
+            sb.Append($"Recently sold: (R0) {volumes - volumesMax} | (R{maxRank}) {volumesMax}");
             return sb.ToString();
         }
 
@@ -123,12 +129,15 @@ public class Market: ChatCommand
             .MaxBy(x => x.Datetime);
 
         sb.Append("Avg: ");
-        sb.Append(mostRecent.MovingAvg > 0 ? $"{mostRecent.MovingAvg:0.##}P" : "N/A");
-        sb.Append(", ");
         if (monthAgo is not null)
         {
-            sb.Append($"Trend: {monthAgo.MovingAvg:0.#}P→{mostRecent.MovingAvg:0.#}P");
+            sb.Append($"{monthAgo.MovingAvg:0.#}P→{mostRecent.MovingAvg:0.#}P");
             sb.Append($" ({calcChange(mostRecent, monthAgo):+0.##;-0.##}%),");
+        }
+        else
+        {
+            sb.Append(mostRecent.MovingAvg > 0 ? $"{mostRecent.MovingAvg:0.##}P" : "N/A");
+            sb.Append(", ");
         }
         sb.Append($"Recently sold: {volumes}");
 
