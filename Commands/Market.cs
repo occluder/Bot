@@ -100,7 +100,7 @@ public class Market: ChatCommand
             if (monthAgoR0 is not null)
             {
                 float changeR0 = calcChange(mostRecentR0, monthAgoR0);
-                sb.Append($"{monthAgoR0.MovingAvg:0.#}P→{mostRecentR0.MovingAvg:0.#} ({changeR0:+0.##;-0.##}%)");
+                sb.Append($"{monthAgoR0.MovingAvg:0.#}P→{mostRecentR0.MovingAvg:0.#}P ({changeR0:+0.##;-0.##}%)");
             }
             else
             {
@@ -111,7 +111,7 @@ public class Market: ChatCommand
             if (monthAgoMax is not null)
             {
                 float changeMax = calcChange(mostRecentMax, monthAgoMax);
-                sb.Append($"{monthAgoMax.MovingAvg:0.#}P→{mostRecentMax.MovingAvg:0.#} ({changeMax:+0.##;-0.##}%)");
+                sb.Append($"{monthAgoMax.MovingAvg:0.#}P→{mostRecentMax.MovingAvg:0.#}P ({changeMax:+0.##;-0.##}%)");
             }
             else
             {
