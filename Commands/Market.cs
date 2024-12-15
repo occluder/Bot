@@ -107,7 +107,7 @@ public class Market: ChatCommand
                 sb.Append(mostRecentR0.MovingAvg > 0 ? $"{mostRecentR0.MovingAvg:0.##}P" : "N/A");
             }
 
-            sb.Append($"| (R{maxRank}) ");
+            sb.Append($" | (R{maxRank}) ");
             if (monthAgoMax is not null)
             {
                 float changeMax = calcChange(mostRecentMax, monthAgoMax);
