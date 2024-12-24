@@ -2,32 +2,36 @@
 using Bot.Models;
 using Bot.Utils;
 using CachingFramework.Redis.Contracts.RedisObjects;
+using MiniTwitch.PubSub.Interfaces;
+using MiniTwitch.PubSub.Models;
 
 namespace Bot.Modules;
 
 public class WarframeAlerts: BotModule
 {
-    private static string[] _items = ["orokin catalyst", "orokin reactor", "forma", "exilus"];
-    private static IRedisSet<string> Ids => Collections.GetRedisSet<string>("warframe:data:worldstate_ids");
-    private static readonly JsonSerializerOptions _options = new()
+    static readonly string[] _items = ["orokin catalyst", "orokin reactor", "forma", "exilus"];
+    static IRedisSet<string> Ids => Collections.GetRedisSet<string>("warframe:data:worldstate_ids");
+    static string[] _channels = [];
+    static readonly JsonSerializerOptions _options = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
-    private readonly BackgroundTimer _timer;
+    readonly BackgroundTimer _timer;
 
     public WarframeAlerts()
     {
         _timer = new(TimeSpan.FromMinutes(5), CheckWorldstate);
     }
 
-    private async Task CheckWorldstate()
+    static async Task CheckWorldstate()
     {
+        _channels = (await Collections.GetRedisList<string>("warframe:alert_channels").GetRangeAsync()).ToArray();
         await CheckAlerts();
         await CheckInvasions();
     }
 
-    private async Task CheckAlerts()
+    static async Task CheckAlerts()
     {
         var alertReq = await GetFromRequest<Alert[]>("https://api.warframestat.us/pc/alerts?language=en", _options);
         if (!alertReq.IsT0)
@@ -49,12 +53,12 @@ public class WarframeAlerts: BotModule
             string lower = rewardStr.ToLower();
             if (_items.Any(lower.Contains))
             {
-                await MainClient.SendMessage("pajlada", $"@warframers pajaDink 🚨 {rewardStr} alert on {missionName} ({minLevel}-{maxLevel})");
+                await MainClient.SendMessage(_channels, $"@warframers pajaDink 🚨 {rewardStr} alert on {missionName} ({minLevel}-{maxLevel})");
             }
         }
     }
 
-    private async Task CheckInvasions()
+    static async Task CheckInvasions()
     {
         var invasionReq = await GetFromRequest<Invasion[]>("https://api.warframestat.us/pc/invasions?language=en", _options);
         if (!invasionReq.IsT0)
@@ -73,12 +77,12 @@ public class WarframeAlerts: BotModule
             string lower = rewardStr.ToLower();
             if (_items.Any(lower.Contains))
             {
-                await MainClient.SendMessage("pajlada", $"@warframers pajaDink 🚨 {rewardStr} invasion on {invasion.NodeKey}");
+                await MainClient.SendMessage(_channels, $"@warframers pajaDink 🚨 {rewardStr} invasion on {invasion.NodeKey}");
             }
         }
     }
 
-    private static async Task<bool> HandleId(string id)
+    static async Task<bool> HandleId(string id)
     {
         if (await Ids.ContainsAsync(id))
         {
@@ -88,15 +92,36 @@ public class WarframeAlerts: BotModule
         await Ids.AddAsync(id);
         return true;
     }
+    static async ValueTask OnStreamUp(ChannelId channelId, IStreamUp _)
+    {
+        if (await HelixClient.GetChannelInformation(channelId) is not { Success: true } result)
+        {
+            return;
+        }
+
+        string title = result.Value.Data[0].Title;
+        string game = result.Value.Data[0].GameName;
+        if (channelId == 31557216
+            && title.Contains("devstream", StringComparison.OrdinalIgnoreCase))
+        {
+            await MainClient.SendMessage(
+            _channels,
+                $"@warframers pajaDink Now live: {title} [{game}]",
+                result.Success
+            );
+        }
+    }
 
     protected override ValueTask OnModuleEnabled()
     {
+        TwitchPubSub.OnStreamUp += OnStreamUp;
         _timer.Start();
         return default;
     }
 
     protected override async ValueTask OnModuleDisabled()
     {
+        TwitchPubSub.OnStreamUp -= OnStreamUp;
         await _timer.StopAsync();
     }
 }

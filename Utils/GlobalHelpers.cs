@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using MiniTwitch.Irc;
 
 namespace Bot.Utils;
 
@@ -69,5 +70,13 @@ internal static class GlobalHelpers
         if (time.Hours > 0)
             return $"{time:h'h 'mm'm 'ss's'}";
         return time.Minutes > 0 ? $"{time:mm'm 'ss's'}" : $"{time:ss's'}";
+    }
+
+    public static async ValueTask SendMessage(this IrcClient client, string[] channels, string message, bool action = false, string? nonce = null, CancellationToken cancellationToken = default(CancellationToken))
+    {
+        foreach (string channel in channels)
+        {
+            await client.SendMessage(channel, message, action, nonce, cancellationToken);
+        }
     }
 }
