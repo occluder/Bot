@@ -1,7 +1,6 @@
 ﻿using System.Data;
 using Bot.Enums;
 using Bot.Interfaces;
-using Bot.Utils;
 using Npgsql;
 
 namespace Bot.StartupTasks;
@@ -32,8 +31,7 @@ public class NpgsqlSetup: IStartupTask
             return StartupTaskState.Failed;
         }
 
-        ForContext("Version", typeof(NpgsqlConnection).GetAssemblyVersion()).ForContext("ShowProperties", true)
-            .Information("Connected to Postgres database");
+        ForContext<NpgsqlSetup>().Information("Connected to Postgres database");
 
         return StartupTaskState.Completed;
     }

@@ -1,6 +1,5 @@
 ﻿using Bot.Enums;
 using Bot.Interfaces;
-using Bot.Utils;
 using Microsoft.Extensions.Logging;
 using MiniTwitch.Irc;
 
@@ -26,8 +25,7 @@ internal class MainClientSetup: IStartupTask
             return StartupTaskState.Failed;
         }
 
-        ForContext("Version", typeof(IrcClient).GetAssemblyVersion()).ForContext("ShowProperties", true)
-            .Information("MainClient setup done");
+        ForContext<MainClientSetup>().Information("MainClient setup done");
         return StartupTaskState.Completed;
     }
 }

@@ -2,7 +2,6 @@
 using System.Text.Json.Serialization;
 using Bot.Enums;
 using Bot.Interfaces;
-using Bot.Utils;
 using CachingFramework.Redis;
 using CachingFramework.Redis.Contracts.Providers;
 using StackExchange.Redis;
@@ -26,7 +25,7 @@ public class RedisSetup: IStartupTask
                     $"{Config.Links["Redis"]},password={Config.Secrets["RedisPass"]}");
             context = new RedisContext(multiplexer,
                 new JsonSerializer(new JsonSerializerOptions
-                    { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull }));
+                { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull }));
             RedisDatabaseAsync = multiplexer.GetDatabase(0);
         }
         catch (Exception)
@@ -37,8 +36,7 @@ public class RedisSetup: IStartupTask
 
         Cache = context.Cache;
         Collections = context.Collections;
-        ForContext("Version", typeof(RedisContext).GetAssemblyVersion()).ForContext("ShowProperties", true)
-            .Information("Connected to Redis");
+        ForContext<RedisSetup>().Information("Connected to Redis");
 
         return StartupTaskState.Completed;
     }

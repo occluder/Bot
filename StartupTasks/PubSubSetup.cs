@@ -1,6 +1,5 @@
 ﻿using Bot.Enums;
 using Bot.Interfaces;
-using Bot.Utils;
 using Microsoft.Extensions.Logging;
 using MiniTwitch.PubSub;
 
@@ -21,8 +20,7 @@ internal class PubSubSetup: IStartupTask
             return StartupTaskState.Failed;
         }
 
-        ForContext("Version", typeof(PubSubClient).GetAssemblyVersion()).ForContext("ShowProperties", true)
-            .Information("PubSub setup done");
+        ForContext<PubSubSetup>().Information("PubSub setup done");
 
         return StartupTaskState.Completed;
     }
