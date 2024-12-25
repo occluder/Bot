@@ -148,7 +148,8 @@ internal class GifterCollector: BotModule
                 @GiftAmount, 
                 @Tier, 
                 @TimeSent
-            )
+            ) on conflict(gift_id) do update set
+                gift_amount = sub_gifter.gift_amount + excluded.gift_amount
             """,
             new
             {
