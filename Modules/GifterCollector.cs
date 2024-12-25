@@ -61,7 +61,7 @@ internal class GifterCollector: BotModule
         }
         catch (Exception ex)
         {
-            _logger.ForContext("GiftNoticeInfo", notice, true).Error(ex, "Failed to insert gifter");
+            _logger.Error(ex, "Failed to insert gifter: {@GifterNotice}", notice);
         }
         finally
         {
