@@ -129,8 +129,8 @@ public class DiscordSink: ILogEventSink
 
     private static string FormatExceptionMessage(string message)
     {
-        if (message.Length > 1900)
-            message = message[..1900] + " ...";
+        if (message.Length > 1000)
+            message = message[..1000] + " ...";
         if (!string.IsNullOrWhiteSpace(message))
             message = $"```{message}```";
 
