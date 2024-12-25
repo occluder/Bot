@@ -17,7 +17,8 @@ internal class LinkCollector: BotModule
     static readonly List<LinkData> _links = new(MAX_LINKS);
     static readonly long[] _knownBots =
     [
-        69861108, 100135110, 237719657, 1564983, 513205789, 254941918, 82008718, 754201843, 19264788, 68136884, 122770725
+        69861108, 100135110, 237719657, 1564983, 513205789, 254941918,
+        82008718, 754201843, 19264788, 68136884, 122770725, 62541963
     ];
     readonly BackgroundTimer _timer;
 
