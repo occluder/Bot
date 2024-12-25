@@ -7,18 +7,19 @@ namespace Bot.Modules;
 
 internal class LinkCollector: BotModule
 {
-    private const int MAX_LINKS = 500;
-
-    private static readonly Regex _regex = new(
+    const int MAX_LINKS = 100;
+    static readonly Regex _regex = new(
         @"https:[\\/][\\/](www\.|[-a-zA-Z0-9]+\.)?[-a-zA-Z0-9@:%._\+~#=]{3,}(\.[a-zA-Z]{2,10})+(/([-a-zA-Z0-9@:%._\+~#=/?&]+)?)?\b",
         RegexOptions.Compiled,
         TimeSpan.FromMilliseconds(50)
     );
-
-    private static readonly ILogger _logger = ForContext<LinkCollector>();
-    private static readonly List<LinkData> _links = new(MAX_LINKS);
-    private static readonly SemaphoreSlim _ss = new(1);
-    private readonly BackgroundTimer _timer;
+    static readonly ILogger _logger = ForContext<LinkCollector>();
+    static readonly List<LinkData> _links = new(MAX_LINKS);
+    static readonly long[] _knownBots =
+    [
+        69861108, 100135110, 237719657, 1564983, 513205789, 254941918, 82008718, 754201843, 19264788, 68136884, 122770725
+    ];
+    readonly BackgroundTimer _timer;
 
     public LinkCollector()
     {
@@ -32,6 +33,11 @@ internal class LinkCollector: BotModule
             return;
         }
 
+        if (_knownBots.AsSpan().Contains(arg.Author.Id))
+        {
+            return;
+        }
+
         try
         {
             if (_regex.Match(arg.Content) is { Success: true, Length: > 10 } match && match.Value[0] == 'h')
@@ -39,7 +45,6 @@ internal class LinkCollector: BotModule
                 if (_links.Count >= MAX_LINKS)
                     await Commit();
 
-                await _ss.WaitAsync();
                 LinkData link = new(
                     arg.Author.Name,
                     arg.Author.Id,
@@ -50,7 +55,6 @@ internal class LinkCollector: BotModule
                 );
 
                 _links.Add(link);
-                _ = _ss.Release();
                 _logger.Verbose("Link added: {@LinkInfo} ({Total})", link, _links.Count);
             }
         }
@@ -65,10 +69,10 @@ internal class LinkCollector: BotModule
         if (!this.Enabled)
             return;
 
-        await _ss.WaitAsync();
         try
         {
-            int inserted = await LiveDbConnection.ExecuteAsync(
+            using var conn = await NewDbConnection();
+            int inserted = await conn.ExecuteAsync(
                 "insert into chat_links values " +
                 "(@Username, @UserId, @Channel, @ChannelId, @LinkText, @TimeSent)",
                 _links
@@ -80,10 +84,6 @@ internal class LinkCollector: BotModule
         catch (Exception ex)
         {
             _logger.Error(ex, "Failed to insert links into table");
-        }
-        finally
-        {
-            _ = _ss.Release();
         }
     }
 
