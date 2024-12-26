@@ -76,7 +76,7 @@ internal class LinkCollector: BotModule
             int inserted = await conn.ExecuteAsync(
                 "insert into chat_links values " +
                 "(@Username, @UserId, @Channel, @ChannelId, @LinkText, @TimeSent)",
-                _links
+                _links.ToArray()
             );
 
             _links.Clear();
