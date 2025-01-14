@@ -37,10 +37,10 @@ public class ModeratorTracker: BotModule
     {
         object[] vals = [.. _mods];
         _mods.Clear();
-        await LiveConnectionLock.WaitAsync();
+        using var conn = await NewDbConnection();
         try
         {
-            await LiveDbConnection.ExecuteAsync(
+            await conn.ExecuteAsync(
                 """
                 insert into channel_moderator (
                     username,
@@ -63,10 +63,6 @@ public class ModeratorTracker: BotModule
         catch (Exception ex)
         {
             Error(ex, "Failed to insert mods");
-        }
-        finally
-        {
-            LiveConnectionLock.Release();
         }
     }
 

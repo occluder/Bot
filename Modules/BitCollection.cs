@@ -12,10 +12,10 @@ internal class BitCollection: BotModule
         if (message.Bits == 0 || !ChannelsById[message.Channel.Id].IsLogged)
             return;
 
-        await LiveConnectionLock.WaitAsync();
+        using var conn = await NewDbConnection();
         try
         {
-            _ = await LiveDbConnection.ExecuteAsync(
+            _ = await conn.ExecuteAsync(
                 "insert into bits_users values (@Username, @UserId, @Channel, @ChannelId, @BitAmount, @TimeSent)",
                 new
                 {
@@ -33,9 +33,9 @@ internal class BitCollection: BotModule
                 message.Author.Name, message.Bits, message.Channel.Name
             );
         }
-        finally
+        catch (Exception ex)
         {
-            _ = LiveConnectionLock.Release();
+            _logger.Error(ex, "Failed to insert bits for {User} in #{Channel}", message.Author.Name, message.Channel.Name);
         }
     }
 

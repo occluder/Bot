@@ -29,14 +29,14 @@ public class Query: ChatCommand
     {
         int firstSpace = message.Content.IndexOf(' ') + 1;
         string sql = message.Content[firstSpace..];
-        await LiveConnectionLock.WaitAsync();
+        using var conn = await NewDbConnection();
         try
         {
-            IEnumerable<dynamic>? results = await LiveDbConnection.QueryAsync(sql, commandTimeout: 5);
+            IEnumerable<dynamic>? results = await conn.QueryAsync(sql, commandTimeout: 5);
             string serialized = JsonSerializer.Serialize(results, _options);
             if (serialized.Length > 450)
             {
-                OneOf<string, Exception> uploadResult = await TextUploadService.UploadToHaste(serialized);
+                var uploadResult = await TextUploadService.UploadToHaste(serialized);
                 if (!uploadResult.IsT0)
                     await message.ReplyWith($"{uploadResult.AsT1.GetType().Name}: {uploadResult.AsT1.Message}");
                 else
@@ -51,10 +51,6 @@ public class Query: ChatCommand
         {
             ForContext<Query>().Error(ex, "Query command failed");
             await message.ReplyWith($"{ex.GetType().Name}: {ex.Message}");
-        }
-        finally
-        {
-            LiveConnectionLock.Release();
         }
     }
 }

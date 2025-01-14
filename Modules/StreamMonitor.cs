@@ -126,10 +126,10 @@ internal class StreamMonitor: BotModule
             Timestamp = Unix()
         };
 
-        await LiveConnectionLock.WaitAsync();
+        using var conn = await NewDbConnection();
         try
         {
-            await LiveDbConnection.ExecuteAsync(
+            await conn.ExecuteAsync(
                 $"insert into channel_stream values (@ChannelName, @ChannelId, '{type}', @Title, @Game, @Timestamp)",
                 channelObj, commandTimeout: 10
             );
@@ -137,10 +137,6 @@ internal class StreamMonitor: BotModule
         catch (Exception ex)
         {
             _logger.Error(ex, "Failed to insert channel stream {@Object}", channelObj);
-        }
-        finally
-        {
-            _ = LiveConnectionLock.Release();
         }
     }
 

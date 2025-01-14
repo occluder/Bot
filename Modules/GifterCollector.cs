@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Data;
 using Bot.Models;
 using MiniTwitch.Irc.Enums;
 using MiniTwitch.Irc.Interfaces;
@@ -25,7 +26,7 @@ internal class GifterCollector: BotModule
             return;
         }
 
-        await LiveConnectionLock.WaitAsync();
+        using var conn = await NewDbConnection();
         try
         {
             await InsertGifter(
@@ -34,7 +35,8 @@ internal class GifterCollector: BotModule
                 notice.Channel,
                 notice.GiftCount,
                 notice.SubPlan,
-                notice.SentTimestamp.ToUnixTimeSeconds()
+                notice.SentTimestamp.ToUnixTimeSeconds(),
+                conn
             );
 
             var recipients = _recipients
@@ -57,15 +59,11 @@ internal class GifterCollector: BotModule
             {
                 _recipients.TryRemove(recipient.Key, out _);
             }
-            await InsertRecipient(recipients);
+            await InsertRecipient(recipients, conn);
         }
         catch (Exception ex)
         {
             _logger.Error(ex, "Failed to insert gifter: {@GifterNotice}", notice);
-        }
-        finally
-        {
-            LiveConnectionLock.Release();
         }
     }
 
@@ -93,7 +91,7 @@ internal class GifterCollector: BotModule
         }
 
         ulong newId = (ulong)notice.TmiSentTs;
-        await LiveConnectionLock.WaitAsync();
+        using var conn = await NewDbConnection();
         try
         {
             await InsertGifter(
@@ -102,25 +100,22 @@ internal class GifterCollector: BotModule
                 notice.Channel,
                 1,
                 notice.SubPlan,
-                notice.SentTimestamp.ToUnixTimeSeconds()
+                notice.SentTimestamp.ToUnixTimeSeconds(),
+                conn
             );
 
             await InsertRecipient([
                 new
-                    {
-                        GiftId = _encoder.Encode(newId),
-                        RecipientName = notice.Recipient.Name,
-                        RecipientId = notice.Recipient.Id
-                    }
-            ]);
+                {
+                    GiftId = _encoder.Encode(newId),
+                    RecipientName = notice.Recipient.Name,
+                    RecipientId = notice.Recipient.Id,
+                }
+            ], conn);
         }
         catch (Exception ex)
         {
             _logger.Error(ex, "Error inserting something");
-        }
-        finally
-        {
-            LiveConnectionLock.Release();
         }
     }
 
@@ -130,12 +125,13 @@ internal class GifterCollector: BotModule
         IBasicChannel channel,
         int giftAmount,
         SubPlan tier,
-        long timeSent
+        long timeSent,
+        IDbConnection connection
     )
     {
         var giftIdEncoded = _encoder.Encode(giftId);
         _logger.Debug("Gift ({Count}): {Id}", giftAmount, giftIdEncoded);
-        return LiveDbConnection.ExecuteAsync(
+        return connection.ExecuteAsync(
             """
             insert into 
                 sub_gifter 
@@ -171,9 +167,9 @@ internal class GifterCollector: BotModule
         );
     }
 
-    private static Task<int> InsertRecipient(object[] objects)
+    private static Task<int> InsertRecipient(object[] objects, IDbConnection connection)
     {
-        return LiveDbConnection.ExecuteAsync(
+        return connection.ExecuteAsync(
             """
             insert into
                 sub_recipient

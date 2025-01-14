@@ -26,21 +26,21 @@ public class ChannelMessages: IMetric
         if (++_invc % 4 != 0)
             return;
 
-        await LiveConnectionLock.WaitAsync();
+        using var conn = await NewDbConnection();
         try
         {
-            Point[] values = _messageCount.Select(kvp => new Point(ChannelsById[kvp.Key].ChannelName, kvp.Value))
+            Point[] values = _messageCount
+                .Select(kvp => new Point(ChannelsById[kvp.Key].ChannelName, kvp.Value))
                 .ToArray();
-            await LiveDbConnection.ExecuteAsync("insert into metrics_channel_messages values (@Channel, @MessageCount)",
-                values);
+
+            await conn.ExecuteAsync(
+                "insert into metrics_channel_messages values (@Channel, @MessageCount)",
+                values
+            );
         }
         catch (Exception ex)
         {
             ForContext<ChannelMessages>().Error(ex, "Something went wrong {InvocationCount}", _invc);
-        }
-        finally
-        {
-            LiveConnectionLock.Release();
         }
 
         foreach ((long channelId, _) in _messageCount)

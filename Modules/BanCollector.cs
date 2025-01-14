@@ -16,7 +16,7 @@ internal class BanCollector: BotModule
 
     public BanCollector()
     {
-        _timer = new(TimeSpan.FromMinutes(1), Commit, LiveConnectionLock);
+        _timer = new(TimeSpan.FromMinutes(1), Commit);
     }
 
     private async ValueTask OnUserTimeout(IUserTimeout timeout)
@@ -78,9 +78,10 @@ internal class BanCollector: BotModule
 
         _logger.Debug("Attempting to insert {BanCount} ban logs", _bans.Count);
         await _ss.WaitAsync();
+        using var conn = await NewDbConnection();
         try
         {
-            int inserted = await LiveDbConnection.ExecuteAsync(
+            int inserted = await conn.ExecuteAsync(
                 "insert into chat_bans values (@Username, @UserId, @Channel, @ChannelId, @Duration, @TimeSent)",
                 _bans
             );

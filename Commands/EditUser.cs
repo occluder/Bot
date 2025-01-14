@@ -1,5 +1,4 @@
-﻿using System.Net;
-using Bot.Enums;
+﻿using Bot.Enums;
 using Bot.Models;
 using MiniTwitch.Irc.Models;
 
@@ -34,12 +33,11 @@ public class EditUser: ChatCommand
     private async ValueTask BlackList(Privmsg msg)
     {
         long uid = GetArgument<long>("UserId");
-        OneOf<IvrUser[], HttpStatusCode, Exception> response =
-            await GetFromRequest<IvrUser[]>($"https://api.ivr.fi/v2/twitch/user?id={uid}");
+        var response = await GetFromRequest<IvrUser[]>($"https://api.ivr.fi/v2/twitch/user?id={uid}");
 
         if (response.TryPickT0(out IvrUser[] users, out _))
         {
-            await LiveConnectionLock.WaitAsync();
+            using var conn = await NewDbConnection();
             try
             {
                 IvrUser user = users.Single();
@@ -51,7 +49,7 @@ public class EditUser: ChatCommand
                     LastModified = msg.SentTimestamp.ToUnixTimeSeconds()
                 };
 
-                await LiveDbConnection.ExecuteAsync(
+                await conn.ExecuteAsync(
                     "insert into user_permissions values (@Username, @UserId, @Permissions, @LastModified)",
                     permission
                 );
@@ -59,9 +57,10 @@ public class EditUser: ChatCommand
                 UserPermissions.Add(long.Parse(user.Id), permission);
                 await msg.ReplyWith($"Blacklisted user: {user.Login} id:{user.Id}");
             }
-            finally
+            catch (Exception ex)
             {
-                LiveConnectionLock.Release();
+                await msg.ReplyWith("Failed to blacklist user");
+                Error(ex, "Failed to blacklist user");
             }
         }
         else
@@ -73,10 +72,10 @@ public class EditUser: ChatCommand
     private async ValueTask UnBlackList(Privmsg msg)
     {
         long uid = GetArgument<long>("UserId");
-        await LiveConnectionLock.WaitAsync();
+        using var conn = await NewDbConnection();
         try
         {
-            int count = await LiveDbConnection.ExecuteAsync("delete from user_permissions where user_id = @UserId", new
+            int count = await conn.ExecuteAsync("delete from user_permissions where user_id = @UserId", new
             {
                 UserId = uid
             });
@@ -84,9 +83,10 @@ public class EditUser: ChatCommand
             UserPermissions.Remove(uid);
             await msg.ReplyWith(count == 1 ? "Successfully unblacklisted" : "Failed to unblacklist");
         }
-        finally
+        catch (Exception ex)
         {
-            LiveConnectionLock.Release();
+            await msg.ReplyWith("Failed to unblacklist user");
+            Error(ex, "Failed to unblacklist user");
         }
     }
 }

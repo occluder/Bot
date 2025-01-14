@@ -14,10 +14,10 @@ public class NewUsers: IMetric
             return;
 
         int count = 0;
-        await LiveConnectionLock.WaitAsync();
+        using var conn = await NewDbConnection();
         try
         {
-            dynamic result = await LiveDbConnection.QueryFirstAsync(
+            dynamic result = await conn.QueryFirstAsync(
                 "select count(*) from users where added_at > @AddedAt",
                 new
                 {
@@ -30,10 +30,6 @@ public class NewUsers: IMetric
         catch (Exception ex)
         {
             ForContext<NewUsers>().Error(ex, "Something went wrong");
-        }
-        finally
-        {
-            LiveConnectionLock.Release();
         }
 
         await RedisDatabaseAsync.StringSetAsync(KEY, count, TimeSpan.FromHours(6));

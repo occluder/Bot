@@ -6,11 +6,10 @@ internal class BackgroundTimer
     private readonly PeriodicTimer _timer;
     private readonly Func<Task> _callback;
     private readonly double _minsUntilComplete;
-    private readonly SemaphoreSlim? _semaphore;
     private Task? _timerTask;
     private nint _invocationsLeft;
 
-    public BackgroundTimer(TimeSpan period, Func<Task> callback, SemaphoreSlim? semaphore = null, nint maxInvocationCount = -1)
+    public BackgroundTimer(TimeSpan period, Func<Task> callback, nint maxInvocationCount = -1)
     {
         if (maxInvocationCount == 0)
             throw new ArgumentException("Max invocation count can't be 0", nameof(maxInvocationCount));
@@ -18,7 +17,6 @@ internal class BackgroundTimer
         _timer = new PeriodicTimer(period);
         _minsUntilComplete = maxInvocationCount * period.TotalMinutes;
         _callback = callback;
-        _semaphore = semaphore;
         _invocationsLeft = maxInvocationCount;
         _logger.Debug("New background timer created ({InvocationCount} * {Period})", maxInvocationCount, period);
     }
@@ -28,16 +26,16 @@ internal class BackgroundTimer
     public async Task StopAsync()
     {
         if (_timerTask is null)
+        {
             return;
+        }
 
         try
         {
-            await (_semaphore?.WaitAsync() ?? Task.CompletedTask);
             await _timerTask;
         }
         finally
         {
-            _ = _semaphore?.Release();
             _timerTask.Dispose();
         }
 
@@ -48,14 +46,12 @@ internal class BackgroundTimer
     {
         while (_invocationsLeft != 0 && await _timer.WaitForNextTickAsync())
         {
-            await (_semaphore?.WaitAsync() ?? Task.CompletedTask);
             try
             {
                 await _callback();
             }
             finally
             {
-                _ = _semaphore?.Release();
                 _invocationsLeft--;
             }
         }

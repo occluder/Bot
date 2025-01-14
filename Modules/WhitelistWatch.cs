@@ -11,10 +11,10 @@ public class WhitelistWatch: BotModule
             return;
         }
 
-        await LiveConnectionLock.WaitAsync();
+        using var conn = await NewDbConnection();
         try
         {
-            await LiveDbConnection.ExecuteAsync(
+            await conn.ExecuteAsync(
                 """
                 insert into
                     whitelisted_message
@@ -45,10 +45,6 @@ public class WhitelistWatch: BotModule
         catch (Exception ex)
         {
             Error(ex, "Error inserting whitelisted message");
-        }
-        finally
-        {
-            _ = LiveConnectionLock.Release();
         }
     }
 

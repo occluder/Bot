@@ -18,14 +18,17 @@ public class FollowersCollector: BotModule
         _logger.Verbose("New follower: {@Data}", follower);
         await Followers.AddAsync((channelId, follower));
         _inserted++;
+        if (_inserted % 50 == 0 && Followers.Count < MAX_REDIS_LIST_SIZE)
+        {
+            return;
+        }
 
-        if (_inserted % 50 == 0 && Followers.Count < MAX_REDIS_LIST_SIZE) return;
         FollowData[] redisFollowers = (await Followers.GetRangeAsync()).ToArray();
         _logger.Verbose("Attempting to insert {FollowerCount} followers", redisFollowers.Length);
-        await LiveConnectionLock.WaitAsync();
+        using var conn = await NewDbConnection();
         try
         {
-            int inserted = await LiveDbConnection.ExecuteAsync(
+            int inserted = await conn.ExecuteAsync(
                 "insert into users values (@Username, @UserId, @TimeFollowed) " +
                 "on conflict on constraint pk_users do nothing", redisFollowers);
 
@@ -35,10 +38,6 @@ public class FollowersCollector: BotModule
         catch (Exception ex)
         {
             _logger.Error(ex, "Failed to collect followers");
-        }
-        finally
-        {
-            LiveConnectionLock.Release();
         }
     }
 

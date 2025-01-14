@@ -24,7 +24,7 @@ internal class LinkCollector: BotModule
 
     public LinkCollector()
     {
-        _timer = new(TimeSpan.FromMinutes(5), Commit, LiveConnectionLock);
+        _timer = new(TimeSpan.FromMinutes(5), Commit);
     }
 
     private async ValueTask OnMessage(Privmsg arg)
@@ -68,11 +68,13 @@ internal class LinkCollector: BotModule
     private async Task Commit()
     {
         if (!this.Enabled)
+        {
             return;
+        }
 
+        using var conn = await NewDbConnection();
         try
         {
-            using var conn = await NewDbConnection();
             int inserted = await conn.ExecuteAsync(
                 "insert into chat_links values " +
                 "(@Username, @UserId, @Channel, @ChannelId, @LinkText, @TimeSent)",

@@ -11,10 +11,10 @@ internal class FetchPermissions: IStartupTask
 
     public async ValueTask<StartupTaskState> Run()
     {
-        await LiveConnectionLock.WaitAsync();
+        using var conn = await NewDbConnection();
         try
         {
-            UserPermissions = (await LiveDbConnection.QueryAsync<UserPermissionDto>("select * from user_permissions"))
+            UserPermissions = (await conn.QueryAsync<UserPermissionDto>("select * from user_permissions"))
                 .ToDictionary(x => x.UserId);
         }
         catch (Exception ex)
@@ -22,15 +22,10 @@ internal class FetchPermissions: IStartupTask
             _logger.Error(ex, "[{ClassName}] Loading user permissions failed!");
             return StartupTaskState.Failed;
         }
-        finally
-        {
-            LiveConnectionLock.Release();
-        }
 
         _logger.Information("Loaded {UserCount} users with modified permissions", UserPermissions.Count);
         return StartupTaskState.Completed;
     }
 
-    public static bool UserBlacklisted(long id)
-        => UserPermissions.ContainsKey(id) && UserPermissions[id].IsBlacklisted;
+    public static bool UserBlacklisted(long id) => UserPermissions.ContainsKey(id) && UserPermissions[id].IsBlacklisted;
 }

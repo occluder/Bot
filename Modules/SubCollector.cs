@@ -15,7 +15,7 @@ public class SubCollector: BotModule
 
     public SubCollector()
     {
-        _timer = new(TimeSpan.FromHours(2), Commit, LiveConnectionLock);
+        _timer = new(TimeSpan.FromHours(2), Commit);
     }
 
     private static async ValueTask OnSub(ISubNotice notice)
@@ -51,11 +51,12 @@ public class SubCollector: BotModule
         if (!this.Enabled || length == 0)
             return;
 
+        using var conn = await NewDbConnection();
         Sub[] subs = (await Collections.GetRedisList<Sub>(KEY).GetRangeAsync()).ToArray();
         _logger.Debug("Attempting to insert {SubCount} subs", subs.Length);
         try
         {
-            int inserted = await LiveDbConnection.ExecuteAsync(
+            int inserted = await conn.ExecuteAsync(
                 "insert into subscriptions values " +
                 "(@Username, @UserId, @Channel, @ChannelId, @CumulativeMonths, @Tier, @TimeSent)",
                 subs

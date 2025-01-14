@@ -13,9 +13,10 @@ internal class ChannelsSetup: IStartupTask
     public async ValueTask<StartupTaskState> Run()
     {
         TwitchChannelDto[] channels;
+        using var conn = await NewDbConnection();
         try
         {
-            channels = (await LiveDbConnection.QueryAsync<TwitchChannelDto>("select * from channels", commandTimeout: 5))
+            channels = (await conn.QueryAsync<TwitchChannelDto>("select * from channels", commandTimeout: 5))
                 .ToArray();
         }
         catch (Exception ex)
@@ -61,7 +62,7 @@ internal class ChannelsSetup: IStartupTask
 
     public static async Task JoinChannel(IvrUser user, int priority, bool isLogged)
     {
-        await LiveConnectionLock.WaitAsync();
+        using var conn = await NewDbConnection();
         try
         {
             TwitchChannelDto channelDto = new()
@@ -75,7 +76,7 @@ internal class ChannelsSetup: IStartupTask
                 Tags = isLogged ? null : "nologs"
             };
 
-            _ = await LiveDbConnection.ExecuteAsync(
+            _ = await conn.ExecuteAsync(
                 "insert into channels values (@DisplayName, @ChannelName, @ChannelId, @AvatarUrl, @Priority, @Tags, @DateAdded)",
                 channelDto
             );
@@ -85,18 +86,18 @@ internal class ChannelsSetup: IStartupTask
             Channels[channelDto.ChannelName] = channelDto;
             ChannelsById[channelDto.ChannelId] = channelDto;
         }
-        finally
+        catch (Exception ex)
         {
-            _ = LiveConnectionLock.Release();
+            ForContext<ChannelsSetup>().Error(ex, "Failed to join channel {ChannelName}", user.Login);
         }
     }
 
     public static async Task PartChannel(long channelId)
     {
-        await LiveConnectionLock.WaitAsync();
+        using var conn = await NewDbConnection();
         try
         {
-            _ = await LiveDbConnection.ExecuteAsync("delete from channels where channel_id = @ChannelId",
+            _ = await conn.ExecuteAsync("delete from channels where channel_id = @ChannelId",
                 new { ChannelId = channelId }
             );
 
@@ -109,9 +110,9 @@ internal class ChannelsSetup: IStartupTask
             _ = Channels.Remove(channelDto.ChannelName);
             _ = ChannelsById.Remove(channelDto.ChannelId);
         }
-        finally
+        catch (Exception ex)
         {
-            _ = LiveConnectionLock.Release();
+            ForContext<ChannelsSetup>().Error(ex, "Failed to part channel {ChannelId}", channelId);
         }
     }
 }

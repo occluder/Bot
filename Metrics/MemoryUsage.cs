@@ -12,7 +12,7 @@ public class MemoryUsage: IMetric
         if (++_invc % 4 != 0)
             return;
 
-        await LiveConnectionLock.WaitAsync();
+        using var conn = await NewDbConnection();
         try
         {
             long ts = Unix();
@@ -50,7 +50,7 @@ public class MemoryUsage: IMetric
                 },
             ];
 
-            await LiveDbConnection.ExecuteAsync(
+            await conn.ExecuteAsync(
                 "insert into metrics_memory values (@Measurement, @Bytes, @Ts)",
                 metrics
             );
@@ -58,10 +58,6 @@ public class MemoryUsage: IMetric
         catch (Exception ex)
         {
             ForContext<MemoryUsage>().Error(ex, "Something went wrong {InvocationCount}", _invc);
-        }
-        finally
-        {
-            LiveConnectionLock.Release();
         }
     }
 }
