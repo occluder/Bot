@@ -16,6 +16,7 @@ public class NpgsqlSetup: IStartupTask
 
     public ValueTask<StartupTaskState> Run()
     {
+        DefaultTypeMap.MatchNamesWithUnderscores = true;
         return ValueTask.FromResult(StartupTaskState.Completed);
     }
 }
