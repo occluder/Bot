@@ -11,9 +11,22 @@ public class WhitelistWatch: BotModule
             return;
         }
 
+        var obj = new WhitelistedMessage
+        (
+            Guid.Parse(message.Id),
+            message.Author.Name,
+            message.Author.Id,
+            message.Channel.Name,
+            message.Channel.Id,
+            message.Content,
+            message.Reply.HasContent,
+            message.TmiSentTs
+        );
+
         using var conn = await NewDbConnection();
         try
         {
+            await RedisPubSub.PublishAsync("bot:whitelisted_message", obj);
             await conn.ExecuteAsync(
                 """
                 insert into
@@ -28,18 +41,7 @@ public class WhitelistWatch: BotModule
                     @IsReply,
                     @TimeSent
                 )
-                """,
-                new
-                {
-                    Id = Guid.Parse(message.Id),
-                    Username = message.Author.Name,
-                    UserId = message.Author.Id,
-                    Channel = message.Channel.Name,
-                    ChannelId = message.Channel.Id,
-                    Message = message.Content,
-                    IsReply = message.Reply.HasContent,
-                    TimeSent = message.TmiSentTs,
-                }, commandTimeout: 10
+                """, obj, commandTimeout: 10
             );
         }
         catch (Exception ex)
@@ -61,4 +63,15 @@ public class WhitelistWatch: BotModule
         AnonClient.OnMessage -= OnMessage;
         return default;
     }
+
+    private record struct WhitelistedMessage(
+        Guid Id,
+        string Username,
+        long UserId,
+        string Channel,
+        long ChannelId,
+        string Message,
+        bool IsReply,
+        long TimeSent
+    );
 }

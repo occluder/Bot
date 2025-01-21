@@ -13,6 +13,7 @@ public class RedisSetup: IStartupTask
 {
     public static ICacheProviderAsync Cache { get; private set; } = default!;
     public static ICollectionProvider Collections { get; private set; } = default!;
+    public static IPubSubProviderAsync RedisPubSub { get; private set; } = default!;
     public static IDatabaseAsync RedisDatabaseAsync { get; private set; } = default!;
 
     public async ValueTask<StartupTaskState> Run()
@@ -36,6 +37,7 @@ public class RedisSetup: IStartupTask
 
         Cache = context.Cache;
         Collections = context.Collections;
+        RedisPubSub = context.PubSub;
         ForContext<RedisSetup>().Information("Connected to Redis");
 
         return StartupTaskState.Completed;
