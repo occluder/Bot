@@ -18,8 +18,7 @@ public class Wiki: ChatCommand
         AddArgument(new("SearchTerm", 1, typeof(string)));
     }
 
-    private const string WIKI_URL = "https://antifandom.com/warframe/";
-    private readonly HttpClient _httpClient = new() { Timeout = TimeSpan.FromSeconds(10) };
+    private const string WIKI_URL = "https://wiki.warframe.com/w/Special:Search?search=";
 
     public override async ValueTask Run(Privmsg message)
     {
@@ -34,12 +33,6 @@ public class Wiki: ChatCommand
             split[i] = char.ToUpper(split[i][0]) + split[i][1..];
         }
 
-        string directLink = $"{WIKI_URL}wiki/{string.Join('_', split[1..])}";
-        if ((await _httpClient.GetAsync(directLink)).IsSuccessStatusCode) {
-            await message.ReplyWith(directLink);
-            return;
-        }
-
-        await message.ReplyWith($"{WIKI_URL}search?q={string.Join('+', split[1..])}");
+        await message.ReplyWith($"{WIKI_URL}{string.Join('+', split[1..])}");
     }
 }
