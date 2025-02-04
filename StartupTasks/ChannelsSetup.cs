@@ -97,7 +97,13 @@ internal class ChannelsSetup: IStartupTask
         using var conn = await NewDbConnection();
         try
         {
-            _ = await conn.ExecuteAsync("delete from channels where channel_id = @ChannelId",
+            _ = await conn.ExecuteAsync("""
+                UPDATE channels 
+                SET
+                    priority = -100
+                WHERE
+                    channel_id = @ChannelId
+                """,
                 new { ChannelId = channelId }
             );
 
