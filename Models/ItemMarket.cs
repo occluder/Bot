@@ -1,8 +1,6 @@
 namespace Bot.Models;
 
-public record ItemMarket(MarketPayload payload);
-
-public record MarketPayload(ItemOrder[] orders);
+public record ItemMarket(string apiVersion, ItemOrder[] data);
 
 public record ItemOrder(
     DateTimeOffset creation_date,

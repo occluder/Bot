@@ -21,11 +21,11 @@ public class Market: ChatCommand
     public override async ValueTask Run(Privmsg message)
     {
         string item = string.Join("_", message.Content.ToLower().Split(' ')[1..]);
-        var response = await GetFromRequest<ItemMarket>($"https://api.warframe.market/v1/items/{item}/orders?platform=pc");
+        var response = await GetFromRequest<ItemMarket>($"https://api.warframe.market/v2/orders/item/{item}");
         Verbose("Got response for {Item}", item);
         if (!response.TryPickT0(out ItemMarket? marketInfo, out OneOf<HttpStatusCode, Exception> error))
         {
-            Warning("Error from https://api.warframe.market/v1/items/{Item}/orders?platform=pc", item);
+            Warning("Error from https://api.warframe.market/v2/orders/item/{Item}", item);
             await error.Match(
                 statusCode => message.ReplyWith($"Received bad status code from warframe.market {statusCode} :("),
                 exception =>
@@ -56,7 +56,7 @@ public class Market: ChatCommand
         }
 
         Verbose("Got {Count} stat entries", stats.Payload.StatisticsClosed._48hours.Length);
-        ItemOrder min = marketInfo.payload.orders
+        ItemOrder min = marketInfo.data
             .Where(x => x is { order_type: "sell", user.status: "ingame" })
             .MinBy(x => x.platinum)!;
 
