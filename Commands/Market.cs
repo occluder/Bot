@@ -57,7 +57,7 @@ public class Market: ChatCommand
 
         Verbose("Got {Count} stat entries", stats.Payload.StatisticsClosed._48hours.Length);
         ItemOrder min = marketInfo.data
-            .Where(x => x is { order_type: "sell", user.status: "ingame" })
+            .Where(x => x is { type: "sell", user.status: "ingame" })
             .MinBy(x => x.platinum)!;
 
         Verbose("Min order: {MinOrder}", min);
