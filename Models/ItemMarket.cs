@@ -3,11 +3,11 @@ namespace Bot.Models;
 public record ItemMarket(string apiVersion, ItemOrder[] data);
 
 public record ItemOrder(
-    DateTimeOffset creation_date,
+    DateTimeOffset createdAt,
     bool visible,
     uint quanitity,
     OrderOwner user,
-    DateTimeOffset last_update,
+    DateTimeOffset updatedAt,
     uint platinum,
     string platform,
     int quantity,
