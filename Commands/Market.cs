@@ -73,60 +73,16 @@ public class Market: ChatCommand
     {
         try
         {
+            if (stats._90days.All(x => x.ModRank is not null))
+            {
+                return GetPeriodStatsRanked(stats);
+            }
+
             Verbose("Getting period string");
+
             StringBuilder sb = new();
             int volumes = stats._48hours.Sum(x => x.Volume);
             Func<Statistic, Statistic, float> calcChange = (x, y) => (1 - (x.MovingAvg / y.MovingAvg)) * -100;
-            if (stats._90days.All(x => x.ModRank is not null))
-            {
-                int maxRank = stats._90days.MaxBy(x => x.ModRank)?.ModRank ?? 3;
-                int volumesMax = stats._48hours.Where(x => x.ModRank == maxRank).Sum(x => x.Volume);
-                Statistic mostRecentR0 = stats._48hours
-                    .Where(o => o.ModRank == 0)
-                    .MaxBy(x => x.Datetime)!;
-
-                Statistic mostRecentMax = stats._48hours
-                    .Where(o => o.ModRank == maxRank)
-                    .MaxBy(x => x.Datetime)!;
-
-                Statistic? monthAgoR0 = stats._90days
-                    .Where(o => o.ModRank == 0)
-                    .Where(o => o.Datetime <= mostRecentR0.Datetime.AddDays(-30))
-                    .MaxBy(x => x.Datetime);
-
-                Statistic? monthAgoMax = stats._90days
-                    .Where(o => o.ModRank == maxRank)
-                    .Where(o => o.Datetime <= mostRecentR0.Datetime.AddDays(-30))
-                    .MaxBy(x => x.Datetime);
-
-                sb.Append("Avg: (R0) ");
-                if (monthAgoR0 is not null)
-                {
-                    float changeR0 = calcChange(mostRecentR0, monthAgoR0);
-                    sb.Append($"{monthAgoR0.MovingAvg:0.#}P→{mostRecentR0.MovingAvg:0.#}P ({changeR0:+0.##;-0.##}%)");
-                }
-                else
-                {
-                    sb.Append(mostRecentR0.MovingAvg > 0 ? $"{mostRecentR0.MovingAvg:0.##}P" : "N/A");
-                }
-
-                sb.Append($" | (R{maxRank}) ");
-                if (monthAgoMax is not null)
-                {
-                    float changeMax = calcChange(mostRecentMax, monthAgoMax);
-                    sb.Append($"{monthAgoMax.MovingAvg:0.#}P→{mostRecentMax.MovingAvg:0.#}P ({changeMax:+0.##;-0.##}%)");
-                }
-                else
-                {
-                    sb.Append(mostRecentMax.MovingAvg > 0 ? $"{mostRecentMax.MovingAvg:0.##}P" : "N/A");
-                }
-
-                sb.Append(", ");
-                sb.Append($"Recently sold: (R0) {volumes - volumesMax} | (R{maxRank}) {volumesMax}");
-                Verbose("Got period string");
-                return sb.ToString();
-            }
-
             Statistic mostRecent = stats._48hours.MaxBy(x => x.Datetime)!;
             Statistic? monthAgo = stats._90days
                 .Where(o => o.Datetime <= mostRecent.Datetime.AddDays(-30))
@@ -152,5 +108,59 @@ public class Market: ChatCommand
             Error(ex, "Failed to get period stats");
             return "ERR";
         }
+    }
+
+    static string GetPeriodStatsRanked(PeriodStats stats)
+    {
+        Verbose("Getting period string (ranked)");
+        StringBuilder sb = new();
+        int volumes = stats._48hours.Sum(x => x.Volume);
+        Func<Statistic, Statistic, float> calcChange = (x, y) => (1 - (x.MovingAvg / y.MovingAvg)) * -100;
+        int maxRank = stats._90days.MaxBy(x => x.ModRank)?.ModRank ?? 3;
+        int volumesMax = stats._48hours.Where(x => x.ModRank == maxRank).Sum(x => x.Volume);
+        Statistic mostRecentR0 = stats._48hours
+            .Where(o => o.ModRank == 0)
+            .MaxBy(x => x.Datetime)!;
+
+        Statistic mostRecentMax = stats._48hours
+            .Where(o => o.ModRank == maxRank)
+            .MaxBy(x => x.Datetime)!;
+
+        Statistic? monthAgoR0 = stats._90days
+            .Where(o => o.ModRank == 0)
+            .Where(o => o.Datetime <= mostRecentR0.Datetime.AddDays(-30))
+            .MaxBy(x => x.Datetime);
+
+        Statistic? monthAgoMax = stats._90days
+            .Where(o => o.ModRank == maxRank)
+            .Where(o => o.Datetime <= mostRecentR0.Datetime.AddDays(-30))
+            .MaxBy(x => x.Datetime);
+
+        sb.Append("Avg: (R0) ");
+        if (monthAgoR0 is not null)
+        {
+            float changeR0 = calcChange(mostRecentR0, monthAgoR0);
+            sb.Append($"{monthAgoR0.MovingAvg:0.#}P→{mostRecentR0.MovingAvg:0.#}P ({changeR0:+0.##;-0.##}%)");
+        }
+        else
+        {
+            sb.Append(mostRecentR0.MovingAvg > 0 ? $"{mostRecentR0.MovingAvg:0.##}P" : "N/A");
+        }
+
+        sb.Append($" | (R{maxRank}) ");
+        if (monthAgoMax is not null)
+        {
+            float changeMax = calcChange(mostRecentMax, monthAgoMax);
+            sb.Append($"{monthAgoMax.MovingAvg:0.#}P→{mostRecentMax.MovingAvg:0.#}P ({changeMax:+0.##;-0.##}%)");
+        }
+        else
+        {
+            sb.Append(mostRecentMax.MovingAvg > 0 ? $"{mostRecentMax.MovingAvg:0.##}P" : "N/A");
+        }
+
+        sb.Append(", ");
+        sb.Append($"Recently sold: (R0) {volumes - volumesMax} | (R{maxRank}) {volumesMax}");
+        Verbose("Got period string");
+        return sb.ToString();
     }
 }
