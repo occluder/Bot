@@ -11,7 +11,7 @@ public record ItemOrder(
     uint platinum,
     string platform,
     int quantity,
-    string order_type,
+    string type,
     int modrank = 0
 );
 
