@@ -9,7 +9,10 @@ namespace Bot.Utils;
 
 internal static class GlobalHelpers
 {
-    private static readonly HttpClient _httpClient = new();
+    private static readonly HttpClient _httpClient = new()
+    {
+        Timeout = TimeSpan.FromSeconds(30)
+    };
 
     public static uint Unsigned24Color(Color color)
     {
