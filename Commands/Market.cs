@@ -60,7 +60,7 @@ public class Market: ChatCommand
             .Where(x => x is { order_type: "sell", user.status: "ingame" })
             .MinBy(x => x.platinum)!;
 
-
+        Verbose("Min order: {MinOrder}", min);
 
         await message.ReplyWith(
             $"{GetPeriodString(stats.Payload.StatisticsClosed)}, " +
@@ -71,6 +71,7 @@ public class Market: ChatCommand
 
     private static string GetPeriodString(PeriodStats stats)
     {
+        Verbose("Getting period string");
         StringBuilder sb = new();
         int volumes = stats._48hours.Sum(x => x.Volume);
         Func<Statistic, Statistic, float> calcChange = (x, y) => (1 - (x.MovingAvg / y.MovingAvg)) * -100;
@@ -120,6 +121,7 @@ public class Market: ChatCommand
 
             sb.Append(", ");
             sb.Append($"Recently sold: (R0) {volumes - volumesMax} | (R{maxRank}) {volumesMax}");
+            Verbose("Got period string");
             return sb.ToString();
         }
 
@@ -140,7 +142,7 @@ public class Market: ChatCommand
             sb.Append(", ");
         }
         sb.Append($"Recently sold: {volumes}");
-
+        Verbose("Got period string");
         return sb.ToString();
     }
 }
