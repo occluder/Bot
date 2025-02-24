@@ -18,10 +18,8 @@ public record ItemOrder(
 public record OrderOwner(
     int reputation,
     string locale,
-    string? avatar,
-    string ingame_name,
-    DateTimeOffset last_seen,
+    string ingameMame,
+    DateTimeOffset lastSeen,
     string id,
-    string region,
     string status
 );
