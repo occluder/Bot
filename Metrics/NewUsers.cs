@@ -4,7 +4,7 @@ namespace Bot.Metrics;
 
 public class NewUsers: IMetric
 {
-    private const string KEY = "bot:metrics:users";
+    private const string KEY = "bot:metrics:startup";
     private uint _invc;
     private readonly long _start = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
@@ -13,25 +13,6 @@ public class NewUsers: IMetric
         if (++_invc % 20 != 0)
             return;
 
-        int count = 0;
-        using var conn = await NewDbConnection();
-        try
-        {
-            dynamic result = await conn.QueryFirstAsync(
-                "select count(*) from users where added_at > @AddedAt",
-                new
-                {
-                    AddedAt = _start
-                }
-            );
-
-            count = (int)result.count;
-        }
-        catch (Exception ex)
-        {
-            ForContext<NewUsers>().Error(ex, "Something went wrong");
-        }
-
-        await RedisDatabaseAsync.StringSetAsync(KEY, count, TimeSpan.FromHours(6));
+        await RedisDatabaseAsync.StringSetAsync(KEY, _start, TimeSpan.FromHours(6));
     }
 }
