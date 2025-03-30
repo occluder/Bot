@@ -29,6 +29,14 @@ internal class Program
             if (result != StartupTaskState.Completed)
                 throw new NotSupportedException(result.ToString());
 
+        if (Environment.GetEnvironmentVariable("SERVICE") is "TRUE")
+        {
+            while (true)
+            {
+                Console.ReadKey();
+            }
+        }
+
         while (true)
         {
             string? input = Console.ReadLine();
