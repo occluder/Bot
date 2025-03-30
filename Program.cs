@@ -31,10 +31,9 @@ internal class Program
 
         if (Environment.GetEnvironmentVariable("SERVICE") is "TRUE")
         {
-            while (true)
-            {
-                Console.ReadKey();
-            }
+            Console.WriteLine("Running as a service -- Console input is disabled.");
+            await Task.Delay(-1);
+            return;
         }
 
         while (true)
