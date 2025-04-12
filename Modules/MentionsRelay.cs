@@ -34,11 +34,16 @@ internal class MentionsRelay: BotModule
                 {
                     new
                     {
-                        title = $"@`{message.Reply.ParentUsername}` said in #`{message.Channel.Name}`",
+                        title = $"@`{message.Reply.ParentUsername}`",
                         description = message.Reply.ParentMessage,
                         color = Unsigned24Color(message.Author.ChatColor),
                         timestamp = DateTime.Now,
                         thumbnail = new { url = pfp },
+                        footer = new
+                        {
+                            icon_url = Channels[message.Channel.Name].AvatarUrl,
+                            text = message.Channel.Name
+                        },
                         fields = new[]
                         {
                             new
@@ -63,11 +68,16 @@ internal class MentionsRelay: BotModule
                 {
                     new
                     {
-                        title = $"@`{message.Author.Name}` in #`{message.Channel.Name}`",
+                        title = $"@`{message.Author.Name}`",
                         description = message.Content,
                         color = Unsigned24Color(message.Author.ChatColor),
                         timestamp = DateTime.Now,
                         thumbnail = new { url = pfp },
+                        footer = new
+                        {
+                            icon_url = Channels[message.Channel.Name].AvatarUrl,
+                            text = message.Channel.Name
+                        },
                         image = _imageHosts.Match(message.Content) is { Success: true } imageMatch
                             ? new
                             {
