@@ -16,8 +16,7 @@ internal class ChannelsSetup: IStartupTask
         using var conn = await NewDbConnection();
         try
         {
-            channels = (await conn.QueryAsync<TwitchChannelDto>("select * from channels", commandTimeout: 5))
-                .ToArray();
+            channels = [.. await conn.QueryAsync<TwitchChannelDto>("select * from channels", commandTimeout: 5)];
         }
         catch (Exception ex)
         {
@@ -41,9 +40,13 @@ internal class ChannelsSetup: IStartupTask
         bool success = await MainClient.JoinChannels(channels.Where(x => x.Priority >= 50).Select(x => x.ChannelName));
         LoggerSetup.LogSwitch.MinimumLevel = ll;
         if (!success)
+        {
             Warning("MainClient failed to join some channels");
+        }
         else
+        {
             Information("MainClient finished joining Channels");
+        }
 
 #if !DEBUG
         Information("Joining AnonClient channels");
@@ -52,9 +55,13 @@ internal class ChannelsSetup: IStartupTask
             await AnonClient.JoinChannels(channels.Where(x => x.Priority is < 50 and > -10).Select(x => x.ChannelName));
         LoggerSetup.LogSwitch.MinimumLevel = ll;
         if (!success2)
+        {
             Warning("AnonClient failed to join some channels");
+        }
         else
+        {
             Information("AnonClient finished joining Channels");
+        }
 #endif
 
         return StartupTaskState.Completed;

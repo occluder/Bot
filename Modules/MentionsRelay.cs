@@ -15,7 +15,7 @@ internal class MentionsRelay: BotModule
 
     private async ValueTask OnMessage(Privmsg message)
     {
-        if (UserBlacklisted(message.Author.Id))
+        if (UserBlacklisted(message.Author.Id) || Channels[message.Channel.Name].NoRelay)
         {
             return;
         }
