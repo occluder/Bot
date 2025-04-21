@@ -14,7 +14,7 @@ public class Raids: BotModule
             return;
         }
 
-        if (!await AddChannelInfo(notice.Channel.Id))
+        if (!await AddChannelInfo(notice.Author.Id))
         {
             return;
         }
@@ -37,8 +37,8 @@ public class Raids: BotModule
                 """,
                 new
                 {
-                    FromChannel = notice.Channel.Name,
-                    FromChannelId = notice.Channel.Id,
+                    FromChannel = notice.Author.Name,
+                    FromChannelId = notice.Author.Id,
                     ToChannel = notice.Channel.Name,
                     ToChannelId = notice.Channel.Id,
                     Viewers = notice.ViewerCount,
@@ -84,7 +84,7 @@ public class Raids: BotModule
                     @Priority, 
                     @Tags, 
                     @DateAdded
-                ) ON CONFLICT DO UPDATE SET
+                ) ON CONFLICT(channel_name, channel_id) DO UPDATE SET
                     display_name = EXCLUDED.display_name,
                     channel_name = EXCLUDED.channel_name,
                     avatar_url = EXCLUDED.avatar_url
