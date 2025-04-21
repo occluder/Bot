@@ -85,9 +85,9 @@ public class Raids: BotModule
                     @Tags, 
                     @DateAdded
                 ) ON CONFLICT DO UPDATE SET
-                    DisplayName = @DisplayName,
-                    ChannelName = @ChannelName,
-                    AvatarUrl = @AvatarUrl,
+                    display_name = EXCLUDED.display_name,
+                    channel_name = EXCLUDED.channel_name,
+                    avatar_url = EXCLUDED.avatar_url
                 """,
                 new
                 {
