@@ -12,7 +12,7 @@ public class ChatUtils: BotModule
     private static async ValueTask OnMessage(Privmsg message)
     {
         await TimeUtils(message);
-        await NoFuckFebruary(message);
+        //await NoFuckFebruary(message);
     }
 
     private static ValueTask TimeUtils(Privmsg message)
@@ -36,7 +36,7 @@ public class ChatUtils: BotModule
                 "et" or "edt" => message.ReplyWith(Date(-240)),
                 "pt" or "pdt" => message.ReplyWith(Date(-420)),
                 "pst" => message.ReplyWith(Date(-480)),
-                "unix" => message.ReplyWith(UnixMs().ToString()),
+                "unix" => message.ReplyWith($"{UnixMs() / 1000.0:#.000}"),
 
                 { Length: 10 } unix when long.TryParse(unix, out long time) && WithinReasonableTime(time) =>
                     message.ReplyWith(Date(unix: time)),
@@ -100,10 +100,20 @@ public class ChatUtils: BotModule
 
     private static async ValueTask NoFuckFebruary(Privmsg message)
     {
-        if (DateTime.Now.Month != 2) return;
-        if (message.Channel.Id != 11148817 || !message.Content.Contains("fuck")) return;
+        if (DateTime.Now.Month != 2)
+        {
+            return;
+        }
 
-        for (int i = 0; i < CountFucks(message.Content); i++) await _februaryList.AddAsync(message.Author.Name);
+        if (message.Channel.Id != 11148817 || !message.Content.Contains("fuck"))
+        {
+            return;
+        }
+
+        for (int i = 0; i < CountFucks(message.Content); i++)
+        {
+            await _februaryList.AddAsync(message.Author.Name);
+        }
     }
 
     private static int CountFucks(string message)
