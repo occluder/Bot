@@ -7,8 +7,8 @@ namespace Bot.StartupTasks;
 
 internal class ChannelsSetup: IStartupTask
 {
-    public static Dictionary<string, TwitchChannelDto> Channels { get; } = new();
-    public static Dictionary<long, TwitchChannelDto> ChannelsById { get; } = new();
+    public static Dictionary<string, TwitchChannelDto> Channels { get; } = [];
+    public static Dictionary<long, TwitchChannelDto> ChannelsById { get; } = [];
 
     public async ValueTask<StartupTaskState> Run()
     {
@@ -16,7 +16,7 @@ internal class ChannelsSetup: IStartupTask
         using var conn = await NewDbConnection();
         try
         {
-            channels = [.. await conn.QueryAsync<TwitchChannelDto>("select * from channels", commandTimeout: 5)];
+            channels = [.. await conn.QueryAsync<TwitchChannelDto>("select * from channels where priority > -10", commandTimeout: 5)];
         }
         catch (Exception ex)
         {
@@ -38,8 +38,8 @@ internal class ChannelsSetup: IStartupTask
             }
         }
 
-        Information("{ChannelCount} channels loaded. {JoinableCount} joinable. {PrioritizedCount} prioritized",
-            channels.Length, channels.Count(x => x.Priority > -10), channels.Count(x => x.Priority >= 50));
+        Information("{ChannelCount} channels loaded. {PrioritizedCount} prioritized",
+            channels.Length, channels.Count(x => x.Priority >= 50));
 
         Information("{ChannelCount} channels are logged", channels.Count(x => x.IsLogged));
         Information("Joining MainClient channels");
