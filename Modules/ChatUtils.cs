@@ -66,7 +66,7 @@ public class ChatUtils: BotModule
                 ? DateTimeOffset.FromUnixTimeMilliseconds(unix.Value)
                 : DateTimeOffset.FromUnixTimeSeconds(unix.Value);
 
-            return $"{offset:yyyy-MM-dd, h:mm:ss tt} {ShortDistance(DateTimeOffset.Now - offset)}";
+            return $"{offset:yyyy-MM-dd, h:mm:ss tt, (UTCzzz)} {ShortDistance(DateTimeOffset.Now - offset)}";
         }
 
         var utc = DateTimeOffset.UtcNow;
