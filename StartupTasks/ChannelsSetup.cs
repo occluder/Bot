@@ -26,8 +26,16 @@ internal class ChannelsSetup: IStartupTask
 
         foreach (TwitchChannelDto channel in channels)
         {
-            Channels.Add(channel.ChannelName, channel);
-            ChannelsById.Add(channel.ChannelId, channel);
+            if (!Channels.TryAdd(channel.ChannelName, channel) && Channels[channel.ChannelName].DateAdded < channel.DateAdded)
+            {
+                ForContext<ChannelsSetup>().Warning("Channel {ChannelName} already exists, but is older than the new one. Updating it.", channel.ChannelName);
+                Channels[channel.ChannelName] = channel;
+            }
+            if (!ChannelsById.TryAdd(channel.ChannelId, channel) && ChannelsById[channel.ChannelId].DateAdded < channel.DateAdded)
+            {
+                ForContext<ChannelsSetup>().Warning("Channel {ChannelName} already exists, but is older than the new one. Updating it.", channel.ChannelName);
+                ChannelsById[channel.ChannelId] = channel;
+            }
         }
 
         Information("{ChannelCount} channels loaded. {JoinableCount} joinable. {PrioritizedCount} prioritized",
