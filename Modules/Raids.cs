@@ -9,7 +9,7 @@ public class Raids: BotModule
 
     static async ValueTask OnRaid(IRaidNotice notice)
     {
-        if (!ChannelsById[notice.Channel.Id].IsLogged)
+        if (!ChannelsById[notice.Channel.Id].IsLogged || notice.ViewerCount < 10)
         {
             return;
         }
