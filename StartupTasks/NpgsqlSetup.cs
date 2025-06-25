@@ -9,7 +9,7 @@ public class NpgsqlSetup: IStartupTask
 {
     public static async Task<IDbConnection> NewDbConnection()
     {
-        var conn = new NpgsqlConnection(Environment.GetEnvironmentVariable("PSQL_TWITCHBOT_STRING"));
+        var conn = new NpgsqlConnection(Environment.GetEnvironmentVariable("PSQL_TWITCHBOT_STRING", EnvironmentVariableTarget.Process));
         await conn.OpenAsync();
         return conn;
     }
