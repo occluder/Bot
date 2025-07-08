@@ -110,16 +110,14 @@ public class DiscordSink: ILogEventSink
                     title,
                     description = log.RenderMessage(),
                     color,
-                    fields = ShouldShowProperties(log)
-                        ? new[]
+                    fields = new[]
+                    {
+                        new
                         {
-                            new
-                            {
-                                name = "Properties:",
-                                value = FormatProperties(log)
-                            }
+                            name = "Properties:",
+                            value = FormatProperties(log)
                         }
-                        : null
+                    }
                 }
             }
         };
@@ -165,13 +163,4 @@ public class DiscordSink: ILogEventSink
         logEvent.Level >= LoggerSetup.LogSwitch.MinimumLevel &&
         (!logEvent.Properties.ContainsKey("ShouldLogToDiscord") ||
          bool.Parse(logEvent.Properties["ShouldLogToDiscord"].ToString()));
-
-    private bool ShouldShowProperties(LogEvent logEvent)
-    {
-        if (logEvent.Properties.TryGetValue("ShowProperties", out LogEventPropertyValue? value) &&
-            value.ToString()[0] == 'T')
-            return true;
-
-        return LoggerSetup.LogSwitch.MinimumLevel <= _propsLevel;
-    }
 }
