@@ -2,6 +2,7 @@
 using Bot.Handlers;
 using Bot.Interfaces;
 using Bot.Models;
+using Bot.Modules;
 
 namespace Bot.StartupTasks;
 
@@ -11,7 +12,7 @@ internal class LoadModules: IStartupTask
 
     public async ValueTask<StartupTaskState> Run()
     {
-        List<BotModule> modules = new();
+        List<BotModule> modules = [];
         Type abstractType = typeof(BotModule);
         foreach (Type type in abstractType.Assembly.GetTypes().Where(abstractType.IsAssignableFrom))
         {
@@ -19,10 +20,29 @@ internal class LoadModules: IStartupTask
             {
                 modules.Add(module);
                 Debug("Loaded module: {ModuleName}", module.GetType().Name);
-                if (Settings.EnabledModules.TryGetValue(module.GetType().Name, out bool enabled) && !enabled)
-                    continue;
+                if (Settings.EnabledModules.TryGetValue(module.GetType().Name, out bool enabled))
+                {
+                    // Exists but not enabled
+                    if (!enabled)
+                    {
+                        continue;
+                    }
 
-                await module.Enable();
+                    // Enabled
+                    await module.Enable();
+                    continue;
+                }
+
+                // Doesn't exist
+                switch (module)
+                {
+                    // I don't like these
+                    case StreamMonitor or Fish:
+                        continue;
+                    default:
+                        await module.Enable();
+                        break;
+                }
             }
         }
 
