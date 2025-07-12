@@ -13,10 +13,36 @@ internal class LoadInMemorySettings: IStartupTask
     {
         try
         {
-            Settings = await Cache.FetchObjectAsync(Config.SettingsKey, () => Task.FromResult(new InMemorySettings()
+            using var db = await NewDbConnection();
+            var res = await db.QuerySingleOrDefaultAsync<InMemorySettings>("""
+                SELECT value FROM persistent_object
+                WHERE key = @key
+            """, new
             {
-                EnabledModules = new()
-            }));
+                Key = Config.SettingsKey
+            }
+            );
+
+            if (res is null)
+            {
+                Settings = new();
+                await db.ExecuteAsync(
+                    """
+                    INSERT INTO 
+                        persistent_object
+                    VALUES 
+                        (@Key, @Value::jsonb)
+                    """, new
+                    {
+                        Key = Config.SettingsKey,
+                        Value = Settings
+                    }
+                );
+            }
+            else
+            {
+                Settings = res;
+            }
         }
         catch (Exception ex)
         {
