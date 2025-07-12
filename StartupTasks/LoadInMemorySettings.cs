@@ -28,9 +28,9 @@ internal class LoadInMemorySettings: IStartupTask
                 Settings = new();
                 await db.ExecuteAsync(
                     """
-                    INSERT INTO
+                    INSERT INTO 
                         persistent_object
-                    VALUES
+                    VALUES 
                         (@Key, @Value::jsonb)
                     """, new
                     {

@@ -18,7 +18,7 @@ public class NpgsqlSetup: IStartupTask
     public ValueTask<StartupTaskState> Run()
     {
         DefaultTypeMap.MatchNamesWithUnderscores = true;
-        SqlMapper.AddTypeHandler(typeof(LoadInMemorySettings), new JsonTypeHandler<LoadInMemorySettings>());
+        SqlMapper.AddTypeHandler(new JsonTypeHandler<LoadInMemorySettings>());
         return ValueTask.FromResult(StartupTaskState.Completed);
     }
 }
