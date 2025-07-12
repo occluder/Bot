@@ -1,6 +1,8 @@
 ﻿using System.Data;
 using Bot.Enums;
 using Bot.Interfaces;
+using Bot.Models;
+using Bot.Utils;
 using Npgsql;
 
 namespace Bot.StartupTasks;
@@ -16,6 +18,8 @@ public class NpgsqlSetup: IStartupTask
 
     public ValueTask<StartupTaskState> Run()
     {
+        DefaultTypeMap.MatchNamesWithUnderscores = true;
+        SqlMapper.AddTypeHandler(new JsonTypeHandler<InMemorySettings>());
         return ValueTask.FromResult(StartupTaskState.Completed);
     }
 }
