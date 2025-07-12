@@ -31,11 +31,12 @@ internal class LoadModules: IStartupTask
     {
         foreach (BotModule module in modules)
         {
-            if (!Settings.EnabledModules.TryGetValue(module.Name, out bool enabled) || !enabled)
-                continue;
-
-            await Settings.EnableModule(module.Name);
-            Information("Loaded new module: {ModuleName}", module.Name);
+            if (Settings.EnabledModules.TryGetValue(module.Name, out bool enabled) && enabled)
+            {
+                await module.Enable();
+                await Settings.EnableModule(module.Name);
+                Information("Enabled module: {ModuleName}", module.Name);
+            }
         }
 
         return StartupTaskState.Completed;
