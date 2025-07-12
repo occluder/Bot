@@ -1,5 +1,6 @@
 ﻿using Bot.Enums;
 using Bot.StartupTasks;
+using Bot.Utils;
 using Bot.Utils.Logging;
 using Serilog.Events;
 
@@ -10,6 +11,8 @@ internal class Program
     private static async Task Main()
     {
         AppContext.SetSwitch("System.Net.DisableIPv6", true);
+        DefaultTypeMap.MatchNamesWithUnderscores = true;
+        SqlMapper.AddTypeHandler(new JsonTypeHandler<LoadInMemorySettings>());
 
         StartupTaskRunner runner = new StartupTaskRunner()
             .Add<LoadConfig>()
