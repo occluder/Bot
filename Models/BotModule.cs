@@ -3,7 +3,7 @@
 public abstract class BotModule
 {
     public bool Enabled { get; private set; }
-    private string Name => GetType().Name;
+    public string Name => GetType().Name;
 
     public async ValueTask Enable()
     {

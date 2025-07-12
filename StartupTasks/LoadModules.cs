@@ -2,7 +2,6 @@
 using Bot.Handlers;
 using Bot.Interfaces;
 using Bot.Models;
-using Bot.Modules;
 
 namespace Bot.StartupTasks;
 
@@ -20,29 +19,6 @@ internal class LoadModules: IStartupTask
             {
                 modules.Add(module);
                 Debug("Loaded module: {ModuleName}", module.GetType().Name);
-                if (Settings.EnabledModules.TryGetValue(module.GetType().Name, out bool enabled))
-                {
-                    // Exists but not enabled
-                    if (!enabled)
-                    {
-                        continue;
-                    }
-
-                    // Enabled
-                    await module.Enable();
-                    continue;
-                }
-
-                // Doesn't exist
-                switch (module)
-                {
-                    // I don't like these
-                    case StreamMonitor or Fish:
-                        continue;
-                    default:
-                        await module.Enable();
-                        break;
-                }
             }
         }
 
@@ -55,12 +31,11 @@ internal class LoadModules: IStartupTask
     {
         foreach (BotModule module in modules)
         {
-            string moduleName = module.GetType().Name;
-            if (!Settings.EnabledModules.ContainsKey(moduleName))
+            if (!Settings.EnabledModules.TryGetValue(module.Name, out bool enabled) || !enabled)
                 continue;
 
-            await Settings.EnableModule(moduleName);
-            Information("Loaded new module: {ModuleName}", moduleName);
+            await Settings.EnableModule(module.Name);
+            Information("Loaded new module: {ModuleName}", module.Name);
         }
 
         return StartupTaskState.Completed;
