@@ -1,4 +1,5 @@
-﻿using Bot.Models;
+﻿using System.Globalization;
+using Bot.Models;
 using CachingFramework.Redis.Contracts.RedisObjects;
 using MiniTwitch.Irc.Models;
 
@@ -36,7 +37,7 @@ public class ChatUtils: BotModule
                 "et" or "edt" => message.ReplyWith(Date(-240)),
                 "pt" or "pdt" => message.ReplyWith(Date(-420)),
                 "pst" => message.ReplyWith(Date(-480)),
-                "unix" => message.ReplyWith($"{UnixMs() / 1000.0:#.000}"),
+                "unix" => message.ReplyWith(SeparatedUnixMs(UnixMs())),
 
                 { Length: 10 } unix when long.TryParse(unix, out long time) && WithinReasonableTime(time) =>
                     message.ReplyWith(Date(unix: time)),
@@ -44,9 +45,11 @@ public class ChatUtils: BotModule
                 { Length: 13 } unixMs when long.TryParse(unixMs, out long time) && WithinReasonableTime(time, true) =>
                     message.ReplyWith(Date(unix: time, ms: true)),
 
-                { Length: >= 19 } date when DateTimeOffset.TryParse(date, out DateTimeOffset dateTime) => message
-                    .ReplyWith(
-                        dateTime.ToUnixTimeMilliseconds().ToString()),
+                { Length: >= 19 } date when DateTimeOffset.TryParse(date, out DateTimeOffset dateTime) =>
+                    message.ReplyWith(SeparatedUnixMs(dateTime.ToUnixTimeMilliseconds())),
+
+                { Length: 16 } and [_, _, _, _, _, _, _, _, 'T', _, _, _, _, _, _, 'Z'] ics when space == -1 =>
+                    message.ReplyWith(SeparatedUnixMs(FromIcsTime(ics.ToString()).ToUnixTimeMilliseconds())),
 
                 _ => default
             };
@@ -128,6 +131,23 @@ public class ChatUtils: BotModule
 
         return fucks;
     }
+
+    static DateTimeOffset FromIcsTime(string icsTime)
+    {
+        if (icsTime.Length < 15 || !icsTime.EndsWith("Z", StringComparison.Ordinal))
+        {
+            throw new ArgumentException("Invalid ICS time format.", nameof(icsTime));
+        }
+
+        if (DateTimeOffset.TryParseExact(icsTime, "yyyyMMddTHHmmssZ", null, DateTimeStyles.AssumeUniversal, out DateTimeOffset date))
+        {
+            return date;
+        }
+
+        throw new FormatException("Failed to parse ICS time.");
+    }
+
+    static string SeparatedUnixMs(long unixMs) => $"{unixMs / 1000.0:#.000}";
 
     protected override ValueTask OnModuleEnabled()
     {
