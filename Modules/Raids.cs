@@ -42,7 +42,7 @@ public class Raids: BotModule
                     ToChannel = notice.Channel.Name,
                     ToChannelId = notice.Channel.Id,
                     Viewers = notice.ViewerCount,
-                    TimeSent = notice.SentTimestamp.ToUnixTimeSeconds()
+                    TimeSent = notice.SentTimestamp.ToUnixTimeMilliseconds()
                 }
             );
         }
@@ -97,7 +97,7 @@ public class Raids: BotModule
                     AvatarUrl = channel.ProfileImageUrl,
                     Priority = -99,
                     Tags = (string?)null,
-                    DateAdded = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
+                    DateAdded = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
                 }
             );
         }

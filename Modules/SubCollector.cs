@@ -37,7 +37,7 @@ public class SubCollector: BotModule
                 SubPlan.Prime => 4,
                 _ => 0
             },
-            notice.SentTimestamp.ToUnixTimeSeconds()
+            notice.SentTimestamp.ToUnixTimeMilliseconds()
         );
 
         await Subs.AddAsync(sub);

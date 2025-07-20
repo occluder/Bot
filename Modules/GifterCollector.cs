@@ -35,7 +35,7 @@ internal class GifterCollector: BotModule
                 notice.Channel,
                 notice.GiftCount,
                 notice.SubPlan,
-                notice.SentTimestamp.ToUnixTimeSeconds(),
+                notice.SentTimestamp.ToUnixTimeMilliseconds(),
                 conn
             );
 
@@ -100,7 +100,7 @@ internal class GifterCollector: BotModule
                 notice.Channel,
                 1,
                 notice.SubPlan,
-                notice.SentTimestamp.ToUnixTimeSeconds(),
+                notice.SentTimestamp.ToUnixTimeMilliseconds(),
                 conn
             );
 

@@ -21,7 +21,7 @@ public class ModeratorTracker: BotModule
             UserId = message.Author.Id,
             Channel = message.Channel.Name,
             ChannelId = message.Channel.Id,
-            LastSeen = message.SentTimestamp.ToUnixTimeSeconds(),
+            LastSeen = message.SentTimestamp.ToUnixTimeMilliseconds(),
         });
 
         if (Unix() - _commit_time < 60)
