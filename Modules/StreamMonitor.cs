@@ -123,7 +123,7 @@ internal class StreamMonitor: BotModule
             ChannelsById[channelId].ChannelId,
             Title = title,
             Game = game,
-            Timestamp = Unix()
+            Timestamp = UnixMs()
         };
 
         using var conn = await NewDbConnection();

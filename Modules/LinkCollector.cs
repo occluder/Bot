@@ -52,7 +52,7 @@ internal class LinkCollector: BotModule
                     arg.Channel.Name,
                     arg.Channel.Id,
                     match.Value,
-                    Unix()
+                    UnixMs()
                 );
 
                 _links.Add(link);
