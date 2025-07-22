@@ -21,12 +21,16 @@ public class WarframeAlerts: BotModule
 
     public WarframeAlerts()
     {
-        _timer = new(TimeSpan.FromMinutes(5), CheckWorldstate);
+        _timer = new(TimeSpan.FromMinutes(10), CheckWorldstate);
     }
 
     static async Task CheckWorldstate()
     {
-        _channels = (await Collections.GetRedisList<string>("warframe:alert_channels").GetRangeAsync()).ToArray();
+        if (_channels.Length == 0)
+        {
+            using var db = await NewDbConnection();
+            _channels = await db.QuerySingleAsync<string[]>("SELECT value FROM persistent_object WHERE key = 'warframe_alert_channels'");
+        }
         await CheckAlerts();
         await CheckInvasions();
     }

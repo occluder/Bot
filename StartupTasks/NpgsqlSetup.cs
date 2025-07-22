@@ -20,6 +20,7 @@ public class NpgsqlSetup: IStartupTask
     {
         DefaultTypeMap.MatchNamesWithUnderscores = true;
         SqlMapper.AddTypeHandler(new JsonTypeHandler<InMemorySettings>());
+        SqlMapper.AddTypeHandler(new JsonTypeHandler<string[]>());
         return ValueTask.FromResult(StartupTaskState.Completed);
     }
 }
