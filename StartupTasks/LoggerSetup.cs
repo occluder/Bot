@@ -2,6 +2,7 @@
 using Bot.Interfaces;
 using Bot.Utils.Logging;
 using Serilog.Core;
+using Serilog.Enrichers.CallerInfo;
 using Serilog.Events;
 
 namespace Bot.StartupTasks;
@@ -15,6 +16,7 @@ public class LoggerSetup: IStartupTask
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Verbose()
             .Filter.With<ClassNameFilter>()
+            .Enrich.WithCallerInfo(true, "Bot.")
             .Enrich.WithClassName()
             .WriteTo.Console(
                 outputTemplate:
