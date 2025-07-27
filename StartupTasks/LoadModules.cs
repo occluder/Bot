@@ -31,6 +31,10 @@ internal class LoadModules: IStartupTask
     {
         foreach (BotModule module in modules)
         {
+            if (!Settings.EnabledModules.ContainsKey(module.Name))
+            {
+                Settings.EnabledModules[module.Name] = true;
+            }
             if (Settings.EnabledModules.TryGetValue(module.Name, out bool enabled) && enabled)
             {
                 await module.Enable();
