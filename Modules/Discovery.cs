@@ -63,6 +63,7 @@ public class Discovery: BotModule
             ChannelId = raid.Author.Id,
             Viewers = raid.ViewerCount
         };
+        await SaveTarget(target);
     }
 
     static async Task SaveTarget(DiscoveryTarget hop)
