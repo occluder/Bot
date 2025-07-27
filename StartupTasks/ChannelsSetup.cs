@@ -95,7 +95,7 @@ internal class ChannelsSetup: IStartupTask
                 """
                 insert into channels 
                 values (@DisplayName, @ChannelName, @ChannelId, @AvatarUrl, @Priority, @Tags, @DateAdded) 
-                on conflict (channel_name, channel_id) do update set channels.priority = @Priority
+                on conflict (channel_name, channel_id) do update set priority = excluded.priority
                 """,
                 channelDto
             );

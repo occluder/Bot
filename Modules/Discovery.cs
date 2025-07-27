@@ -73,7 +73,7 @@ public class Discovery: BotModule
             await db.ExecuteAsync(
                 """
                 INSERT INTO persistent_object VALUES (@Key, @Value)
-                ON CONFLICT (key) DO UPDATE SET persistent_object.value = @Value::jsonb
+                ON CONFLICT (key) DO UPDATE SET value = excluded.value
                 """, new
                 {
                     Key = DISCOVERY_KEY,
