@@ -92,7 +92,11 @@ internal class ChannelsSetup: IStartupTask
             };
 
             _ = await conn.ExecuteAsync(
-                "insert into channels values (@DisplayName, @ChannelName, @ChannelId, @AvatarUrl, @Priority, @Tags, @DateAdded)",
+                """
+                insert into channels 
+                values (@DisplayName, @ChannelName, @ChannelId, @AvatarUrl, @Priority, @Tags, @DateAdded) 
+                on conflict (channel_name, channel_id) do update set channels.priority = @Priority
+                """,
                 channelDto
             );
 

@@ -33,7 +33,7 @@ public class Discovery: BotModule
             return;
         }
 
-        if (AnonClient.JoinedChannels.Contains(raid.Author))
+        if (AnonClient.JoinedChannels.Contains(raid.Author) || MainClient.JoinedChannels.Contains(raid.Author))
         {
             return;
         }
