@@ -17,7 +17,7 @@ public class Discovery: BotModule
             target = null;
         }
 
-        if (target is null && (target = await GetTarget()) is null)
+        if (target is null)
         {
             Debug("No discovery target set, Setting new.");
             target = new DiscoveryTarget(
@@ -33,28 +33,24 @@ public class Discovery: BotModule
             return;
         }
 
-        if (AnonClient.JoinedChannels.Contains(raid.Author) || MainClient.JoinedChannels.Contains(raid.Author))
+        if (Channels.ContainsKey(raid.Author.Name))
         {
             return;
         }
 
-        if (AnonClient.JoinedChannels.Any(x => x.Id == target.ChannelId))
+        // This is not raid author, we're leaving the current target channel
+        if (ChannelsById.ContainsKey(target.ChannelId))
         {
             await PartChannel(target.ChannelId);
         }
 
-        var response = await GetFromRequest<IvrUser[]>($"https://api.ivr.fi/v2/twitch/user?login={raid.Author.Name}");
-        if (response.TryPickT0(out IvrUser[] users, out _))
-        {
-            await JoinChannel(users[0], -1, true);
-        }
-
+        await JoinChannel(await GetUser(raid.Author.Name), -1, true);
         Information(
-            "Discovery target changed from {OldChannel} to {Channel} with {Viewers} viewers until {StopAt}.",
+            "Discovery target changed from {OldChannel} to {Channel} with {Viewers} viewers. Expires: {TimeLeft}.",
             target.Channel,
             raid.Author.Name,
             raid.ViewerCount,
-            DateTimeOffset.FromUnixTimeMilliseconds(target.StopAt)
+            PrettyTimeString(DateTimeOffset.FromUnixTimeMilliseconds(target.StopAt) - DateTimeOffset.UtcNow)
         );
 
         target = target with
@@ -117,10 +113,29 @@ public class Discovery: BotModule
         }
     }
 
+    static async Task<IvrUser> GetUser(string channelName)
+    {
+        var response = await GetFromRequest<IvrUser[]>($"https://api.ivr.fi/v2/twitch/user?login={channelName}");
+        if (response.TryPickT0(out IvrUser[] users, out _))
+        {
+            return users[0];
+        }
+
+        throw new Exception($"Failed to get user {channelName} from IVR API");
+    }
+
     protected async override ValueTask OnModuleEnabled()
     {
         MainClient.OnRaidNotice += OnRaid;
         AnonClient.OnRaidNotice += OnRaid;
+        target = await GetTarget();
+        if (target is null || UnixMs() > target.StopAt)
+        {
+            target = null;
+            return;
+        }
+
+        await JoinChannel(await GetUser(target.Channel), -1, true);
     }
 
 

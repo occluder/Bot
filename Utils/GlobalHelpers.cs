@@ -74,9 +74,15 @@ internal static class GlobalHelpers
 
     public static string PrettyTimeString(TimeSpan time)
     {
-        if (time.Hours > 0)
-            return $"{time:h'h 'mm'm 'ss's'}";
-        return time.Minutes > 0 ? $"{time:mm'm 'ss's'}" : $"{time:ss's'}";
+        return time switch
+        {
+            { Days: > 7 } => $"{time:dd'd'}",
+            { Days: > 2 } => $"{time:dd'd 'hh'h'}",
+            { Days: > 0 } => $"{time:dd'd 'hh'h 'mm'm'}",
+            { Hours: > 0 } => $"{time:h'h 'mm'm 'ss's'}",
+            { Minutes: > 0 } => $"{time:mm'm 'ss's'}",
+            _ => $"{time:ss's'}"
+        };
     }
 
     public static async ValueTask SendMessage(this IrcClient client, string[] channels, string message, bool action = false, string? nonce = null, CancellationToken cancellationToken = default(CancellationToken))
