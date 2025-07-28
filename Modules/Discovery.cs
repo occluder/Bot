@@ -13,6 +13,7 @@ public class Discovery: BotModule
         if (target is not null && target.StopAt < UnixMs())
         {
             Debug("Current discovery target has expired, resetting.");
+            await PartChannel(target.ChannelId);
             target = null;
         }
 
@@ -116,11 +117,10 @@ public class Discovery: BotModule
         }
     }
 
-    protected override ValueTask OnModuleEnabled()
+    protected async override ValueTask OnModuleEnabled()
     {
         MainClient.OnRaidNotice += OnRaid;
         AnonClient.OnRaidNotice += OnRaid;
-        return default;
     }
 
 
