@@ -25,7 +25,6 @@ public class Discovery: BotModule
                 raid.ViewerCount,
                 DateTimeOffset.Now.AddDays(7).ToUnixTimeMilliseconds()
             );
-            await SaveTarget(target);
         }
 
         if (raid.ViewerCount < target.Viewers)

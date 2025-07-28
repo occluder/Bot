@@ -29,9 +29,11 @@ public class ChannelMessages: IMetric
         using var conn = await NewDbConnection();
         try
         {
-            Point[] values = _messageCount
+            Point[] values = [..
+                _messageCount
+                .Where(x => ChannelsById.ContainsKey(x.Key))
                 .Select(kvp => new Point(ChannelsById[kvp.Key].ChannelName, kvp.Value))
-                .ToArray();
+            ];
 
             await conn.ExecuteAsync(
                 "insert into metrics_channel_messages values (@Channel, @MessageCount)",
@@ -43,8 +45,7 @@ public class ChannelMessages: IMetric
             ForContext<ChannelMessages>().Error(ex, "Something went wrong {InvocationCount}", _invc);
         }
 
-        foreach ((long channelId, _) in _messageCount)
-            _messageCount[channelId] = 0;
+        _messageCount.Clear();
     }
 }
 
