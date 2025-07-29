@@ -11,7 +11,6 @@ public class DiscordSink: ILogEventSink
 {
     private readonly ILogger _logger = ForContext("ShouldLogToDiscord", false).ForContext<DiscordSink>();
     private readonly ConcurrentQueue<WebhookObject> _logQueue = new();
-    private readonly HttpClient _client = new();
     private readonly Webhook _webhook;
     private readonly LogEventLevel _logLevel;
     private readonly Task _caller;
@@ -25,7 +24,7 @@ public class DiscordSink: ILogEventSink
             WebhookObject aggregateObject = new();
             while (true)
             {
-                if (_logQueue.IsEmpty && aggregateObject.embeds.Count == 0)
+                if (_logQueue.IsEmpty && aggregateObject.embeds.Count > 0)
                 {
                     await _webhook.SendAsync(aggregateObject);
                     aggregateObject = new WebhookObject();
