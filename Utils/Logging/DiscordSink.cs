@@ -1,9 +1,7 @@
 ﻿using System.Collections.Concurrent;
-using System.Net.Http.Json;
 using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Bot.StartupTasks;
+using Discord.Webhook;
 using Serilog.Core;
 using Serilog.Events;
 
@@ -11,39 +9,51 @@ namespace Bot.Utils.Logging;
 
 public class DiscordSink: ILogEventSink
 {
-    private readonly JsonSerializerOptions _sOptions = new()
-    {
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-    };
-
     private readonly ILogger _logger = ForContext("ShouldLogToDiscord", false).ForContext<DiscordSink>();
-    private readonly ConcurrentQueue<object> _logQueue = new();
+    private readonly ConcurrentQueue<WebhookObject> _logQueue = new();
     private readonly HttpClient _client = new();
-    private readonly string _webhookUrl;
+    private readonly Webhook _webhook;
     private readonly LogEventLevel _logLevel;
-    private readonly LogEventLevel _propsLevel;
     private readonly Task _caller;
 
-    public DiscordSink(string webhookUrl, LogEventLevel restrictedToMinimumLevel,
-        LogEventLevel propsRestrictedToMaximumLevel)
+    public DiscordSink(string webhookUrl, LogEventLevel restrictedToMinimumLevel)
     {
-        _webhookUrl = webhookUrl;
+        _webhook = new(webhookUrl);
         _logLevel = restrictedToMinimumLevel;
-        _propsLevel = propsRestrictedToMaximumLevel;
         _caller = Task.Factory.StartNew(async () =>
         {
+            WebhookObject aggregateObject = new();
             while (true)
             {
-                if (_logQueue.TryDequeue(out object? logEvent) && logEvent is not null)
+                if (_logQueue.IsEmpty && aggregateObject.embeds.Count == 0)
                 {
-                    HttpResponseMessage response = await _client.PostAsJsonAsync(_webhookUrl, logEvent, _sOptions);
-                    if (response.IsSuccessStatusCode)
-                        _logger.Verbose("[{ClassName}] Sending log: {Status}", response.StatusCode);
-                    else
-                        _logger.Warning("[{ClassName}] Sending log: {Status}", response.StatusCode);
+                    await _webhook.SendAsync(aggregateObject);
+                    aggregateObject = new WebhookObject();
+                    goto DelayedContinue;
                 }
 
-                await Task.Delay(TimeSpan.FromSeconds(1.5));
+                if (!_logQueue.TryDequeue(out WebhookObject? webhookObject) || webhookObject is null)
+                {
+                    goto DelayedContinue;
+                }
+
+                if (!string.IsNullOrEmpty(webhookObject.content))
+                {
+                    await _webhook.SendAsync(webhookObject);
+                    goto DelayedContinue;
+                }
+
+                if (aggregateObject.embeds.Count == 25)
+                {
+                    await _webhook.SendAsync(aggregateObject);
+                    aggregateObject = new WebhookObject();
+                }
+
+                aggregateObject.embeds.AddRange(webhookObject.embeds);
+                continue;
+
+            DelayedContinue:
+                await Task.Delay(2000);
             }
         }, TaskCreationOptions.LongRunning);
 
@@ -53,76 +63,37 @@ public class DiscordSink: ILogEventSink
     public void Emit(LogEvent logEvent)
     {
         if (!ShouldLogEvent(logEvent))
+        {
             return;
+        }
 
-        if (logEvent.Exception is not null)
-            _logQueue.Enqueue(CreatExceptionLogObject(logEvent));
-        else
-            _logQueue.Enqueue(CreateLogObject(logEvent));
+        _logQueue.Enqueue(logEvent.Exception is not null ? CreatExceptionLogObject(logEvent) : CreateLogObject(logEvent));
     }
 
-    public object CreatExceptionLogObject(LogEvent log)
+    static WebhookObject CreatExceptionLogObject(LogEvent log)
     {
-        (string title, int color) = GetEmbedData(log.Level);
-        var discordMessage = new
+        var (title, color) = GetEmbedData(log.Level);
+        return new WebhookObject().AddEmbed(builder =>
         {
-            embeds = new[]
-            {
-                new
-                {
-                    title,
-                    description = $"`{log.Exception!.GetType().Name}:` {log.RenderMessage()}",
-                    color,
-                    fields = new[]
-                    {
-                        new
-                        {
-                            name = "Message:",
-                            value = FormatExceptionMessage(log.Exception!.Message)
-                        },
-                        new
-                        {
-                            name = "StackTrace:",
-                            value = FormatExceptionMessage(log.Exception.StackTrace ?? string.Empty)
-                        },
-                        new
-                        {
-                            name = "Properties:",
-                            value = FormatProperties(log)
-                        }
-                    }
-                }
-            }
-        };
-
-        return discordMessage;
+            builder.WithTitle(title)
+            .WithColor(color)
+            .WithDescription($"`{log.Exception!.GetType().Name}:` {log.RenderMessage()}")
+            .AddField("Message:", FormatExceptionMessage(log.Exception!.Message))
+            .AddField("StackTrace:", FormatExceptionMessage(log.Exception.StackTrace ?? string.Empty))
+            .AddField("Properties:", FormatProperties(log));
+        });
     }
 
-    public object CreateLogObject(LogEvent log)
+    public WebhookObject CreateLogObject(LogEvent log)
     {
-        (string title, int color) = GetEmbedData(log.Level);
-        var discordMessage = new
+        var (title, color) = GetEmbedData(log.Level);
+        return new WebhookObject().AddEmbed(builder =>
         {
-            embeds = new[]
-            {
-                new
-                {
-                    title,
-                    description = log.RenderMessage(),
-                    color,
-                    fields = new[]
-                    {
-                        new
-                        {
-                            name = "Properties:",
-                            value = FormatProperties(log)
-                        }
-                    }
-                }
-            }
-        };
-
-        return discordMessage;
+            builder.WithTitle(title)
+            .WithColor(color)
+            .WithDescription(log.RenderMessage())
+            .AddField("Properties:", FormatProperties(log));
+        });
     }
 
     private static string FormatExceptionMessage(string message)
@@ -148,14 +119,21 @@ public class DiscordSink: ILogEventSink
         return sb.ToString();
     }
 
-    private static (string title, int color) GetEmbedData(LogEventLevel level) => level switch
+    static readonly DColor _verboseColor = new(215, 215, 215);
+    static readonly DColor _debugColor = new(185, 160, 215);
+    static readonly DColor _infoColor = new(125, 225, 125);
+    static readonly DColor _warningColor = new(235, 250, 10);
+    static readonly DColor _errorColor = new(255, 0, 0);
+    static readonly DColor _fatalColor = new(60, 0, 15);
+
+    private static (string title, DColor color) GetEmbedData(LogEventLevel level) => level switch
     {
-        LogEventLevel.Verbose => ("📢 Verbose", 10197915),
-        LogEventLevel.Debug => ("🔍 Debug", 16777215),
-        LogEventLevel.Information => ("ℹ Information", 3901635),
-        LogEventLevel.Warning => ("⚠ Warning", 16312092),
-        LogEventLevel.Error => ("❌ Error", 13632027),
-        LogEventLevel.Fatal => ("💥 Fatal", 3866640),
+        LogEventLevel.Verbose => ("📢 Verbose", _verboseColor),
+        LogEventLevel.Debug => ("🔍 Debug", _debugColor),
+        LogEventLevel.Information => ("ℹ Information", _infoColor),
+        LogEventLevel.Warning => ("⚠ Warning", _warningColor),
+        LogEventLevel.Error => ("❌ Error", _errorColor),
+        LogEventLevel.Fatal => ("💥 Fatal", _fatalColor),
         _ => default
     };
 
