@@ -5,14 +5,9 @@ using MiniTwitch.Irc.Models;
 
 namespace Bot.Modules;
 
-internal class LinkCollector: BotModule
+internal partial class LinkCollector: BotModule
 {
     const int MAX_LINKS = 100;
-    static readonly Regex _regex = new(
-        @"https:[\\/][\\/](www\.|[-a-zA-Z0-9]+\.)?[-a-zA-Z0-9@:%._\+~#=]{3,}(\.[a-zA-Z]{2,10})+(/([-a-zA-Z0-9@:%._\+~#=/?&]+)?)?\b",
-        RegexOptions.Compiled,
-        TimeSpan.FromMilliseconds(50)
-    );
     static readonly ILogger _logger = ForContext<LinkCollector>();
     static readonly List<LinkData> _links = new(MAX_LINKS);
     static readonly long[] _knownBots =
@@ -41,7 +36,7 @@ internal class LinkCollector: BotModule
 
         try
         {
-            if (_regex.Match(arg.Content) is { Success: true, Length: > 10 } match && match.Value[0] == 'h')
+            if (LinksRegex().Match(arg.Content) is { Success: true, Length: > 10 } match && match.Value[0] == 'h')
             {
                 if (_links.Count >= MAX_LINKS)
                     await Commit();
@@ -104,6 +99,9 @@ internal class LinkCollector: BotModule
         AnonClient.OnMessage -= OnMessage;
         await _timer.StopAsync();
     }
+
+    [GeneratedRegex(@"https:[\\/][\\/](www\.|[-a-zA-Z0-9]+\.)?[-a-zA-Z0-9@:%._\+~#=]{3,}(\.[a-zA-Z]{2,10})+(/([-a-zA-Z0-9@:%._\+~#=/?&]+)?)?\b", RegexOptions.None, 10)]
+    private partial Regex LinksRegex();
 
     private record LinkData(
         string Username,
