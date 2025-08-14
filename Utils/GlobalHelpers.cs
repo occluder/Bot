@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using Discord.Webhook;
 using MiniTwitch.Irc;
 
 namespace Bot.Utils;
@@ -27,6 +28,11 @@ internal static class GlobalHelpers
         c <<= 8;
         c |= color.B;
         return c;
+    }
+
+    public static DColor ColorToDColor(Color color)
+    {
+        return new DColor(color.R, color.G, color.B);
     }
 
     public static long Unix() => DateTimeOffset.Now.ToUnixTimeSeconds();

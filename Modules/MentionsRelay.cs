@@ -1,6 +1,8 @@
-﻿using System.Net.Http.Json;
+﻿using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using Bot.Models;
+using Discord.Webhook;
 using MiniTwitch.Irc.Models;
 
 namespace Bot.Modules;
@@ -9,9 +11,15 @@ internal class MentionsRelay: BotModule
 {
     private static readonly ILogger _logger = ForContext<MentionsRelay>();
 
-    private readonly Regex _imageHosts = new(Config.Secrets["ImageHostsRegex"], RegexOptions.Compiled, TimeSpan.FromMilliseconds(50));
-    private readonly Regex _regex = new(Config.Secrets["MentionsRegex"], RegexOptions.Compiled, TimeSpan.FromMilliseconds(50));
-    private readonly HttpClient _requests = new() { Timeout = TimeSpan.FromSeconds(15) };
+    static readonly Regex _imageHosts = new(Config.Secrets["ImageHostsRegex"], RegexOptions.Compiled, TimeSpan.FromMilliseconds(50));
+    static readonly Regex _regex = new(Config.Secrets["MentionsRegex"], RegexOptions.Compiled, TimeSpan.FromMilliseconds(50));
+    static readonly JsonSerializerOptions _jsonOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+    readonly Webhook _webhook;
+
+    public MentionsRelay()
+    {
+        _webhook = new(Config.Links["MentionsWebhook"]);
+    }
 
     private async ValueTask OnMessage(Privmsg message)
     {
@@ -20,86 +28,91 @@ internal class MentionsRelay: BotModule
             return;
         }
 
-        if (_regex.Match(message.Content) is { Success: false })
+        var match = _regex.Match(message.Content);
+        if (!match.Success)
         {
             return;
         }
 
-        string? pfp = (await HelixClient.GetUsers(message.Author.Id)).Value?.Data.FirstOrDefault()?.ProfileImageUrl;
-        object? payload = null;
+        string pfp = (await HelixClient.GetUsers(message.Author.Id)).Value!.Data[0].ProfileImageUrl;
+        WebhookObject payload = new();
         if (message.Reply.HasContent)
-            payload = new
-            {
-                embeds = new[]
-                {
-                    new
-                    {
-                        title = $"@`{message.Reply.ParentUsername}`",
-                        description = message.Reply.ParentMessage,
-                        color = Unsigned24Color(message.Author.ChatColor),
-                        timestamp = DateTime.Now,
-                        thumbnail = new { url = pfp },
-                        footer = new
-                        {
-                            icon_url = Channels[message.Channel.Name].AvatarUrl,
-                            text = message.Channel.Name
-                        },
-                        fields = new[]
-                        {
-                            new
-                            {
-                                name = $"@`{message.Author.Name}` replied:",
-                                value = message.Content
-                            }
-                        },
-                        image = _imageHosts.Match(message.Content) is { Success: true } imageMatch
-                            ? new
-                            {
-                                url = imageMatch.Value
-                            }
-                            : null
-                    }
-                }
-            };
+        {
+            payload.AddEmbed(embed =>
+                embed.WithTitle($"@`{message.Reply.ParentUsername}`")
+                     .WithDescription(message.Reply.ParentMessage)
+                     .WithColor(ColorToDColor(message.Author.ChatColor))
+                     .WithThumbnail(pfp)
+                     .WithFooter(message.Channel.Name, Channels[message.Channel.Name].AvatarUrl)
+                     .AddField($"@`{message.Author.Name}` replied:", message.Content)
+            );
+        }
         else
-            payload = new
-            {
-                embeds = new[]
-                {
-                    new
-                    {
-                        title = $"@`{message.Author.Name}`",
-                        description = message.Content,
-                        color = Unsigned24Color(message.Author.ChatColor),
-                        timestamp = DateTime.Now,
-                        thumbnail = new { url = pfp },
-                        footer = new
-                        {
-                            icon_url = Channels[message.Channel.Name].AvatarUrl,
-                            text = message.Channel.Name
-                        },
-                        image = _imageHosts.Match(message.Content) is { Success: true } imageMatch
-                            ? new
-                            {
-                                url = imageMatch.Value
-                            }
-                            : null
-                    }
-                }
-            };
+        {
+            payload.AddEmbed(embed =>
+                embed.WithTitle($"@`{message.Author.Name}`")
+                     .WithDescription(message.Content)
+                     .WithColor(ColorToDColor(message.Author.ChatColor))
+                     .WithThumbnail(pfp)
+                     .WithFooter(message.Channel.Name, Channels[message.Channel.Name].AvatarUrl)
+            );
+        }
 
+        if (_imageHosts.Match(message.Content) is { Success: true } image)
+        {
+            payload.embeds[0].image = new() { url = image.Value };
+        }
+
+        payload.content = await GetRecentChannelMessages(message.Channel.Id, message.SentTimestamp.UtcDateTime);
         try
         {
-            HttpResponseMessage response = await _requests.PostAsJsonAsync(Config.Links["MentionsWebhook"], payload);
-            if (response.IsSuccessStatusCode)
-                _logger.Debug("[{StatusCode}] POST {Url}", response.StatusCode, Config.Links["MentionsWebhook"]);
-            else
-                _logger.Warning("[{StatusCode}] POST {Url}", response.StatusCode, Config.Links["MentionsWebhook"]);
+            await _webhook.SendAsync(payload);
         }
         catch (Exception ex)
         {
-            _logger.Error(ex, "POST {Url}", Config.Links["MentionsWebhook"]);
+            _logger.Error(ex, "Error sending webhook");
         }
+    }
+
+    static async Task<string> GetRecentChannelMessages(long channelId, DateTime time)
+    {
+        var response = await GetFromRequest<ChannelHistroy>(
+            $"https://logs.ivr.fi/channelid/{channelId}?to={time.AddSeconds(5):O}&json=true&reverse=true&limit=10",
+            _jsonOptions
+        );
+
+        return response.Match<string>(
+            success =>
+            {
+                return $"```ansi\n{string.Join('\n', success.Messages.Where(x => x.Type == 1).Select(AnsiLine))}\n```";
+            },
+            badStatus =>
+            {
+                return $"Error fetching messages ({badStatus})";
+            },
+            exception =>
+            {
+                return $"Error fetching messages: {exception.Message}";
+            }
+        );
+    }
+
+    static string AnsiLine(Message message)
+    {
+        StringBuilder sb = new();
+        sb.Append($"\u001b[2;30m[{message.Timestamp:HH:mm:ss}]\u001b[0m ");
+        sb.Append($"\u001b[2;32m#{message.Channel}\u001b[0m ");
+        sb.Append($"\u001b[2;33m{message.Username}\u001b[0m: ");
+        if (_regex.Match(message.Text) is { Success: true } match)
+        {
+            sb.Append(_regex.Replace(message.Text, $"\u001b[2;35m{match.Value}\u001b[0m"));
+        }
+        else
+        {
+            sb.Append(message.Text);
+        }
+
+        return sb.ToString();
     }
 
     protected override ValueTask OnModuleEnabled()
@@ -116,3 +129,12 @@ internal class MentionsRelay: BotModule
         return default;
     }
 }
+
+record ChannelHistroy(Message[] Messages);
+record Message(
+    string Text,
+    DateTime Timestamp,
+    string Channel,
+    int Type,
+    string Username
+);
