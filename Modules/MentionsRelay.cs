@@ -84,7 +84,7 @@ internal class MentionsRelay: BotModule
         return response.Match<string>(
             success =>
             {
-                return $"```ansi\n{string.Join('\n', success.Messages.Where(x => x.Type == 1).Select(AnsiLine))}\n```";
+                return $"```ansi\n{string.Join('\n', AnsiMessage(success.Messages.Where(x => x.Type == 1).Reverse()))}\n```";
             },
             badStatus =>
             {
@@ -97,22 +97,34 @@ internal class MentionsRelay: BotModule
         );
     }
 
-    static string AnsiLine(Message message)
+    static string AnsiMessage(IEnumerable<Message> messages)
     {
-        StringBuilder sb = new();
-        sb.Append($"\u001b[2;30m[{message.Timestamp:HH:mm:ss}]\u001b[0m ");
-        sb.Append($"\u001b[2;32m#{message.Channel}\u001b[0m ");
-        sb.Append($"\u001b[2;33m{message.Username}\u001b[0m: ");
-        if (_regex.Match(message.Text) is { Success: true } match)
+        StringBuilder final = new();
+        int totalLength = 0;
+        foreach (var message in messages)
         {
-            sb.Append(_regex.Replace(message.Text, $"\u001b[2;35m{match.Value}\u001b[0m"));
-        }
-        else
-        {
-            sb.Append(message.Text);
+            StringBuilder sb = new();
+            sb.Append($"\u001b[2;30m[{message.Timestamp:HH:mm:ss}]\u001b[0m ");
+            sb.Append($"\u001b[2;32m#{message.Channel}\u001b[0m ");
+            sb.Append($"\u001b[2;33m{message.Username}\u001b[0m: ");
+            if (_regex.Match(message.Text) is { Success: true } match)
+            {
+                sb.Append(_regex.Replace(message.Text, $"\u001b[2;35m{match.Value}\u001b[0m"));
+            }
+            else
+            {
+                sb.Append(message.Text);
+            }
+
+            if (totalLength + sb.Length > 1000)
+            {
+                break;
+            }
+
+            final.Append(sb);
         }
 
-        return sb.ToString();
+        return final.ToString();
     }
 
     protected override ValueTask OnModuleEnabled()
