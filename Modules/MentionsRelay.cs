@@ -84,7 +84,7 @@ internal class MentionsRelay: BotModule
         return response.Match<string>(
             success =>
             {
-                return $"```ansi\n{string.Join('\n', AnsiMessage(success.Messages.Where(x => x.Type == 1).Reverse()))}\n```";
+                return $"```ansi\n{AnsiMessage(success.Messages.Where(x => x.Type == 1).Reverse())}\n```";
             },
             badStatus =>
             {
@@ -116,6 +116,7 @@ internal class MentionsRelay: BotModule
                 sb.Append(message.Text);
             }
 
+            sb.Append('\n');
             if (totalLength + sb.Length > 1000)
             {
                 break;
