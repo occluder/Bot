@@ -117,7 +117,7 @@ internal class MentionsRelay: BotModule
             }
 
             sb.Append('\n');
-            if (totalLength + sb.Length > 1000)
+            if (totalLength + sb.Length > 900)
             {
                 break;
             }
