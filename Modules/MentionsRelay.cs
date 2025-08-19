@@ -9,8 +9,8 @@ namespace Bot.Modules;
 
 internal class MentionsRelay: BotModule
 {
-    private static readonly ILogger _logger = ForContext<MentionsRelay>();
-
+    const int MAX_HISTORY_MESSAGES = 20;
+    static readonly ILogger _logger = ForContext<MentionsRelay>();
     static readonly Regex _imageHosts = new(Config.Secrets["ImageHostsRegex"], RegexOptions.Compiled, TimeSpan.FromMilliseconds(50));
     static readonly Regex _regex = new(Config.Secrets["MentionsRegex"], RegexOptions.Compiled, TimeSpan.FromMilliseconds(50));
     static readonly JsonSerializerOptions _jsonOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
@@ -63,7 +63,12 @@ internal class MentionsRelay: BotModule
             payload.embeds[0].image = new() { url = image.Value };
         }
 
-        payload.content = await GetRecentChannelMessages(message.Channel.Id, message.SentTimestamp.UtcDateTime);
+        string[]? content = await GetRecentChannelMessages(message.Channel.Id, message.SentTimestamp.UtcDateTime);
+        if (content is not null)
+        {
+            string contentString = string.Join("\n", content.Reverse());
+        }
+
         try
         {
             await _webhook.SendAsync(payload);
@@ -74,33 +79,36 @@ internal class MentionsRelay: BotModule
         }
     }
 
-    static async Task<string> GetRecentChannelMessages(long channelId, DateTime time)
+    static async Task<string[]?> GetRecentChannelMessages(long channelId, DateTime time)
     {
         var response = await GetFromRequest<ChannelHistroy>(
-            $"https://logs.ivr.fi/channelid/{channelId}?to={time.AddSeconds(5):O}&json=true&reverse=true&limit=10",
+            $"https://logs.ivr.fi/channelid/{channelId}?to={time.AddSeconds(5):O}&json=true&reverse=true&limit={MAX_HISTORY_MESSAGES}",
             _jsonOptions
         );
 
-        return response.Match<string>(
+        return response.Match<string[]?>(
             success =>
             {
-                return $"```ansi\n{AnsiMessage(success.Messages.Where(x => x.Type == 1).Reverse())}\n```";
+                return AnsiMessage(success.Messages.Where(x => x.Type == 1));
             },
             badStatus =>
             {
-                return $"Error fetching messages ({badStatus})";
+                _logger.Error("Error fetching messages: {StatusCode}", badStatus);
+                return null;
             },
             exception =>
             {
-                return $"Error fetching messages: {exception.Message}";
+                _logger.Error(exception, "Error fetching messages");
+                return null;
             }
         );
     }
 
-    static string AnsiMessage(IEnumerable<Message> messages)
+    static string[] AnsiMessage(IEnumerable<Message> messages)
     {
-        StringBuilder final = new();
+        var final = new string[MAX_HISTORY_MESSAGES];
         int totalLength = 0;
+        int i = 0;
         foreach (var message in messages)
         {
             StringBuilder sb = new();
@@ -116,17 +124,17 @@ internal class MentionsRelay: BotModule
                 sb.Append(message.Text);
             }
 
-            sb.Append('\n');
             if (totalLength + sb.Length > 980)
             {
                 break;
             }
 
-            final.Append(sb);
+            final[i] = sb.ToString();
             totalLength += sb.Length;
+            i++;
         }
 
-        return final.ToString();
+        return final;
     }
 
     protected override ValueTask OnModuleEnabled()
