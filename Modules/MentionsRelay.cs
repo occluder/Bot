@@ -66,7 +66,7 @@ internal class MentionsRelay: BotModule
         string[]? content = await GetRecentChannelMessages(message.Channel.Id, message.SentTimestamp.UtcDateTime);
         if (content is not null)
         {
-            payload.content = string.Join("\n", content.Reverse());
+            payload.content = $"```ansi\n{string.Join("\n", content.Reverse())}\n```";
         }
 
         try
