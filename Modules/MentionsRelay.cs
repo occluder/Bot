@@ -113,7 +113,6 @@ internal class MentionsRelay: BotModule
         {
             StringBuilder sb = new();
             sb.Append($"\u001b[2;30m[{message.Timestamp:HH:mm:ss}]\u001b[0m ");
-            sb.Append($"\u001b[2;32m#{message.Channel}\u001b[0m ");
             sb.Append($"\u001b[2;33m{message.Username}\u001b[0m: ");
             if (_regex.Match(message.Text) is { Success: true } match)
             {
