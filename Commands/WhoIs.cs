@@ -41,7 +41,7 @@ public class WhoIs: ChatCommand
         }
 
         await message.ReplyWith(
-            $"{queryResult.MaxBy(x => x.AddedAt)!.Username} ({queryResult[0].Id}) aliases: " +
+            $"{queryResult.MaxBy(x => x.AddedAt)!.Username} ({queryResult[0].UserId}) aliases: " +
             $"{string.Join(", ", queryResult.Select(x => $"{x.Username} ({DateTimeOffset.FromUnixTimeMilliseconds(x.AddedAt):Y})"))}"
         );
     }
