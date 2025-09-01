@@ -53,7 +53,7 @@ public class WhoIs: ChatCommand
 
             return [.. await connection.QueryAsync<UserDto>(
                 """
-                    select username, user_id
+                    select *
                     from users
                     where user_id = @UserId
                 """,
@@ -77,7 +77,7 @@ public class WhoIs: ChatCommand
 
             return [.. await connection.QueryAsync<UserDto>(
                 """
-                    select username, user_id
+                    select *
                     from users
                     where user_id = (select max(user_id) from users where username = @Username)
                 """,
