@@ -17,18 +17,21 @@ public class Help: ChatCommand
 
     public Help()
     {
-        AddArgument(new("CommandName", 1, typeof(string), true));
+        AddArgument(new("CommandName", typeof(string), true));
     }
 
     public override ValueTask Run(Privmsg message)
     {
         IChatCommand[] commands = ChatHandler.GetCommands().ToArray();
-        if (!TryGetArgument("CommandName", out string commandName))
+        if (!TryGetArgument("CommandName", out var commandName))
+        {
             return message.ReplyWith($"All commands: {string.Join(", ", commands.Select(x => x.Info.Name))}");
+        }
 
-        if (commands.FirstOrDefault(x => x.Info.Name == commandName) is { } cmd)
-            return message.ReplyWith(
-                $"{cmd.Info.Name}: {cmd.Info.Description}, cooldown: {cmd.Info.Cooldown}, permission: {cmd.Info.Permission}");
+        if (commands.FirstOrDefault(x => x.Info.Name == commandName!.AssumedString) is { } cmd)
+        {
+            return message.ReplyWith($"{cmd.Info.Name}: {cmd.Info.Description}, cooldown: {cmd.Info.Cooldown}, permission: {cmd.Info.Permission}");
+        }
 
         return message.ReplyWith("Command not found");
     }

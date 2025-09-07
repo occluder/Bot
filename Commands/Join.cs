@@ -16,21 +16,21 @@ internal class Join: ChatCommand
 
     public Join()
     {
-        AddArgument(new CommandArgument("Login", 1, typeof(string)));
-        AddArgument(new CommandArgument("Priority", 2, typeof(int), true));
-        AddArgument(new CommandArgument("IsLogged", 3, typeof(bool), true));
+        AddArgument(new CommandArgument("Login", typeof(string)));
+        AddArgument(new CommandArgument("Priority", typeof(int), true));
+        AddArgument(new CommandArgument("IsLogged", typeof(bool), true));
     }
 
     public override async ValueTask Run(Privmsg message)
     {
-        string login = GetArgument<string>("Login");
-        _ = TryGetArgument("Priority", out int? priority);
-        _ = TryGetArgument("IsLogged", out bool? logged);
+        string login = GetArgument("Login").AssumedString;
+        _ = TryGetArgument("Priority", out var priority);
+        _ = TryGetArgument("IsLogged", out var logged);
         OneOf<IvrUser[], HttpStatusCode, Exception> response =
             await GetFromRequest<IvrUser[]>($"https://api.ivr.fi/v2/twitch/user?login={login}");
         if (response.TryPickT0(out IvrUser[] users, out _))
         {
-            await JoinChannel(users[0], priority ?? 0, logged ?? true);
+            await JoinChannel(users[0], priority?.AssumedInt ?? 0, logged?.AssumedBool ?? true);
             await message.ReplyWith("👍");
         }
         else

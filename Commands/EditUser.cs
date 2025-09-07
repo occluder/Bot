@@ -15,14 +15,14 @@ public class EditUser: ChatCommand
 
     public EditUser()
     {
-        AddArgument(new("UserId", 1, typeof(long)));
-        AddArgument(new("Action", 2, typeof(string)));
-        AddArgument(new("BlockDurationHours", 3, typeof(int), true));
+        AddArgument(new("UserId", typeof(long)));
+        AddArgument(new("Action", typeof(string)));
+        AddArgument(new("BlockDurationHours", typeof(int), true));
     }
 
     public override ValueTask Run(Privmsg message)
     {
-        return GetArgument<string>("Action") switch
+        return GetArgument("Action").AssumedString switch
         {
             "blacklist" => BlackList(message),
             "unblacklist" => UnBlackList(message),
@@ -32,9 +32,8 @@ public class EditUser: ChatCommand
 
     private async ValueTask BlackList(Privmsg msg)
     {
-        long uid = GetArgument<long>("UserId");
+        long uid = GetArgument("UserId").AssumedLong;
         var response = await GetFromRequest<IvrUser[]>($"https://api.ivr.fi/v2/twitch/user?id={uid}");
-
         if (response.TryPickT0(out IvrUser[] users, out _))
         {
             using var conn = await NewDbConnection();
@@ -71,7 +70,7 @@ public class EditUser: ChatCommand
 
     private async ValueTask UnBlackList(Privmsg msg)
     {
-        long uid = GetArgument<long>("UserId");
+        long uid = GetArgument("UserId").AssumedLong;
         using var conn = await NewDbConnection();
         try
         {

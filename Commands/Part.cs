@@ -14,12 +14,12 @@ internal class Part: ChatCommand
 
     public Part()
     {
-        AddArgument(new("ChannelId", 1, typeof(long)));
+        AddArgument(new("ChannelId", typeof(long)));
     }
 
     public override async ValueTask Run(Privmsg message)
     {
-        long id = GetArgument<long>("ChannelId");
+        long id = GetArgument("ChannelId").AssumedLong;
         if (ChannelsById.ContainsKey(id))
         {
             await PartChannel(id);

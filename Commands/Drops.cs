@@ -1,4 +1,3 @@
-using System.Net;
 using Bot.Enums;
 using Bot.Models;
 using Bot.Services;
@@ -10,7 +9,7 @@ public class Drops: ChatCommand
 {
     public Drops()
     {
-        AddArgument(new("ItemName", 1, typeof(string)));
+        AddArgument(new("Item Name", typeof(string)));
     }
 
     public override CommandInfo Info { get; } = new(
@@ -22,12 +21,9 @@ public class Drops: ChatCommand
 
     public override async ValueTask Run(Privmsg message)
     {
-        string[] split = message.Content.Split(' ');
-        string item = string.Join(' ', split[1..]);
-        OneOf<ItemDrop[], HttpStatusCode, Exception> response =
-            await GetFromRequest<ItemDrop[]>($"https://api.warframestat.us/drops/search/{item}");
-
-        if (!response.TryPickT0(out ItemDrop[]? dropInfo, out OneOf<HttpStatusCode, Exception> error))
+        string item = GetArgument("Item Name").AssumedString;
+        var response = await GetFromRequest<ItemDrop[]>($"https://api.warframestat.us/drops/search/{item}");
+        if (!response.TryPickT0(out ItemDrop[]? dropInfo, out var error))
         {
             Warning($"Error from https://api.warframestat.us/drops/search/{item}", item);
             await error.Match(
@@ -60,7 +56,7 @@ public class Drops: ChatCommand
                     .OrderByDescending(d => d.chance)
                     .Select(d => $"{d.place} ({d.chance:0.##}%)")
                 );
-                
+
                 OneOf<string, Exception> hasteResponse = await TextUploadService.UploadToHaste(fullString);
                 hasteResponse.TryPickT0(out string? link, out _);
                 await message.ReplyWith(

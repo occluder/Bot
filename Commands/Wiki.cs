@@ -15,7 +15,7 @@ public class Wiki: ChatCommand
 
     public Wiki()
     {
-        AddArgument(new("SearchTerm", 1, typeof(string)));
+        AddArgument(new("SearchTerm", typeof(string)));
     }
 
     private const string WIKI_URL = "https://wiki.warframe.com/w/Special:Search?search=";

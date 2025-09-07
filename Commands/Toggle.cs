@@ -15,12 +15,12 @@ public class Toggle: ChatCommand
 
     public Toggle()
     {
-        AddArgument(new("Module", 1, typeof(string)));
+        AddArgument(new("Module", typeof(string)));
     }
 
     public override async ValueTask Run(Privmsg message)
     {
-        string module = GetArgument<string>("Module");
+        string module = GetArgument("Module").AssumedString;
         bool success = Module.Exists(module) && Module.IsEnabled(module)
             ? await Module.DisableModule(module)
             : await Module.EnableModule(module);

@@ -9,7 +9,7 @@ public class WhoIs: ChatCommand
 {
     public WhoIs()
     {
-        AddArgument(new CommandArgument("Target", 1, typeof(string)));
+        AddArgument(new CommandArgument("Target", typeof(string)));
     }
 
     public override CommandInfo Info { get; } = new(
@@ -23,26 +23,30 @@ public class WhoIs: ChatCommand
     {
         using var conn = await NewDbConnection();
         UserDto[] queryResult = [];
-        if (long.TryParse(GetArgument<string>("Target"), out long userId))
+        if (long.TryParse(GetArgument("Target").AssumedString, out long userId))
         {
             queryResult = await IdLookup(userId, conn);
         }
 
         if (queryResult.Length == 0)
         {
-            queryResult = await NameLookup(GetArgument<string>("Target"), conn);
+            queryResult = await NameLookup(GetArgument("Target").AssumedString, conn);
         }
 
         if (queryResult.Length == 0)
         {
-            Debug("No results found for user lookup: {Target}", GetArgument<string>("Target"));
+            Debug("No results found for user lookup: {Target}", GetArgument("Target").AssumedString);
             await message.ReplyWith("User not found :(");
             return;
         }
 
+        var aliases = queryResult
+            .OrderByDescending(x => x.AddedAt)
+            .Select(x => $"{x.Username} ({DateTimeOffset.FromUnixTimeMilliseconds(x.AddedAt):Y})");
+
         await message.ReplyWith(
             $"{queryResult.MaxBy(x => x.AddedAt)!.Username} ({queryResult[0].UserId}) aliases: " +
-            $"{string.Join(", ", queryResult.Select(x => $"{x.Username} ({DateTimeOffset.FromUnixTimeMilliseconds(x.AddedAt):Y})"))}"
+            $"{string.Join(", ", aliases)}"
         );
     }
 
