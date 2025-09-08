@@ -34,14 +34,18 @@ public abstract class ChatCommand: IChatCommand
 
     protected async ValueTask<bool> CheckArguments(Privmsg message)
     {
-        _messageArgs = message.Content.Split(' ');
-        if (_messageArgs.Length - 1 < _definedArgs.Count(arg => !arg.Optional))
+        string[] splitMessage = message.Content.Split(' ');
+        if (
+            (splitMessage.Length == 0 && _definedArgs.Count > 0)
+            || (splitMessage.Length - 1 < _definedArgs.Count(arg => !arg.Optional))
+        )
         {
-            var firstMissingArg = _definedArgs[_messageArgs.Length - 1];
+            var firstMissingArg = _definedArgs[splitMessage.Length - 1];
             await message.ReplyWith($"{firstMissingArg.ArgumentType.Name} argument \"{firstMissingArg.Name}\" is missing");
             return false;
         }
 
+        _messageArgs = splitMessage[1..]; // Skip command name
         int argIdx = 0;
         foreach (CommandArgument arg in _definedArgs)
         {
