@@ -45,22 +45,29 @@ public abstract class ChatCommand: IChatCommand
         int argIdx = 0;
         foreach (CommandArgument arg in _definedArgs)
         {
-            // FIXME: This is broken if the last argument is optional and not provided
             if (arg.TakeRemaining)
             {
+                if (argIdx >= _messageArgs.Length)
+                {
+                    if (!arg.Optional)
+                    {
+                        await message.ReplyWith($"{arg.ArgumentType.Name} argument \"{arg.Name}\" is missing");
+                        return false;
+                    }
+
+                    return true;
+                }
+
                 string remaining = string.Join(' ', _messageArgs[argIdx..]);
                 _parsedArgs[arg.Name] = new(remaining);
                 break;
             }
 
-            bool argParse = ParseUserArg(_messageArgs[argIdx++], arg);
-            if (argParse)
+            if (!ParseUserArg(_messageArgs[argIdx++], arg))
             {
-                continue;
+                await message.ReplyWith($"Argument {argIdx - 1} error: {arg.Name} must be of type {arg.ArgumentType.Name}");
+                return false;
             }
-
-            await message.ReplyWith($"Argument {argIdx} error: {arg.Name} must be of type {arg.ArgumentType.Name}");
-            return false;
         }
 
         return true;
@@ -70,35 +77,35 @@ public abstract class ChatCommand: IChatCommand
     {
         switch (defined.ArgumentType.Name)
         {
-            case "Int32":
+            case nameof(Int32):
                 if (int.TryParse(input, out int intValue))
                 {
                     _parsedArgs[defined.Name] = new(intValue);
                     return true;
                 }
                 return false;
-            case "Int64":
+            case nameof(Int64):
                 if (long.TryParse(input, out long longValue))
                 {
                     _parsedArgs[defined.Name] = new(longValue);
                     return true;
                 }
                 return false;
-            case "Single":
+            case nameof(Single):
                 if (float.TryParse(input, out float floatValue))
                 {
                     _parsedArgs[defined.Name] = new(floatValue);
                     return true;
                 }
                 return false;
-            case "Boolean":
+            case nameof(Boolean):
                 if (bool.TryParse(input, out bool boolValue))
                 {
                     _parsedArgs[defined.Name] = new(boolValue);
                     return true;
                 }
                 return false;
-            case "String":
+            case nameof(String):
                 _parsedArgs[defined.Name] = new(input);
                 return true;
             default:
