@@ -9,7 +9,7 @@ public class Drops: ChatCommand
 {
     public Drops()
     {
-        AddArgument(new("Item Name", typeof(string)));
+        AddArgument(new("Item Name", typeof(string), TakeRemaining: true));
     }
 
     public override CommandInfo Info { get; } = new(

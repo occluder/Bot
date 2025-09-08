@@ -15,7 +15,7 @@ public class Query: ChatCommand
 
     public Query()
     {
-        AddArgument(new("sql", typeof(string)));
+        AddArgument(new("sql", typeof(string), TakeRemaining: true));
     }
 
     public override CommandInfo Info { get; } = new(

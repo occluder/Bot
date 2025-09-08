@@ -15,24 +15,13 @@ public class Wiki: ChatCommand
 
     public Wiki()
     {
-        AddArgument(new("SearchTerm", typeof(string)));
+        AddArgument(new("Search Term", typeof(string), TakeRemaining: true));
     }
 
     private const string WIKI_URL = "https://wiki.warframe.com/w/Special:Search?search=";
 
     public override async ValueTask Run(Privmsg message)
     {
-        string[] split = message.Content.Split(' ');
-        for (int i = 1; i < split.Length; i++)
-        {
-            if (split[i].Length < 2)
-            {
-                continue;
-            }
-
-            split[i] = char.ToUpper(split[i][0]) + split[i][1..];
-        }
-
-        await message.ReplyWith($"{WIKI_URL}{string.Join('+', split[1..])}");
+        await message.ReplyWith($"{WIKI_URL}{GetArgument("Search Term").AssumedString}");
     }
 }
