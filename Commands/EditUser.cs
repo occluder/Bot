@@ -22,7 +22,13 @@ public class EditUser: ChatCommand
 
     public override ValueTask Run(Privmsg message)
     {
-        return GetArgument("Action").AssumedString switch
+        var arg = GetArgument("Action").AssumedString;
+        Debug(
+            "Running command: f!edituser {UserId} {Action}",
+            GetArgument("UserId").AssumedLong,
+            arg
+        );
+        return arg switch
         {
             "blacklist" => BlackList(message),
             "unblacklist" => UnBlackList(message),
@@ -40,12 +46,13 @@ public class EditUser: ChatCommand
             try
             {
                 IvrUser user = users.Single();
+                Debug("Got user: {Username}", user.Login);
                 UserPermissionDto permission = new()
                 {
                     Username = user.Login,
-                    UserId = long.Parse(user.Id),
+                    UserId = uid,
                     Permissions = "blacklisted",
-                    LastModified = msg.SentTimestamp.ToUnixTimeSeconds()
+                    LastModified = msg.SentTimestamp.ToUnixTimeMilliseconds()
                 };
 
                 await conn.ExecuteAsync(
@@ -53,6 +60,7 @@ public class EditUser: ChatCommand
                     permission
                 );
 
+                Information("Blacklisted user: {Username} id:{UserId}", user.Login, user.Id);
                 UserPermissions.Add(long.Parse(user.Id), permission);
                 await msg.ReplyWith($"Blacklisted user: {user.Login} id:{user.Id}");
             }
