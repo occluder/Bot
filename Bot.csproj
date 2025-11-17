@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MiniTwitch.Irc" Version="2.0.2" />
+    <PackageReference Include="MiniTwitch.Irc" Version="3.0.0" />
   </ItemGroup>
 
   <ItemGroup>
