@@ -13,7 +13,7 @@
     <PackageReference Include="Discord.Webhook" Version="1.0.9" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.0" />
-    <PackageReference Include="MiniTwitch.Helix" Version="1.0.4" />
+    <PackageReference Include="MiniTwitch.Helix" Version="2.0.0" />
     <PackageReference Include="MiniTwitch.PubSub" Version="2.1.1" />
     <PackageReference Include="Npgsql" Version="9.0.4" />
     <PackageReference Include="OneOf" Version="3.0.271" />
