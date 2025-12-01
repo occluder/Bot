@@ -61,7 +61,7 @@ public class EditUser: ChatCommand
                 );
 
                 Information("Blacklisted user: {Username} id:{UserId}", user.Login, user.Id);
-                UserPermissions.Add(long.Parse(user.Id), permission);
+                UserPermissions.Add(uid, permission);
                 await msg.ReplyWith($"Blacklisted user: {user.Login} id:{user.Id}");
             }
             catch (Exception ex)
