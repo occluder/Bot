@@ -24,7 +24,7 @@ internal class BitCollection: BotModule
                     Channel = message.Channel.Name,
                     ChannelId = message.Channel.Id,
                     BitAmount = message.Bits,
-                    TimeSent = message.TmiSentTs / 1000
+                    TimeSent = message.TmiSentTs
                 }, commandTimeout: 10
             );
 
