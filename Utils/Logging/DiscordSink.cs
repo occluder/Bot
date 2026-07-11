@@ -19,42 +19,51 @@ public class DiscordSink: ILogEventSink
     {
         _webhook = new(webhookUrl);
         _logLevel = restrictedToMinimumLevel;
-        _caller = Task.Factory.StartNew(async () =>
+        _caller = Task.Run(async () =>
         {
             WebhookObject aggregateObject = new();
             while (true)
             {
-                if (_logQueue.IsEmpty && aggregateObject.embeds.Count > 0)
+                if (_logQueue.IsEmpty)
+                {
+                    if (aggregateObject.embeds.Count > 0)
+                    {
+                        await _webhook.SendAsync(aggregateObject);
+                        aggregateObject = new WebhookObject();
+                    }
+                    await Task.Delay(2000);
+                    continue;
+                }
+
+                if (!_logQueue.TryDequeue(out WebhookObject? item) || item is null)
+                {
+                    await Task.Delay(2000);
+                    continue;
+                }
+
+                if (!string.IsNullOrEmpty(item.content))
+                {
+                    if (aggregateObject.embeds.Count > 0)
+                    {
+                        await _webhook.SendAsync(aggregateObject);
+                        aggregateObject = new WebhookObject();
+                    }
+                    await _webhook.SendAsync(item);
+                    await Task.Delay(2000);
+                    continue;
+                }
+
+                aggregateObject.embeds.AddRange(item.embeds);
+
+                if (aggregateObject.embeds.Count >= 25)
                 {
                     await _webhook.SendAsync(aggregateObject);
                     aggregateObject = new WebhookObject();
-                    goto DelayedContinue;
                 }
 
-                if (!_logQueue.TryDequeue(out WebhookObject? webhookObject) || webhookObject is null)
-                {
-                    goto DelayedContinue;
-                }
-
-                if (!string.IsNullOrEmpty(webhookObject.content))
-                {
-                    await _webhook.SendAsync(webhookObject);
-                    goto DelayedContinue;
-                }
-
-                if (aggregateObject.embeds.Count == 25)
-                {
-                    await _webhook.SendAsync(aggregateObject);
-                    aggregateObject = new WebhookObject();
-                }
-
-                aggregateObject.embeds.AddRange(webhookObject.embeds);
-                continue;
-
-            DelayedContinue:
-                await Task.Delay(2000);
+                await Task.Delay(100);
             }
-        }, TaskCreationOptions.LongRunning);
+        });
 
         GC.KeepAlive(_caller);
     }
@@ -136,8 +145,14 @@ public class DiscordSink: ILogEventSink
         _ => default
     };
 
-    private bool ShouldLogEvent(LogEvent logEvent) =>
-        logEvent.Level >= LoggerSetup.LogSwitch.MinimumLevel &&
-        (!logEvent.Properties.ContainsKey("ShouldLogToDiscord") ||
-         bool.Parse(logEvent.Properties["ShouldLogToDiscord"].ToString()));
+    private bool ShouldLogEvent(LogEvent logEvent)
+    {
+        if (logEvent.Level < LoggerSetup.LogSwitch.MinimumLevel)
+            return false;
+
+        if (!logEvent.Properties.TryGetValue("ShouldLogToDiscord", out LogEventPropertyValue? value))
+            return true;
+
+        return value is not ScalarValue { Value: bool shouldLog } || shouldLog;
+    }
 }
